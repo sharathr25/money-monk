@@ -1,5 +1,5 @@
 import { Button } from "@workspace/ui/components/button"
-import { Target, LayoutDashboard, Plus } from "lucide-react"
+import { Target, LayoutDashboard, Cog } from "lucide-react"
 import { useNavigate } from "react-router"
 
 export function Home() {
@@ -12,14 +12,14 @@ export function Home() {
       Icon: LayoutDashboard,
     },
     {
-      label: "Add Goal",
-      to: "/add-goal",
-      Icon: Plus,
-    },
-    {
       label: "Goals",
       to: "/goals",
       Icon: Target,
+    },
+    {
+      label: "Settings",
+      to: "/settings",
+      Icon: Cog,
     },
   ]
 
