@@ -1,19 +1,32 @@
-import { Button } from "@workspace/ui/components/button"
+import { BrowserRouter, Outlet, Route, Routes } from "react-router"
+import { Home } from "@/pages/home"
+import { CashFlow } from "@/pages/home/tabs/CashFlow"
+import { Goals } from "@/pages/home/tabs/Goals"
+import { AddGoal } from "@/pages/home/tabs/AddGoal"
+import { Header } from "./components/Header"
+
+const Layout = () => (
+  <div className="flex min-h-svh flex-1 flex-col">
+    <div className="my-2 px-6">
+      <Header />
+    </div>
+    <div className="flex flex-1 flex-col px-6">
+      <Outlet />
+    </div>
+  </div>
+)
 
 export function App() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/" element={<Home />} index />
+          <Route path="cash-flow" element={<CashFlow />} />
+          <Route path="goals" element={<Goals />} />
+          <Route path="add-goal" element={<AddGoal />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
