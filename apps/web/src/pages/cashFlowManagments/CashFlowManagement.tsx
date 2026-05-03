@@ -16,12 +16,41 @@ import { Button } from "@workspace/ui/components/button"
 import { Label } from "@workspace/ui/components/label"
 import { Input } from "@workspace/ui/components/input"
 import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@workspace/ui/components/input-group"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@workspace/ui/components/dialog"
+import {
   RadioGroup,
   RadioGroupItem,
 } from "@workspace/ui/components/radio-group"
-import { Calendar, MoveDown, MoveUp, Repeat, Save } from "lucide-react"
-import { Field, FieldLabel, FieldTitle } from "@workspace/ui/components/field"
-import type { SubmitEventHandler } from "react"
+import {
+  BanknoteArrowDown,
+  Calendar,
+  MoveDown,
+  MoveUp,
+  Repeat,
+  Save,
+} from "lucide-react"
+import * as Icons from "lucide-react"
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@workspace/ui/components/field"
+import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
+import { useState, type SubmitEventHandler } from "react"
+
+const ICON_NAMES = Object.keys(Icons) as Array<keyof typeof Icons>
 
 const Form = ({
   onSubmit,
@@ -30,6 +59,16 @@ const Form = ({
   onSubmit: SubmitEventHandler<HTMLFormElement>
   type: string
 }) => {
+  const [icon, setIcon] = useState("home")
+  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [frequency, setFrequency] = useState("MONTH")
+
+  const filteredIcons = ICON_NAMES.filter((name) =>
+    name.toLowerCase().includes(icon.toLowerCase())
+  ).slice(0, 5)
+
+  console.log(frequency)
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -41,8 +80,48 @@ const Form = ({
       <CardContent>
         <form className="flex flex-col gap-6" onSubmit={onSubmit}>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" type="text" required className="h-11" />
+            <Field>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
+              <InputGroup className="h-11">
+                <InputGroupInput id="name" />
+                <InputGroupAddon align="inline-end">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <BanknoteArrowDown />
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Icon</DialogTitle>
+                      </DialogHeader>
+                      <Input
+                        id="icon"
+                        onChange={(e) => setIcon(e.target.value)}
+                        value={icon}
+                        className="h-11"
+                        placeholder="Search icons..."
+                      />
+                      <div className="flex flex-wrap justify-start gap-4">
+                        {icon &&
+                          filteredIcons.map((name) => {
+                            const Icon = Icons[name] as Icons.LucideIcon
+
+                            if (!Icon) return
+
+                            return (
+                              <div
+                                key={name}
+                                className="flex flex-1 flex-col items-center text-sm"
+                              >
+                                <Icon />
+                              </div>
+                            )
+                          })}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="amount">Amount</Label>
@@ -50,9 +129,20 @@ const Form = ({
           </div>
           <div className="flex flex-col gap-2">
             <Label>Frequency</Label>
-            <RadioGroup defaultValue="MONTH" className="flex">
-              <FieldLabel htmlFor="monthly" className="p-3">
-                <Field orientation="horizontal">
+            <RadioGroup
+              defaultValue={frequency}
+              value={frequency}
+              className="flex flex-1"
+            >
+              <FieldLabel
+                htmlFor="monthly"
+                className="p-3"
+                onClick={() => setFrequency("MONTH")}
+              >
+                <Field
+                  orientation="horizontal"
+                  className="flex flex-1 justify-center"
+                >
                   <Repeat />
                   <FieldTitle>Monthly</FieldTitle>
                   <RadioGroupItem
@@ -62,15 +152,45 @@ const Form = ({
                   />
                 </Field>
               </FieldLabel>
-              <FieldLabel htmlFor="one-time" className="p-3">
+              <FieldLabel
+                htmlFor="one-time"
+                className="p-3"
+                onClick={() => setFrequency("ONE_TIME")}
+              >
                 <Field orientation="horizontal">
                   <Calendar />
-                  <FieldTitle>One time</FieldTitle>
-                  <RadioGroupItem
-                    value="ONE_TIME"
-                    id="one-time"
-                    className="hidden"
-                  />
+                  <div>
+                    <FieldTitle>One time</FieldTitle>
+                    <FieldDescription className="flex gap-2">
+                      {date?.toLocaleDateString()}
+                    </FieldDescription>
+                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <RadioGroupItem
+                        value="ONE_TIME"
+                        id="one-time"
+                        className="hidden"
+                      />
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Date</DialogTitle>
+                        <DialogDescription>
+                          If you don't select date, today's date will be taken
+                          by default. Click 'One time' frequency again to change
+                          date.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <CalendarInput
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        captionLayout="dropdown"
+                        className="w-full rounded-lg border"
+                      />
+                    </DialogContent>
+                  </Dialog>
                 </Field>
               </FieldLabel>
             </RadioGroup>
