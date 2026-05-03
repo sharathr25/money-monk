@@ -1,8 +1,8 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router"
 import { Home } from "@/pages/home"
-import { CashFlow } from "@/pages/CashFlow"
-import { Goals } from "@/pages/Goals"
-import { AddGoal } from "@/pages/AddGoal"
+import { CashFlow } from "@/pages/cashFlow"
+import { Goals } from "@/pages/goals"
+import { AddGoal } from "@/pages/addGoal"
 import { Header } from "./components/Header"
 import { Settings } from "./pages/settings"
 
