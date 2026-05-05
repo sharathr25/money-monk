@@ -5,7 +5,7 @@ import { Goals } from "@/pages/goals"
 import { AddGoal } from "@/pages/addGoal"
 import { Header } from "./components/Header"
 import { Settings } from "./pages/settings"
-import { CashFlowManagement } from "./pages/cashFlowManagments"
+import { CashFlowManagement } from "./pages/cashFlowManagment"
 
 const Layout = () => (
   <div className="flex min-h-svh flex-1 flex-col">

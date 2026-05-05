@@ -70,7 +70,7 @@ const Form = ({
   console.log(frequency)
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-lg font-bold capitalize">
           Add New {type.toLowerCase()}
@@ -216,10 +216,10 @@ export function CashFlowManagement() {
       </div>
       <Tabs defaultValue="income">
         <TabsList className="flex w-full flex-1">
-          <TabsTrigger className="flex w-full flex-1 p-2" value="income">
+          <TabsTrigger className="flex w-full flex-1 p-3" value="income">
             Income
           </TabsTrigger>
-          <TabsTrigger className="flex w-full flex-1 p-2" value="expense">
+          <TabsTrigger className="flex w-full flex-1 p-3" value="expense">
             Expense
           </TabsTrigger>
         </TabsList>
