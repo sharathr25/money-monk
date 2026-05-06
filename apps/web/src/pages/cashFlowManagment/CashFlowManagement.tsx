@@ -67,8 +67,6 @@ const Form = ({
     name.toLowerCase().includes(icon.toLowerCase())
   ).slice(0, 5)
 
-  console.log(frequency)
-
   return (
     <Card className="w-full">
       <CardHeader>

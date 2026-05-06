@@ -27,6 +27,8 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -61,7 +63,7 @@
     --popover-foreground: oklch(0.25 0.03 213);
     
     /* Primary: #2D3A4B (Matte Blue) */
-    --primary: oklch(0.32 0.04 213); 
+    --primary: oklch(38.73% 0.064 220.08); 
     --primary-foreground: oklch(0.98 0.01 210);
     
     --secondary: oklch(0.92 0.01 210);
@@ -88,6 +90,10 @@
     --sidebar-accent-foreground: oklch(0.32 0.04 213);
     --sidebar-border: oklch(0.92 0.01 210);
     --sidebar-ring: oklch(0.32 0.04 213);
+
+    /* Success: Vibrant Emerald (#10B981) */
+    --success: oklch(0.72 0.16 160);
+    --success-foreground: oklch(0.99 0.01 160);
 }
 
 .dark {
@@ -117,6 +123,10 @@
     --sidebar-accent-foreground: oklch(0.98 0.01 210);
     --sidebar-border: oklch(1 0 0 / 15%);
     --sidebar-ring: oklch(0.92 0.01 210);
+
+    /* Dark Mode Success */
+    --success: oklch(0.68 0.18 160);
+    --success-foreground: oklch(0.20 0.03 213);
 }
 
 @layer base {

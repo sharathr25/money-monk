@@ -13,7 +13,7 @@ export function Header() {
 
   return (
     <div className="my-2 flex items-center gap-2">
-      {pathname !== "/" && (
+      {paths.length > 2 && (
         <Button variant="ghost" onClick={() => navigate(-1)} className="p-0">
           <MoveLeft />
         </Button>

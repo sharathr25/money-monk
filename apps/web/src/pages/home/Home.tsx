@@ -1,6 +1,6 @@
 import { Button } from "@workspace/ui/components/button"
-import { Target, LayoutDashboard, Cog } from "lucide-react"
-import { useNavigate } from "react-router"
+import { Target, ChartNoAxesCombined, ArrowDownUp } from "lucide-react"
+import { Outlet, useNavigate } from "react-router"
 
 export function Home() {
   const navigate = useNavigate()
@@ -9,24 +9,26 @@ export function Home() {
     {
       label: "Cash Flow",
       to: "/cash-flow",
-      Icon: LayoutDashboard,
+      Icon: ArrowDownUp,
+    },
+    {
+      label: "Projection",
+      to: "/cash-flow-projection",
+      Icon: ChartNoAxesCombined,
     },
     {
       label: "Goals",
       to: "/goals",
       Icon: Target,
     },
-    {
-      label: "Settings",
-      to: "/settings",
-      Icon: Cog,
-    },
   ]
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex flex-1 bg-red-100">Home</div>
-      <div className="flex h-16 items-center justify-between">
+      <div className="overflow-y-scrollable flex flex-1 flex-col">
+        <Outlet />
+      </div>
+      <div className="fixed bottom-0 left-0 flex h-16 w-full items-center justify-between bg-(--background)">
         {links.map(({ label, to, Icon }) => (
           <Button
             variant="ghost"
