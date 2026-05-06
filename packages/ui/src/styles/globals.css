@@ -137,3 +137,11 @@
     @apply bg-background text-foreground font-sans;
     }
 }
+
+@utility no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  &::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+}

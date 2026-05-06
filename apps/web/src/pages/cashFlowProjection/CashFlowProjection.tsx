@@ -4,6 +4,11 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@workspace/ui/components/chart"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@workspace/ui/components/alert"
 import { Bar, BarChart, XAxis } from "recharts"
 import {
   Card,
@@ -66,36 +71,20 @@ export function CashFlowProjection() {
       <div className="flex flex-col gap-2">
         <h1 className="font-extrabold">Liquidity Insights</h1>
         <div className="flex flex-col gap-3">
-          <Card className="bg-(--destructive)/10 p-0 text-(--destructive)">
-            <Item>
-              <ItemMedia>
-                <TriangleAlert />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="line-clamp-1">
-                  January Shortfall Risk
-                </ItemTitle>
-                <ItemDescription className="text-(--destructive)">
-                  Projected expenses exceed liquidity by 1,500
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          </Card>
-          <Card className="bg-(--primary)/10 p-0 text-(--primary)">
-            <Item>
-              <ItemMedia>
-                <Lightbulb fill="text-(--primary)" />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="line-clamp-1">
-                  Investement Opportunity
-                </ItemTitle>
-                <ItemDescription className="text-(--primary)">
-                  Surplus in November can be moved to a high-yield vault
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          </Card>
+          <Alert variant="destructive" className="bg-(--destructive)/10">
+            <TriangleAlert />
+            <AlertTitle>January Shortfall Risk</AlertTitle>
+            <AlertDescription>
+              Projected expenses exceed liquidity by 1,500
+            </AlertDescription>
+          </Alert>
+          <Alert variant="default" className="bg-(--primary)/10">
+            <Lightbulb />
+            <AlertTitle>Investement Opportunity</AlertTitle>
+            <AlertDescription>
+              Surplus in November can be moved to a high-yield vault
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
       <div className="flex flex-col gap-2">

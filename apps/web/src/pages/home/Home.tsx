@@ -32,7 +32,7 @@ export function Home() {
         {links.map(({ label, to, Icon }) => (
           <Button
             variant="ghost"
-            className="flex h-8 flex-col"
+            className="flex h-8 basis-1/3 flex-col"
             onClick={() => navigate(to)}
           >
             <Icon />

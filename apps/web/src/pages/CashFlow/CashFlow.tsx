@@ -142,7 +142,7 @@ export function CashFlow() {
           <div className="flex items-center justify-between">
             <div>₹ 12,54,000</div>
             <Badge variant="secondary">
-              <div className="text-xs">+187% vs Feb</div>
+              <div className="text-xs">+21%</div>
             </Badge>
           </div>
           Calculated based on recurring commitments and active income sources.
