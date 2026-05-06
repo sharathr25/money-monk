@@ -25,7 +25,7 @@ export function Home() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="overflow-y-scrollable flex flex-1 flex-col">
+      <div className="mb-20 flex flex-1 flex-col">
         <Outlet />
       </div>
       <div className="fixed bottom-0 left-0 flex h-16 w-full items-center justify-between bg-(--background)">

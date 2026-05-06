@@ -10,10 +10,10 @@ import { CashFlowProjection } from "./pages/cashFlowProjection"
 
 const Layout = () => (
   <div className="flex min-h-svh flex-1 flex-col">
-    <div className="my-2 px-6">
+    <div className="fixed top-0 z-99 w-full bg-(--background) px-6">
       <Header />
     </div>
-    <div className="flex flex-1 flex-col px-6">
+    <div className="mt-10 flex flex-1 flex-col px-6 py-2">
       <Outlet />
     </div>
   </div>
