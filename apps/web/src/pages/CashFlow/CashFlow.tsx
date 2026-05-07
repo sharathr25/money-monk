@@ -14,9 +14,19 @@ import {
 } from "@workspace/ui/components/item"
 import { Badge } from "@workspace/ui/components/badge"
 import { Progress } from "@workspace/ui/components/progress"
-import { Banknote, MoveDown, MoveUp, Pen, TrendingUp } from "lucide-react"
+import {
+  ArrowDownUp,
+  Banknote,
+  Cog,
+  MoveDown,
+  MoveUp,
+  Pen,
+  TrendingUp,
+} from "lucide-react"
+import { useNavigate } from "react-router"
 
 export function CashFlow() {
+  const navigate = useNavigate()
   return (
     <div className="flex flex-col gap-4">
       <Card className="w-full">
@@ -40,6 +50,23 @@ export function CashFlow() {
             </Button>
           </div>
           <Progress value={20} />
+        </CardContent>
+      </Card>
+      <Card className="w-full bg-(--primary) text-(--primary-foreground)">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="font-bold capitalize">REMANING FOR THE MONTH</div>
+            <TrendingUp />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div>₹ 12,54,000</div>
+            <Badge variant="secondary">
+              <div className="text-xs">+21%</div>
+            </Badge>
+          </div>
+          Calculated based on recurring commitments and active income sources.
         </CardContent>
       </Card>
       <div className="flex justify-between">
@@ -131,23 +158,13 @@ export function CashFlow() {
           </Item>
         </Card>
       </div>
-      <Card className="w-full bg-(--primary) text-(--primary-foreground)">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="font-bold capitalize">REMANING FOR THE MONTH</div>
-            <TrendingUp />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div>₹ 12,54,000</div>
-            <Badge variant="secondary">
-              <div className="text-xs">+21%</div>
-            </Badge>
-          </div>
-          Calculated based on recurring commitments and active income sources.
-        </CardContent>
-      </Card>
+      <Button
+        className="fixed right-6 bottom-20 h-12 w-20 rounded-full"
+        onClick={() => navigate("/manage-cash-flow")}
+      >
+        <ArrowDownUp />
+        <Cog />
+      </Button>
     </div>
   )
 }

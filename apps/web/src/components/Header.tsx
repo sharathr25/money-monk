@@ -11,13 +11,13 @@ export function Header() {
   const routeName =
     currentRoute === "" ? "home" : currentRoute.replaceAll("-", " ")
 
+  console.log(currentRoute, pathname)
+
   return (
     <div className="my-2 flex items-center gap-2">
-      {paths.length > 2 && (
-        <Button variant="ghost" onClick={() => navigate(-1)} className="p-0">
-          <MoveLeft />
-        </Button>
-      )}
+      <Button variant="ghost" onClick={() => navigate(-1)} className="p-0">
+        <MoveLeft />
+      </Button>
       <div className="capitalize">{routeName.toLowerCase()}</div>
     </div>
   )

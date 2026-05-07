@@ -8,17 +8,17 @@ export function Home() {
   const links = [
     {
       label: "Cash Flow",
-      to: "/cash-flow",
+      to: "/",
       Icon: ArrowDownUp,
     },
     {
       label: "Projection",
-      to: "/cash-flow-projection",
+      to: "cash-flow-projection",
       Icon: ChartNoAxesCombined,
     },
     {
       label: "Goals",
-      to: "/goals",
+      to: "goals",
       Icon: Target,
     },
   ]

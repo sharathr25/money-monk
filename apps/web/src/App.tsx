@@ -7,6 +7,7 @@ import { Header } from "./components/Header"
 import { Settings } from "./pages/settings"
 import { CashFlowManagement } from "./pages/cashFlowManagment"
 import { CashFlowProjection } from "./pages/cashFlowProjection"
+import { AddCashFlowMovement } from "./pages/addCashFlowMovement"
 
 const Layout = () => (
   <div className="flex min-h-svh flex-1 flex-col">
@@ -25,7 +26,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Home />}>
-            <Route path="cash-flow" element={<CashFlow />} index />
+            <Route element={<CashFlow />} index />
             <Route path="goals" element={<Goals />} />
             <Route
               path="cash-flow-projection"
@@ -33,6 +34,10 @@ export function App() {
             />
           </Route>
           <Route path="manage-cash-flow" element={<CashFlowManagement />} />
+          <Route
+            path="add-cash-flow-movement"
+            element={<AddCashFlowMovement />}
+          />
           <Route path="add-goal" element={<AddGoal />} />
           <Route path="settings" element={<Settings />} />
         </Route>
