@@ -18,21 +18,36 @@ import {
   PlaneTakeoff,
   Plus,
 } from "lucide-react"
+import { useState } from "react"
+
+const TABS = [
+  "All commitements",
+  "Planned",
+  "Started Saving",
+  "Active",
+  "Paused",
+  "Completed",
+]
 
 export function Goals() {
+  const [tab, setTab] = useState(0)
+
   return (
-    <div className="mb-16 flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
       <div>
         <h1 className="text-xl font-extrabold">Commitments</h1>
         <p>Your financial journeys and milestones.</p>
       </div>
       <div className="no-scrollbar flex w-full flex-1 gap-2 overflow-x-scroll">
-        <Badge variant="default">All commitements</Badge>
-        <Badge variant="secondary">Planned</Badge>
-        <Badge variant="secondary">Started Saving</Badge>
-        <Badge variant="secondary">Active</Badge>
-        <Badge variant="secondary">Paused</Badge>
-        <Badge variant="secondary">Completed</Badge>
+        {TABS.map((t, i) => (
+          <Badge
+            key={t}
+            variant={i === tab ? "default" : "secondary"}
+            onClick={() => setTab(i)}
+          >
+            {t}
+          </Badge>
+        ))}
       </div>
       <div className="flex flex-col gap-4">
         {/* Active card */}
@@ -59,7 +74,7 @@ export function Goals() {
               </FieldLabel>
               <Progress value={66} id="progress-upload" />
             </Field>
-            <p className="mt-1 text-right text-xs text-(--muted-foreground)">
+            <p className="mt-1 text-xs text-(--muted-foreground)">
               Started On Oct 12, 2024
             </p>
           </CardContent>
@@ -88,7 +103,7 @@ export function Goals() {
               </FieldLabel>
               <Progress value={66} id="progress-upload" />
             </Field>
-            <p className="mt-1 text-right text-xs text-(--muted-foreground)">
+            <p className="mt-1 text-xs text-(--muted-foreground)">
               Started Saving On Oct 12, 2024
             </p>
           </CardContent>
@@ -108,7 +123,7 @@ export function Goals() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-1">
-            <p className="mt-1 text-right text-xs text-(--muted-foreground)">
+            <p className="mt-1 text-xs text-(--muted-foreground)">
               Upcoming commitment
             </p>
           </CardContent>
@@ -151,17 +166,15 @@ export function Goals() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-1">
-            <p className="mt-1 text-right text-xs text-(--muted-foreground)">
+            <p className="mt-1 text-xs text-(--muted-foreground)">
               Completed On Oct 12, 2024
             </p>
           </CardContent>
         </Card>
       </div>
-      <div className="fixed bottom-0 left-0 w-full bg-linear-to-t from-background px-6 pb-20">
-        <Button className="h-12 w-full">
-          <Plus /> Add New Commitement
-        </Button>
-      </div>
+      <Button className="fixed right-6 bottom-20 h-12 w-12 rounded-full">
+        <Plus />
+      </Button>
     </div>
   )
 }

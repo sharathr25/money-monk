@@ -31,6 +31,7 @@ export function Home() {
       <div className="fixed bottom-0 left-0 flex h-16 w-full items-center justify-between bg-(--background)">
         {links.map(({ label, to, Icon }) => (
           <Button
+            key={label}
             variant="ghost"
             className="flex h-8 basis-1/3 flex-col"
             onClick={() => navigate(to)}
