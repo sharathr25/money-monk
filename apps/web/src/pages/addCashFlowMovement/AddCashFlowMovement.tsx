@@ -20,12 +20,15 @@ import {
   InputGroupInput,
 } from "@workspace/ui/components/input-group"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@workspace/ui/components/dialog"
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerFooter,
+  DrawerDescription,
+  DrawerClose,
+} from "@workspace/ui/components/drawer"
 import {
   RadioGroup,
   RadioGroupItem,
@@ -44,6 +47,7 @@ import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useState, type SubmitEventHandler } from "react"
 
 const ICON_NAMES = Object.keys(Icons) as Array<keyof typeof Icons>
+const ICONS_PAGE_SIZE = 5
 
 const Form = ({
   onSubmit,
@@ -56,21 +60,13 @@ const Form = ({
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [frequency, setFrequency] = useState("MONTH")
 
-  const filteredIcons = ICON_NAMES.filter((name) =>
-    name.toLowerCase().includes(icon.toLowerCase())
-  )
-    .slice(0, 5)
-    .map((name) => {
-      const Icon = Icons[name] as Icons.LucideIcon
-
-      if (!Icon) return
-
-      return (
-        <div key={name} className="flex flex-1 flex-col items-center text-sm">
-          <Icon />
-        </div>
+  const filteredIcons = icon
+    ? ICON_NAMES.filter((name) =>
+        name.toLowerCase().includes(icon.toLowerCase())
       )
-    })
+        .slice(0, ICONS_PAGE_SIZE)
+        .map((name) => ({ Icon: Icons[name] as Icons.LucideIcon, name }))
+    : []
 
   return (
     <Card className="w-full">
@@ -87,26 +83,33 @@ const Form = ({
             <InputGroup className="h-11">
               <InputGroupInput id="name" />
               <InputGroupAddon align="inline-end">
-                <Dialog>
-                  <DialogTrigger asChild>
+                <Drawer>
+                  <DrawerTrigger asChild>
                     <BanknoteArrowDown />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Icon</DialogTitle>
-                    </DialogHeader>
-                    <Input
-                      id="icon"
-                      onChange={(e) => setIcon(e.target.value)}
-                      value={icon}
-                      className="h-11"
-                      placeholder="Search icons..."
-                    />
-                    <div className="flex flex-wrap justify-start gap-4">
-                      {icon && filteredIcons}
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <DrawerHeader className="flex items-start">
+                      <DrawerTitle>Icon</DrawerTitle>
+                      <DrawerDescription>Select an icon.</DrawerDescription>
+                      <Input
+                        id="icon"
+                        onChange={(e) => setIcon(e.target.value)}
+                        value={icon}
+                        className="h-11"
+                        placeholder="Search icons..."
+                      />
+                    </DrawerHeader>
+                    <DrawerFooter>
+                      <div className="flex h-11 gap-8">
+                        {filteredIcons.map(({ Icon, name }) => (
+                          <DrawerClose asChild key={name}>
+                            <Icon />
+                          </DrawerClose>
+                        ))}
+                      </div>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
               </InputGroupAddon>
             </InputGroup>
           </Field>
@@ -150,8 +153,8 @@ const Form = ({
           </Field>
           <Field>
             <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
-            <Dialog>
-              <DialogTrigger asChild>
+            <Drawer>
+              <DrawerTrigger asChild>
                 <Button
                   disabled={frequency !== "ONE_TIME"}
                   variant="outline"
@@ -161,11 +164,12 @@ const Form = ({
                   <Calendar />
                   {date?.toLocaleDateString()}
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>Date</DialogTitle>
-                </DialogHeader>
+              </DrawerTrigger>
+              <DrawerContent className="sm:max-w-sm">
+                <DrawerHeader className="flex items-start">
+                  <DrawerTitle>Date</DrawerTitle>
+                  <DrawerDescription>Select a date.</DrawerDescription>
+                </DrawerHeader>
                 <CalendarInput
                   required={frequency === "ONE_TIME"}
                   mode="single"
@@ -175,31 +179,8 @@ const Form = ({
                   captionLayout="dropdown"
                   className="w-full"
                 />
-              </DialogContent>
-            </Dialog>
-            {/* <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  disabled={frequency !== "ONE_TIME"}
-                  variant="outline"
-                  id="date-picker-simple"
-                  className="h-11 justify-start font-normal"
-                >
-                  <Calendar />
-                  {date?.toLocaleDateString()}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarInput
-                  required={frequency === "ONE_TIME"}
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  defaultMonth={date}
-                  captionLayout="dropdown"
-                />
-              </PopoverContent>
-            </Popover> */}
+              </DrawerContent>
+            </Drawer>
           </Field>
           <Button type="submit" className="h-13 w-full">
             <Save />
