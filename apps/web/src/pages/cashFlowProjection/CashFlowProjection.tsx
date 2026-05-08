@@ -16,13 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@workspace/ui/components/item"
 import { Lightbulb, TriangleAlert } from "lucide-react"
 import { Badge } from "@workspace/ui/components/badge"
 
