@@ -20,15 +20,15 @@ import {
   InputGroupInput,
 } from "@workspace/ui/components/input-group"
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-  DrawerFooter,
-  DrawerDescription,
-  DrawerClose,
-} from "@workspace/ui/components/drawer"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+  DialogClose,
+} from "@workspace/ui/components/dialog"
 import {
   RadioGroup,
   RadioGroupItem,
@@ -83,14 +83,14 @@ const Form = ({
             <InputGroup className="h-11">
               <InputGroupInput id="name" />
               <InputGroupAddon align="inline-end">
-                <Drawer>
-                  <DrawerTrigger asChild>
+                <Dialog>
+                  <DialogTrigger asChild>
                     <BanknoteArrowDown />
-                  </DrawerTrigger>
-                  <DrawerContent>
-                    <DrawerHeader className="flex items-start">
-                      <DrawerTitle>Icon</DrawerTitle>
-                      <DrawerDescription>Select an icon.</DrawerDescription>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader className="flex items-start">
+                      <DialogTitle>Icon</DialogTitle>
+                      <DialogDescription>Select an icon.</DialogDescription>
                       <Input
                         id="icon"
                         onChange={(e) => setIcon(e.target.value)}
@@ -98,18 +98,20 @@ const Form = ({
                         className="h-11"
                         placeholder="Search icons..."
                       />
-                    </DrawerHeader>
-                    <DrawerFooter>
-                      <div className="flex h-11 gap-8">
+                    </DialogHeader>
+                    <DialogFooter>
+                      <div className="flex h-11 flex-wrap gap-8">
                         {filteredIcons.map(({ Icon, name }) => (
-                          <DrawerClose asChild key={name}>
-                            <Icon />
-                          </DrawerClose>
+                          <DialogClose asChild key={name}>
+                            <Button variant="ghost" size="icon-lg">
+                              <Icon />
+                            </Button>
+                          </DialogClose>
                         ))}
                       </div>
-                    </DrawerFooter>
-                  </DrawerContent>
-                </Drawer>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </InputGroupAddon>
             </InputGroup>
           </Field>
@@ -153,8 +155,8 @@ const Form = ({
           </Field>
           <Field>
             <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
-            <Drawer>
-              <DrawerTrigger asChild>
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
                   disabled={frequency !== "ONE_TIME"}
                   variant="outline"
@@ -164,12 +166,12 @@ const Form = ({
                   <Calendar />
                   {date?.toLocaleDateString()}
                 </Button>
-              </DrawerTrigger>
-              <DrawerContent className="sm:max-w-sm">
-                <DrawerHeader className="flex items-start">
-                  <DrawerTitle>Date</DrawerTitle>
-                  <DrawerDescription>Select a date.</DrawerDescription>
-                </DrawerHeader>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader className="flex items-start">
+                  <DialogTitle>Date</DialogTitle>
+                  <DialogDescription>Select a date.</DialogDescription>
+                </DialogHeader>
                 <CalendarInput
                   required={frequency === "ONE_TIME"}
                   mode="single"
@@ -177,10 +179,10 @@ const Form = ({
                   onSelect={setDate}
                   defaultMonth={date}
                   captionLayout="dropdown"
-                  className="w-full"
+                  className="mx-auto"
                 />
-              </DrawerContent>
-            </Drawer>
+              </DialogContent>
+            </Dialog>
           </Field>
           <Button type="submit" className="h-13 w-full">
             <Save />
