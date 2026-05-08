@@ -1,47 +1,6 @@
-import { BrowserRouter, Outlet, Route, Routes } from "react-router"
-import { Home } from "@/pages/home"
-import { CashFlow } from "@/pages/cashFlow"
-import { Goals } from "@/pages/goals"
-import { AddGoal } from "@/pages/addGoal"
-import { Header } from "./components/Header"
-import { Settings } from "./pages/settings"
-import { CashFlowManagement } from "./pages/cashFlowManagment"
-import { CashFlowProjection } from "./pages/cashFlowProjection"
-import { AddCashFlowMovement } from "./pages/addCashFlowMovement"
-
-const Layout = () => (
-  <div className="flex min-h-svh flex-1 flex-col">
-    <div className="fixed top-0 z-99 w-full bg-(--background) px-6">
-      <Header />
-    </div>
-    <div className="mt-10 flex flex-1 flex-col px-6 py-2">
-      <Outlet />
-    </div>
-  </div>
-)
+import { RouterProvider } from "react-router"
+import { router } from "./routes"
 
 export function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Home />}>
-            <Route element={<CashFlow />} index />
-            <Route path="goals" element={<Goals />} />
-            <Route
-              path="cash-flow-projection"
-              element={<CashFlowProjection />}
-            />
-          </Route>
-          <Route path="manage-cash-flow" element={<CashFlowManagement />} />
-          <Route
-            path="add-cash-flow-movement"
-            element={<AddCashFlowMovement />}
-          />
-          <Route path="add-goal" element={<AddGoal />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+  return <RouterProvider router={router} />
 }

@@ -1,3 +1,5 @@
+import { useNavigator } from "@/hooks/useNavigator"
+import { ROUTE_NAMES } from "@/routes"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Card } from "@workspace/ui/components/card"
@@ -15,10 +17,9 @@ import {
   TabsTrigger,
 } from "@workspace/ui/components/tabs"
 import { Banknote, Pen, Plus, Trash } from "lucide-react"
-import { useNavigate } from "react-router"
 
 export function CashFlowManagement() {
-  const navigate = useNavigate()
+  const { navigate } = useNavigator()
 
   return (
     <div className="flex flex-1 flex-col gap-2">
@@ -172,7 +173,7 @@ export function CashFlowManagement() {
       </Tabs>
       <Button
         className="fixed right-6 bottom-6 h-12 w-12 rounded-full"
-        onClick={() => navigate("/add-cash-flow-movement")}
+        onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_MOVEMENT)}
       >
         <Plus />
       </Button>

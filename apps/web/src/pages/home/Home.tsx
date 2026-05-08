@@ -1,24 +1,26 @@
+import { useNavigator } from "@/hooks/useNavigator"
+import { ROUTE_NAMES } from "@/routes"
 import { Button } from "@workspace/ui/components/button"
 import { Target, ChartNoAxesCombined, ArrowDownUp } from "lucide-react"
-import { Outlet, useNavigate } from "react-router"
+import { Outlet } from "react-router"
 
 export function Home() {
-  const navigate = useNavigate()
+  const { navigate } = useNavigator()
 
   const links = [
     {
       label: "Cash Flow",
-      to: "/",
+      to: ROUTE_NAMES.ROOT,
       Icon: ArrowDownUp,
     },
     {
       label: "Projection",
-      to: "cash-flow-projection",
+      to: ROUTE_NAMES.CASH_FLOW_PRJECTION,
       Icon: ChartNoAxesCombined,
     },
     {
       label: "Goals",
-      to: "goals",
+      to: ROUTE_NAMES.GOALS,
       Icon: Target,
     },
   ]

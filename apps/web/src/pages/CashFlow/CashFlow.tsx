@@ -13,7 +13,6 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 import { Badge } from "@workspace/ui/components/badge"
-import { Progress } from "@workspace/ui/components/progress"
 import {
   ArrowDownUp,
   Banknote,
@@ -22,66 +21,59 @@ import {
   MoveUp,
   Pen,
   TrendingUp,
+  Wallet,
 } from "lucide-react"
-import { useNavigate } from "react-router"
+import { useNavigator } from "@/hooks/useNavigator"
+import { ROUTE_NAMES } from "@/routes"
 
 export function CashFlow() {
-  const navigate = useNavigate()
+  const { navigate } = useNavigator()
   return (
     <div className="flex flex-col gap-4">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="font-bold capitalize">Opening Balance</div>
-            <Badge
-              className="rounded-sm p-4"
-              onClick={() => {}}
-              variant="secondary"
-            >
-              March
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div>₹ 12,54,000</div>
-            <Button variant="ghost">
-              <Pen />
-            </Button>
-          </div>
-          <Progress value={20} />
-        </CardContent>
-      </Card>
-      <Card className="w-full bg-(--primary) text-(--primary-foreground)">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="font-bold capitalize">REMANING FOR THE MONTH</div>
-            <TrendingUp />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div>₹ 12,54,000</div>
-            <Badge variant="secondary">
-              <div className="text-xs">+21%</div>
-            </Badge>
-          </div>
-          Calculated based on recurring commitments and active income sources.
-        </CardContent>
-      </Card>
+      <div className="flex items-end gap-2">
+        <div className="text-2xl/7 font-extrabold">March</div>
+        <div className="text-sm">2024</div>
+      </div>
+      <div className="flex gap-4">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="font-bold capitalize">Opening Balance</div>
+              <Wallet />
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <div>₹ 12,54,000</div>
+              <Button variant="secondary">
+                <Pen />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="w-full bg-(--primary) text-(--primary-foreground)">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="font-bold capitalize">Net Cash Flow</div>
+              <TrendingUp />
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <div className="flex justify-between gap-1">
+              <div>₹ 12,54,000</div>
+              <Badge variant="secondary">+21%</Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       <div className="flex justify-between">
         <div className="flex items-center gap-1">
           <MoveDown className="text-[var(--success)]" />
-          In
+          Income
         </div>
-        <div className="flex items-center gap-1">
-          + ₹1,500
-          <Badge variant="default">
-            <div className="text-xs">+187% vs Feb</div>
-          </Badge>
-        </div>
+        <div className="flex items-center gap-1">+ ₹1,500</div>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <Card className="p-0">
           <Item>
             <ItemMedia>
@@ -119,12 +111,12 @@ export function CashFlow() {
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
             <MoveUp className="text-[var(--destructive)]" size={20} />
-            Out
+            Expenses
           </div>
           - ₹1,500
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <Card className="p-0">
           <Item>
             <ItemMedia>
@@ -160,7 +152,7 @@ export function CashFlow() {
       </div>
       <Button
         className="fixed right-6 bottom-20 h-12 w-20 rounded-full"
-        onClick={() => navigate("/manage-cash-flow")}
+        onClick={() => navigate(ROUTE_NAMES.CASH_FLOW_MANAGEMENT)}
       >
         <ArrowDownUp />
         <Cog />

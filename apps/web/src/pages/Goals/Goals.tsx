@@ -156,8 +156,8 @@ export function Goals() {
           <CardHeader>
             <CardTitle className="flex flex-col items-start">
               <div className="flex w-full justify-between">
-                <Badge>Done</Badge>
-                <Check />
+                <Badge className="bg-(--success)">Done</Badge>
+                <Check className="text-(--success)" />
               </div>
               <div className="flex w-full flex-col">
                 <div className="text-lg font-bold capitalize">Student Loan</div>
