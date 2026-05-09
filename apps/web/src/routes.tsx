@@ -4,17 +4,17 @@ import { CashFlow } from "@/pages/cashFlow"
 import { Goals } from "@/pages/goals"
 import { AddGoal } from "@/pages/addGoal"
 import { Settings } from "./pages/settings"
-import { CashFlowManagement } from "./pages/cashFlowManagment"
+import { ManageCashFlowTemplate } from "./pages/manageCashFlowTemplate"
 import { CashFlowProjection } from "./pages/cashFlowProjection"
-import { AddCashFlowMovement } from "./pages/addCashFlowMovement"
+import { AddCashFlowTemplate } from "./pages/addCashFlowTemplate"
 import { Layout } from "./components/Layout"
 
 export const ROUTE_NAMES = {
   ROOT: "/",
   CASH_FLOW_PRJECTION: "/cash-flow-projection",
   GOALS: "/goals",
-  CASH_FLOW_MANAGEMENT: "/manage-cash-flow",
-  ADD_CASH_FLOW_MOVEMENT: "/add-cash-flow-movement",
+  MANAGE_CASH_FLOW_TEMPLATE: "/manage-cash-flow-template",
+  ADD_CASH_FLOW_TEMPLATE: "/add-cash-flow-template",
   ADD_GOAL: "/add-goal",
   SETTINGS: "/settings",
 } as const
@@ -45,12 +45,12 @@ const routes = [
         ],
       },
       {
-        path: ROUTE_NAMES.CASH_FLOW_MANAGEMENT,
-        Component: CashFlowManagement,
+        path: ROUTE_NAMES.MANAGE_CASH_FLOW_TEMPLATE,
+        Component: ManageCashFlowTemplate,
       },
       {
-        path: ROUTE_NAMES.ADD_CASH_FLOW_MOVEMENT,
-        Component: AddCashFlowMovement,
+        path: ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE,
+        Component: AddCashFlowTemplate,
       },
       {
         path: ROUTE_NAMES.GOALS,

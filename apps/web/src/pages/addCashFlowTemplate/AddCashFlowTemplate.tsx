@@ -223,7 +223,7 @@ const Form = ({ type }: { type: CashFlowType }) => {
   )
 }
 
-export function AddCashFlowMovement() {
+export function AddCashFlowTemplate() {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <div>

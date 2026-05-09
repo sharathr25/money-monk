@@ -18,7 +18,7 @@ import {
 } from "@workspace/ui/components/tabs"
 import { Banknote, Pen, Plus, Trash } from "lucide-react"
 
-export function CashFlowManagement() {
+export function ManageCashFlowTemplate() {
   const { navigate } = useNavigator()
 
   return (
@@ -173,7 +173,7 @@ export function CashFlowManagement() {
       </Tabs>
       <Button
         className="fixed right-6 bottom-6 h-12 w-12 rounded-full"
-        onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_MOVEMENT)}
+        onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE)}
       >
         <Plus />
       </Button>
