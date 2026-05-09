@@ -44,25 +44,48 @@ import {
 import * as Icons from "lucide-react"
 import { Field, FieldLabel, FieldTitle } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
-import { useState, type SubmitEventHandler } from "react"
+import { useForm, type SubmitHandler } from "react-hook-form"
 
 const ICON_NAMES = Object.keys(Icons) as Array<keyof typeof Icons>
 const ICONS_PAGE_SIZE = 5
 
-const Form = ({
-  onSubmit,
-  type,
-}: {
-  onSubmit: SubmitEventHandler<HTMLFormElement>
-  type: string
-}) => {
-  const [icon, setIcon] = useState("home")
-  const [date, setDate] = useState<Date | undefined>(new Date())
-  const [frequency, setFrequency] = useState("MONTH")
+type Frequency = "MONTHLY" | "ONE_TIME"
 
-  const filteredIcons = icon
+type CashFlowType = "INCOME" | "EXPENSE"
+
+type AddCashFlowFormInputs = {
+  name: string
+  iconNameFilter?: string
+  icon?: string
+  description?: string
+  amount: number
+  frequency: Frequency
+  type: CashFlowType
+  date?: Date
+}
+
+const Form = ({ type }: { type: CashFlowType }) => {
+  const { handleSubmit, register, setValue, watch } =
+    useForm<AddCashFlowFormInputs>({
+      defaultValues: {
+        date: new Date(),
+        frequency: "MONTHLY",
+        iconNameFilter: "bank",
+        icon: "Banknote",
+        type,
+      },
+    })
+
+  const onSubmit: SubmitHandler<AddCashFlowFormInputs> = (data) =>
+    console.log(data)
+
+  const iconNameFilter = watch("iconNameFilter")
+  const frequency = watch("frequency")
+  const date = watch("date")
+
+  const filteredIcons = iconNameFilter
     ? ICON_NAMES.filter((name) =>
-        name.toLowerCase().includes(icon.toLowerCase())
+        name.toLowerCase().includes(iconNameFilter.toLowerCase())
       )
         .slice(0, ICONS_PAGE_SIZE)
         .map((name) => ({ Icon: Icons[name] as Icons.LucideIcon, name }))
@@ -77,53 +100,67 @@ const Form = ({
         <CardAction>{type === "INCOME" ? <MoveDown /> : <MoveUp />}</CardAction>
       </CardHeader>
       <CardContent>
-        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
+              <InputGroup className="h-11">
+                <InputGroupInput id="name" {...register("name")} />
+                <InputGroupAddon align="inline-end">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <BanknoteArrowDown />
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader className="flex items-start">
+                        <DialogTitle>Icon</DialogTitle>
+                        <DialogDescription>Select an icon.</DialogDescription>
+                        <Input
+                          id="icon"
+                          className="h-11"
+                          placeholder="Search icons..."
+                          {...register("iconNameFilter")}
+                        />
+                      </DialogHeader>
+                      <DialogFooter>
+                        <div className="flex h-11 flex-wrap gap-8">
+                          {filteredIcons.map(({ Icon, name }) => (
+                            <DialogClose asChild key={name}>
+                              <Button
+                                variant="ghost"
+                                size="icon-lg"
+                                onClick={() => setValue("icon", name)}
+                              >
+                                <Icon />
+                              </Button>
+                            </DialogClose>
+                          ))}
+                        </div>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="name">Amount</FieldLabel>
+              <Input
+                id="amount"
+                type="number"
+                className="h-11"
+                {...register("amount", { required: true })}
+              />
+            </Field>
+          </div>
           <Field>
-            <FieldLabel htmlFor="name">Name</FieldLabel>
-            <InputGroup className="h-11">
-              <InputGroupInput id="name" />
-              <InputGroupAddon align="inline-end">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <BanknoteArrowDown />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader className="flex items-start">
-                      <DialogTitle>Icon</DialogTitle>
-                      <DialogDescription>Select an icon.</DialogDescription>
-                      <Input
-                        id="icon"
-                        onChange={(e) => setIcon(e.target.value)}
-                        value={icon}
-                        className="h-11"
-                        placeholder="Search icons..."
-                      />
-                    </DialogHeader>
-                    <DialogFooter>
-                      <div className="flex h-11 flex-wrap gap-8">
-                        {filteredIcons.map(({ Icon, name }) => (
-                          <DialogClose asChild key={name}>
-                            <Button variant="ghost" size="icon-lg">
-                              <Icon />
-                            </Button>
-                          </DialogClose>
-                        ))}
-                      </div>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="name">Amount</FieldLabel>
-            <Input id="amount" type="number" required className="h-11" />
+            <FieldLabel htmlFor="desc">Description</FieldLabel>
+            <Input id="desc" className="h-11" {...register("description")} />
           </Field>
           <Field>
             <FieldLabel>Frequency</FieldLabel>
             <RadioGroup
-              defaultValue={frequency}
-              value={frequency}
+              defaultValue="MONTH"
+              onValueChange={(v: Frequency) => setValue("frequency", v)}
               className="flex flex-1"
             >
               <FieldLabel htmlFor="monthly">
@@ -133,22 +170,14 @@ const Form = ({
                 >
                   <Repeat />
                   <FieldTitle>Monthly</FieldTitle>
-                  <RadioGroupItem
-                    value="MONTH"
-                    id="monthly"
-                    onClick={() => setFrequency("MONTH")}
-                  />
+                  <RadioGroupItem value="MONTH" id="monthly" />
                 </Field>
               </FieldLabel>
               <FieldLabel htmlFor="one-time">
                 <Field orientation="horizontal">
                   <Calendar />
                   <FieldTitle>One time</FieldTitle>
-                  <RadioGroupItem
-                    value="ONE_TIME"
-                    id="one-time"
-                    onClick={() => setFrequency("ONE_TIME")}
-                  />
+                  <RadioGroupItem value="ONE_TIME" id="one-time" />
                 </Field>
               </FieldLabel>
             </RadioGroup>
@@ -176,7 +205,7 @@ const Form = ({
                   required={frequency === "ONE_TIME"}
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={(d: Date | undefined) => setValue("date", d)}
                   defaultMonth={date}
                   captionLayout="dropdown"
                   className="mx-auto"
@@ -195,11 +224,6 @@ const Form = ({
 }
 
 export function AddCashFlowMovement() {
-  const onSubmit = (e: React.SubmitEvent) => {
-    e.preventDefault()
-    console.log("submitted")
-  }
-
   return (
     <div className="flex flex-1 flex-col gap-2">
       <div>
@@ -216,10 +240,10 @@ export function AddCashFlowMovement() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="income">
-          <Form onSubmit={onSubmit} type="INCOME" />
+          <Form type="INCOME" />
         </TabsContent>
         <TabsContent value="expense">
-          <Form onSubmit={onSubmit} type="EXPENSE" />
+          <Form type="EXPENSE" />
         </TabsContent>
       </Tabs>
     </div>
