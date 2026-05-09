@@ -6,11 +6,8 @@
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-    "paths": {
-      "@workspace/api/*": ["./src/*"]
-    }
+    "outDir": "dist"
   },
-  "include": ["."],
+  "include": ["src", "turbo"],
   "exclude": ["node_modules", "dist"]
 }

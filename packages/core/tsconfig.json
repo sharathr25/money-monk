@@ -8,7 +8,7 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@workspace/api/*": ["./src/*"]
+      "@workspace/core/*": ["./src/*"]
     }
   },
   "include": ["."],

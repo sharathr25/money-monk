@@ -5,7 +5,7 @@ import { getCashFlowTemplates } from "@workspace/api/firebase/cashFlowTemplates"
 
 // initializeFirebase()
 
-console.log(getCashFlowTemplates())
+console.log(await getCashFlowTemplates({ uid: "na" }))
 
 export function App() {
   return <RouterProvider router={router} />

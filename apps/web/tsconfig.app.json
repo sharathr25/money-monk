@@ -26,7 +26,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"],
-      "@workspace/api/*": ["../../packages/api/src/*"]
+      "@workspace/api/*": ["../../packages/api/src/*"],
+      "@workspace/core/*": ["../../packages/core/src/*"]
     }
   },
   "include": ["src"]
