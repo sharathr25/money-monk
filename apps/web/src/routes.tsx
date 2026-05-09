@@ -11,12 +11,13 @@ import { Layout } from "./components/Layout"
 
 export const ROUTE_NAMES = {
   ROOT: "/",
-  CASH_FLOW_PRJECTION: "/cash-flow-projection",
+  CASH_FLOW_PROJECTION: "/cash-flow-projection",
   GOALS: "/goals",
   MANAGE_CASH_FLOW_TEMPLATE: "/manage-cash-flow-template",
   ADD_CASH_FLOW_TEMPLATE: "/add-cash-flow-template",
   ADD_GOAL: "/add-goal",
   SETTINGS: "/settings",
+  SIGN_IN: "/sign-in",
 } as const
 
 export type RouteName = (typeof ROUTE_NAMES)[keyof typeof ROUTE_NAMES]
@@ -35,7 +36,7 @@ const routes = [
             Component: CashFlow,
           },
           {
-            path: ROUTE_NAMES.CASH_FLOW_PRJECTION,
+            path: ROUTE_NAMES.CASH_FLOW_PROJECTION,
             Component: CashFlowProjection,
           },
           {
