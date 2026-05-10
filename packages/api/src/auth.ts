@@ -1,17 +1,19 @@
-import {
-  getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth"
+import { NextOrObserver, signInWithPopup, User } from "firebase/auth"
+import { auth, googleAuthProvider } from "./firebase"
 
-const auth = getAuth()
-const appVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {})
-
-export const signIn = async (phoneNumber: string) => {
+export const signInWithGoogle = async () => {
   try {
-    return await signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-  } catch (error) {
+    await signInWithPopup(auth, googleAuthProvider)
+    console.log(getLoggedInUser())
+  } catch (error: any) {
     console.error(error)
-    return null
   }
+}
+
+export const onAuthStateChanged = (cb: NextOrObserver<User | null>) => {
+  auth.onAuthStateChanged(cb)
+}
+
+export const getLoggedInUser = () => {
+  return auth.currentUser
 }

@@ -8,6 +8,7 @@ import { ManageCashFlowTemplate } from "./pages/manageCashFlowTemplate"
 import { CashFlowProjection } from "./pages/cashFlowProjection"
 import { AddCashFlowTemplate } from "./pages/addCashFlowTemplate"
 import { Layout } from "./components/Layout"
+import { SignIn } from "./pages/signIn"
 
 export const ROUTE_NAMES = {
   ROOT: "/",
@@ -61,8 +62,12 @@ const routes = [
         path: ROUTE_NAMES.SETTINGS,
         Component: Settings,
       },
+      {
+        path: ROUTE_NAMES.SIGN_IN,
+        Component: SignIn,
+      },
     ],
   },
 ]
 
-export const router = createBrowserRouter(routes)
+export const router = () => createBrowserRouter(routes)

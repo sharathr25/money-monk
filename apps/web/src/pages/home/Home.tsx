@@ -1,7 +1,12 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
+import {
+  getLoggedInUser,
+  onAuthStateChanged,
+} from "@workspace/api/firebase/auth"
 import { Button } from "@workspace/ui/components/button"
 import { Target, ChartNoAxesCombined, ArrowDownUp } from "lucide-react"
+import { useEffect } from "react"
 import { Outlet } from "react-router"
 
 export function Home() {
@@ -15,7 +20,7 @@ export function Home() {
     },
     {
       label: "Projection",
-      to: ROUTE_NAMES.CASH_FLOW_PRJECTION,
+      to: ROUTE_NAMES.CASH_FLOW_PROJECTION,
       Icon: ChartNoAxesCombined,
     },
     {
@@ -24,6 +29,10 @@ export function Home() {
       Icon: Target,
     },
   ]
+
+  useEffect(() => {
+    console.log(getLoggedInUser())
+  }, [])
 
   return (
     <div className="flex flex-1 flex-col">
