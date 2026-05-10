@@ -45,26 +45,24 @@ import * as Icons from "lucide-react"
 import { Field, FieldLabel, FieldTitle } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
+import { saveCashFlowTemplate } from "@workspace/api/db/index"
+import type { Frequency, Type } from "@workspace/core/type/index"
 
 const ICON_NAMES = Object.keys(Icons) as Array<keyof typeof Icons>
 const ICONS_PAGE_SIZE = 5
-
-type Frequency = "MONTHLY" | "ONE_TIME"
-
-type CashFlowType = "INCOME" | "EXPENSE"
 
 type AddCashFlowFormInputs = {
   name: string
   iconNameFilter?: string
   icon?: string
   description?: string
-  amount: number
+  amount: string
   frequency: Frequency
-  type: CashFlowType
+  type: Type
   date?: Date
 }
 
-const Form = ({ type }: { type: CashFlowType }) => {
+const Form = ({ type }: { type: Type }) => {
   const { handleSubmit, register, setValue, watch } =
     useForm<AddCashFlowFormInputs>({
       defaultValues: {
@@ -76,8 +74,13 @@ const Form = ({ type }: { type: CashFlowType }) => {
       },
     })
 
-  const onSubmit: SubmitHandler<AddCashFlowFormInputs> = (data) =>
-    console.log(data)
+  const onSubmit: SubmitHandler<AddCashFlowFormInputs> = (data) => {
+    const { iconNameFilter, ...rest } = data
+    saveCashFlowTemplate({
+      ...rest,
+      amount: parseFloat(data.amount),
+    })
+  }
 
   const iconNameFilter = watch("iconNameFilter")
   const frequency = watch("frequency")

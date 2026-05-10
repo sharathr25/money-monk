@@ -11,6 +11,7 @@
   "dependencies": {},
   "devDependencies": {},
   "exports": {
-    "./firebase/*": "./src/*.ts"
+    "./auth/*": "./src/auth/*.ts",
+    "./db/*": "./src/db/*.ts"
   }
 }

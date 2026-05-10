@@ -1,0 +1,57 @@
+import {
+  addDoc,
+  collection,
+  DocumentData,
+  getDocs,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore"
+import { db } from "../firebase"
+import { CASH_FLOW_TEMPLATES, USERS } from "./collections"
+import {
+  SaveCashFlowTemplateSpec,
+  CashFlowTemplateQuery,
+} from "@workspace/core/type/cashFlowTemplates"
+import { getLoggedInUser } from "../auth"
+
+export const getCashFlowTemplates = async ({
+  uid,
+  type,
+}: CashFlowTemplateQuery) => {
+  const q = query(
+    collection(db, USERS, uid, CASH_FLOW_TEMPLATES),
+    where("type", "==", type)
+  )
+  const querySnapshot = await getDocs(q)
+  return querySnapshot.docs.map((d) => ({ ...d.data(), id: d.id }))
+}
+
+export const saveCashFlowTemplate = async (
+  template: SaveCashFlowTemplateSpec
+) => {
+  const user = getLoggedInUser()
+  if (!user) {
+    console.log("Cannot save cash flow template with user", { user })
+    return
+  }
+  const date = new Date()
+
+  const doc: DocumentData = {
+    ...template,
+    createdAt: Timestamp.fromDate(date),
+    updatedAt: Timestamp.fromDate(date),
+  }
+
+  if (template.frequency === "ONE_TIME" && template.date) {
+    doc.date = Timestamp.fromDate(template.date)
+  } else {
+    delete doc.date
+  }
+
+  if (!template.description) {
+    delete doc.description
+  }
+
+  await addDoc(collection(db, USERS, user.uid, CASH_FLOW_TEMPLATES), doc)
+}

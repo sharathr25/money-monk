@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router"
 import { router } from "./routes"
-import { onAuthStateChanged } from "@workspace/api/firebase/auth"
+import { onAuthStateChanged } from "@workspace/api/auth/index"
 import { useEffect, useState } from "react"
 import { Spinner } from "@workspace/ui/components/spinner"
 

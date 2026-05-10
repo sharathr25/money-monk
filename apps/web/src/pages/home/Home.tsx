@@ -1,9 +1,6 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import {
-  getLoggedInUser,
-  onAuthStateChanged,
-} from "@workspace/api/firebase/auth"
+import { getLoggedInUser } from "@workspace/api/auth/index"
 import { Button } from "@workspace/ui/components/button"
 import { Target, ChartNoAxesCombined, ArrowDownUp } from "lucide-react"
 import { useEffect } from "react"

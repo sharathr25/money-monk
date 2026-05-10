@@ -1,6 +1,6 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import { signInWithGoogle } from "@workspace/api/firebase/auth"
+import { signInWithGoogle } from "@workspace/api/auth/index"
 import { Button } from "@workspace/ui/components/button"
 
 export function SignIn() {
