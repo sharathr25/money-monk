@@ -22,3 +22,5 @@ export type CashFlowTemplate = SaveCashFlowTemplateSpec & {
   createdAt: Date
   updatedAt: Date
 }
+
+export type UpdateCashFlowTemplate = SaveCashFlowTemplateSpec

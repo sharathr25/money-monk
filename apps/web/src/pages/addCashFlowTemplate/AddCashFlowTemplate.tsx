@@ -41,44 +41,7 @@ export function AddCashFlowTemplate() {
         <h1 className="text-xl font-bold">Add Cash Flow</h1>
         <p className="text-sm">Add your recurring/one-time income/expense</p>
       </div>
-      <Tabs defaultValue="income">
-        <TabsList className="flex w-full flex-1">
-          <TabsTrigger className="flex w-full flex-1" value="income">
-            Income
-          </TabsTrigger>
-          <TabsTrigger className="flex w-full flex-1" value="expense">
-            Expense
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="income">
-          <CashFlowTemplateForm
-            defaultValues={{
-              name: "",
-              amount: "",
-              date: new Date(),
-              frequency: "MONTHLY",
-              iconNameFilter: "bank",
-              icon: "banknote",
-              type: "INCOME",
-            }}
-            onSubmit={onSubmit}
-          />
-        </TabsContent>
-        <TabsContent value="expense">
-          <CashFlowTemplateForm
-            defaultValues={{
-              name: "",
-              amount: "",
-              date: new Date(),
-              frequency: "MONTHLY",
-              iconNameFilter: "bank",
-              icon: "banknote",
-              type: "EXPENSE",
-            }}
-            onSubmit={onSubmit}
-          />
-        </TabsContent>
-      </Tabs>
+      <CashFlowTemplateForm onSubmit={onSubmit} />
     </div>
   )
 }

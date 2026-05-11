@@ -18,12 +18,15 @@ import {
   DialogClose,
 } from "@workspace/ui/components/dialog"
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@workspace/ui/components/radio-group"
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@workspace/ui/components/select"
 import { MoveDown, MoveUp, Repeat, Save, Calendar } from "lucide-react"
 import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
-import { Field, FieldLabel, FieldTitle } from "@workspace/ui/components/field"
+import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import type { Frequency, Type } from "@workspace/core/type/index"
@@ -31,7 +34,17 @@ import { formatAmount } from "@workspace/ui/lib/utils"
 
 const ICONS_PAGE_SIZE = 10
 
-type AddCashFlowFormInputs = {
+const DEFAULT_CASH_TEMPLATE = {
+  name: "",
+  amount: "",
+  date: new Date(),
+  frequency: "MONTHLY" as Frequency,
+  iconNameFilter: "bank",
+  icon: "banknote",
+  type: "INCOME" as Type,
+}
+
+export type CashFlowTemplateFormInputs = {
   name: string
   iconNameFilter?: string
   icon: string
@@ -43,22 +56,24 @@ type AddCashFlowFormInputs = {
 }
 
 export const CashFlowTemplateForm = ({
-  defaultValues,
+  formInputs,
   onSubmit,
 }: {
-  defaultValues: AddCashFlowFormInputs
-  onSubmit: SubmitHandler<AddCashFlowFormInputs>
+  formInputs?: CashFlowTemplateFormInputs
+  onSubmit: SubmitHandler<CashFlowTemplateFormInputs>
 }) => {
+  const isEdit = Boolean(formInputs)
+  const defaultValues = formInputs || DEFAULT_CASH_TEMPLATE
   const { handleSubmit, register, setValue, watch } =
-    useForm<AddCashFlowFormInputs>({
+    useForm<CashFlowTemplateFormInputs>({
       defaultValues,
     })
-  const type = defaultValues.type
 
   const iconNameFilter = watch("iconNameFilter")
   const frequency = watch("frequency")
   const date = watch("date")
   const icon = watch("icon")
+  const type = watch("type")
 
   const filteredIcons: IconName[] = iconNameFilter
     ? iconNames
@@ -70,33 +85,16 @@ export const CashFlowTemplateForm = ({
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-lg font-bold capitalize">
-          Add New {type.toLowerCase()}
+          {isEdit ? "Edit" : "Add New"} {type.toLowerCase()}
         </CardTitle>
         <CardAction>{type === "INCOME" ? <MoveDown /> : <MoveUp />}</CardAction>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-2">
-            <Field>
+            <Field className="basis-3/4">
               <FieldLabel htmlFor="name">Name</FieldLabel>
               <Input id="name" className="h-11" {...register("name")} />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="name">Amount</FieldLabel>
-              <Input
-                id="amount"
-                className="h-11"
-                {...register("amount", { required: true })}
-                onChange={(e) =>
-                  setValue("amount", formatAmount(e.target.value))
-                }
-              />
-            </Field>
-          </div>
-          <div className="flex gap-2">
-            <Field className="basis-3/4">
-              <FieldLabel htmlFor="desc">Description</FieldLabel>
-              <Input id="desc" className="h-11" {...register("description")} />
             </Field>
             <Field className="basis-1/4">
               <FieldLabel htmlFor="name">Icon</FieldLabel>
@@ -137,65 +135,100 @@ export const CashFlowTemplateForm = ({
             </Field>
           </div>
           <Field>
-            <FieldLabel>Frequency</FieldLabel>
-            <RadioGroup
-              defaultValue={defaultValues.frequency}
-              onValueChange={(v: Frequency) => setValue("frequency", v)}
-              className="flex flex-1"
-            >
-              <FieldLabel htmlFor="monthly">
-                <Field
-                  orientation="horizontal"
-                  className="flex flex-1 justify-center"
-                >
-                  <Repeat />
-                  <FieldTitle>Monthly</FieldTitle>
-                  <RadioGroupItem value="MONTHLY" id="monthly" />
-                </Field>
-              </FieldLabel>
-              <FieldLabel htmlFor="one-time">
-                <Field orientation="horizontal">
-                  <Calendar />
-                  <FieldTitle>One time</FieldTitle>
-                  <RadioGroupItem value="ONE_TIME" id="one-time" />
-                </Field>
-              </FieldLabel>
-            </RadioGroup>
+            <FieldLabel htmlFor="desc">Description</FieldLabel>
+            <Input id="desc" className="h-11" {...register("description")} />
           </Field>
-          <Field>
-            <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  disabled={frequency !== "ONE_TIME"}
-                  variant="outline"
-                  id="date-picker-simple"
-                  className="h-11 justify-start font-normal"
-                >
-                  <Calendar />
-                  {date?.toLocaleDateString()}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader className="flex items-start">
-                  <DialogTitle>Date</DialogTitle>
-                  <DialogDescription>Select a date.</DialogDescription>
-                </DialogHeader>
-                <CalendarInput
-                  required={frequency === "ONE_TIME"}
-                  mode="single"
-                  selected={date}
-                  onSelect={(d: Date | undefined) => setValue("date", d)}
-                  defaultMonth={date}
-                  captionLayout="dropdown"
-                  className="mx-auto"
-                />
-              </DialogContent>
-            </Dialog>
-          </Field>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel htmlFor="name">Amount</FieldLabel>
+              <Input
+                id="amount"
+                className="h-11"
+                {...register("amount", { required: true })}
+                onChange={(e) =>
+                  setValue("amount", formatAmount(e.target.value))
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="type">Type</FieldLabel>
+              <Select
+                defaultValue={defaultValues.type}
+                onValueChange={(v: Type) => setValue("type", v)}
+              >
+                <SelectTrigger id="type" className="!h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="INCOME">
+                    <MoveDown />
+                    Income
+                  </SelectItem>
+                  <SelectItem value="EXPENSE">
+                    <MoveUp />
+                    Expense
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel>Frequency</FieldLabel>
+              <Select
+                defaultValue={defaultValues.frequency}
+                onValueChange={(v: Type) => setValue("type", v)}
+              >
+                <SelectTrigger id="type" className="!h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MONTHLY">
+                    <Repeat />
+                    Monthly
+                  </SelectItem>
+                  <SelectItem value="ONE_TIME">
+                    <Calendar />
+                    One time
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    disabled={frequency !== "ONE_TIME"}
+                    variant="outline"
+                    id="date-picker-simple"
+                    className="h-11 justify-start font-normal"
+                  >
+                    <Calendar />
+                    {date?.toLocaleDateString()}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader className="flex items-start">
+                    <DialogTitle>Date</DialogTitle>
+                    <DialogDescription>Select a date.</DialogDescription>
+                  </DialogHeader>
+                  <CalendarInput
+                    required={frequency === "ONE_TIME"}
+                    mode="single"
+                    selected={date}
+                    onSelect={(d: Date | undefined) => setValue("date", d)}
+                    defaultMonth={date}
+                    captionLayout="dropdown"
+                    className="mx-auto"
+                  />
+                </DialogContent>
+              </Dialog>
+            </Field>
+          </div>
           <Button type="submit" className="h-13 w-full">
             <Save />
-            Save
+            {isEdit ? "Update" : "Save"}
           </Button>
         </form>
       </CardContent>

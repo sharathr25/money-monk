@@ -7,6 +7,7 @@ import {
   getDocs,
   query,
   QueryConstraint,
+  setDoc,
   Timestamp,
   where,
 } from "firebase/firestore"
@@ -16,6 +17,7 @@ import {
   SaveCashFlowTemplateSpec,
   CashFlowTemplateQuery,
   CashFlowTemplate,
+  UpdateCashFlowTemplate,
 } from "@workspace/core/type/cashFlowTemplates"
 import { getLoggedInUser } from "../auth/index"
 
@@ -77,7 +79,7 @@ export const saveCashFlowTemplate = async (
 ) => {
   const user = getLoggedInUser()
   if (!user) {
-    console.log("Cannot save cash flow template with user", { user })
+    console.log("Cannot save cash flow template without user")
     return
   }
   const date = new Date()
@@ -99,4 +101,37 @@ export const saveCashFlowTemplate = async (
   }
 
   await addDoc(collection(db, USERS, user.uid, CASH_FLOW_TEMPLATES), doc)
+}
+
+export const updateCashFlowTemplate = async (
+  id: string,
+  template: UpdateCashFlowTemplate
+) => {
+  const user = getLoggedInUser()
+  if (!user) {
+    console.log("Cannot update cash flow template without user")
+    return
+  }
+  const date = new Date()
+
+  const data: DocumentData = {
+    ...template,
+    updatedAt: Timestamp.fromDate(date),
+  }
+
+  if (template.frequency === "ONE_TIME" && template.date) {
+    data.date = Timestamp.fromDate(template.date)
+  } else {
+    delete data.date
+  }
+
+  if (!template.description) {
+    delete data.description
+  }
+
+  delete data.id
+
+  await setDoc(doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id), data, {
+    merge: true,
+  })
 }
