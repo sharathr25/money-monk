@@ -25,9 +25,20 @@ import {
 } from "lucide-react"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
+import { useEffect, useState } from "react"
+import type { CashFlowTemplate } from "@workspace/core/types"
+import { queryCashFlowTemplates } from "@workspace/api/db/index"
+import { getLoggedInUser } from "@workspace/api/auth/index"
 
 export function CashFlow() {
+  const user = getLoggedInUser()
   const { navigate } = useNavigator()
+  const [cashFlow, setCashFlow] = useState<CashFlowTemplate[]>([])
+
+  useEffect(() => {
+    queryCashFlowTemplates({ uid: user?.uid || "" }).then(console.log)
+  }, [])
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-end gap-2">

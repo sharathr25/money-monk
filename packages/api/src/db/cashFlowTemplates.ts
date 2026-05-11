@@ -4,6 +4,7 @@ import {
   DocumentData,
   getDocs,
   query,
+  QueryConstraint,
   Timestamp,
   where,
 } from "firebase/firestore"
@@ -12,19 +13,38 @@ import { CASH_FLOW_TEMPLATES, USERS } from "./collections"
 import {
   SaveCashFlowTemplateSpec,
   CashFlowTemplateQuery,
+  CashFlowTemplate,
 } from "@workspace/core/type/cashFlowTemplates"
-import { getLoggedInUser } from "../auth"
+import { getLoggedInUser } from "../auth/index"
 
-export const getCashFlowTemplates = async ({
+export const queryCashFlowTemplates = async ({
   uid,
   type,
-}: CashFlowTemplateQuery) => {
+}: CashFlowTemplateQuery): Promise<CashFlowTemplate[]> => {
+  const contraints: QueryConstraint[] = []
+
+  if (type) {
+    contraints.push(where("type", "==", type))
+  }
+
   const q = query(
-    collection(db, USERS, uid, CASH_FLOW_TEMPLATES),
-    where("type", "==", type)
+    collection(db, USERS, uid || "", CASH_FLOW_TEMPLATES),
+    ...contraints
   )
+
   const querySnapshot = await getDocs(q)
-  return querySnapshot.docs.map((d) => ({ ...d.data(), id: d.id }))
+
+  return querySnapshot.docs.map((d) => ({
+    description: d.get("description"),
+    frequency: d.get("frequency"),
+    name: d.get("name"),
+    type: d.get("type"),
+    amount: d.get("amount"),
+    date: d.get("date"),
+    id: d.id,
+    createdAt: d.get("createdAt"),
+    updatedAt: d.get("updatedAt"),
+  }))
 }
 
 export const saveCashFlowTemplate = async (

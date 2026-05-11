@@ -15,11 +15,6 @@ import {
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@workspace/ui/components/input-group"
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -33,23 +28,17 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@workspace/ui/components/radio-group"
-import {
-  BanknoteArrowDown,
-  MoveDown,
-  MoveUp,
-  Repeat,
-  Save,
-  Calendar,
-} from "lucide-react"
+import { MoveDown, MoveUp, Repeat, Save, Calendar } from "lucide-react"
 import * as Icons from "lucide-react"
 import { Field, FieldLabel, FieldTitle } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { saveCashFlowTemplate } from "@workspace/api/db/index"
 import type { Frequency, Type } from "@workspace/core/type/index"
+import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 
 const ICON_NAMES = Object.keys(Icons) as Array<keyof typeof Icons>
-const ICONS_PAGE_SIZE = 5
+const ICONS_PAGE_SIZE = 10
 
 type AddCashFlowFormInputs = {
   name: string
@@ -63,7 +52,7 @@ type AddCashFlowFormInputs = {
 }
 
 const Form = ({ type }: { type: Type }) => {
-  const { handleSubmit, register, setValue, watch } =
+  const { handleSubmit, register, setValue, watch, reset } =
     useForm<AddCashFlowFormInputs>({
       defaultValues: {
         date: new Date(),
@@ -74,17 +63,23 @@ const Form = ({ type }: { type: Type }) => {
       },
     })
 
-  const onSubmit: SubmitHandler<AddCashFlowFormInputs> = (data) => {
-    const { iconNameFilter, ...rest } = data
-    saveCashFlowTemplate({
-      ...rest,
-      amount: parseFloat(data.amount),
-    })
+  const onSubmit: SubmitHandler<AddCashFlowFormInputs> = async (data) => {
+    try {
+      const { iconNameFilter, ...rest } = data
+      await saveCashFlowTemplate({
+        ...rest,
+        amount: amountToDouble(rest.amount),
+      })
+      reset()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const iconNameFilter = watch("iconNameFilter")
   const frequency = watch("frequency")
   const date = watch("date")
+  const icon = watch("icon")
 
   const filteredIcons = iconNameFilter
     ? ICON_NAMES.filter((name) =>
@@ -93,6 +88,10 @@ const Form = ({ type }: { type: Type }) => {
         .slice(0, ICONS_PAGE_SIZE)
         .map((name) => ({ Icon: Icons[name] as Icons.LucideIcon, name }))
     : []
+
+  const Icon = (
+    icon ? Icons[icon as keyof typeof Icons] : <Icons.Banknote />
+  ) as Icons.LucideIcon
 
   return (
     <Card className="w-full">
@@ -107,62 +106,66 @@ const Form = ({ type }: { type: Type }) => {
           <div className="flex gap-2">
             <Field>
               <FieldLabel htmlFor="name">Name</FieldLabel>
-              <InputGroup className="h-11">
-                <InputGroupInput id="name" {...register("name")} />
-                <InputGroupAddon align="inline-end">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <BanknoteArrowDown />
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader className="flex items-start">
-                        <DialogTitle>Icon</DialogTitle>
-                        <DialogDescription>Select an icon.</DialogDescription>
-                        <Input
-                          id="icon"
-                          className="h-11"
-                          placeholder="Search icons..."
-                          {...register("iconNameFilter")}
-                        />
-                      </DialogHeader>
-                      <DialogFooter>
-                        <div className="flex h-11 flex-wrap gap-8">
-                          {filteredIcons.map(({ Icon, name }) => (
-                            <DialogClose asChild key={name}>
-                              <Button
-                                variant="ghost"
-                                size="icon-lg"
-                                onClick={() => setValue("icon", name)}
-                              >
-                                <Icon />
-                              </Button>
-                            </DialogClose>
-                          ))}
-                        </div>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </InputGroupAddon>
-              </InputGroup>
+              <Input id="name" className="h-11" {...register("name")} />
             </Field>
             <Field>
               <FieldLabel htmlFor="name">Amount</FieldLabel>
               <Input
                 id="amount"
-                type="number"
                 className="h-11"
                 {...register("amount", { required: true })}
+                onChange={(e) =>
+                  setValue("amount", formatAmount(e.target.value))
+                }
               />
             </Field>
           </div>
-          <Field>
-            <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" className="h-11" {...register("description")} />
-          </Field>
+          <div className="flex gap-2">
+            <Field className="basis-3/4">
+              <FieldLabel htmlFor="desc">Description</FieldLabel>
+              <Input id="desc" className="h-11" {...register("description")} />
+            </Field>
+            <Field className="basis-1/4">
+              <FieldLabel htmlFor="name">Icon</FieldLabel>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="h-11">
+                    <Icon className="size-6" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader className="flex items-start">
+                    <DialogTitle>Icon</DialogTitle>
+                    <DialogDescription>Select an icon.</DialogDescription>
+                    <Input
+                      id="icon"
+                      className="h-11"
+                      placeholder="Search icons..."
+                      {...register("iconNameFilter")}
+                    />
+                  </DialogHeader>
+                  <DialogFooter>
+                    <div className="flex h-11 flex-wrap gap-8">
+                      {filteredIcons.map(({ Icon, name }) => (
+                        <DialogClose asChild key={name}>
+                          <Button
+                            variant="ghost"
+                            size="icon-lg"
+                            onClick={() => setValue("icon", name)}
+                          >
+                            <Icon />
+                          </Button>
+                        </DialogClose>
+                      ))}
+                    </div>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </Field>
+          </div>
           <Field>
             <FieldLabel>Frequency</FieldLabel>
             <RadioGroup
-              defaultValue="MONTH"
               onValueChange={(v: Frequency) => setValue("frequency", v)}
               className="flex flex-1"
             >

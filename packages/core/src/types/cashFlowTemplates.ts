@@ -15,3 +15,9 @@ export type SaveCashFlowTemplateSpec = {
   amount: number
   date?: Date | null
 }
+
+export type CashFlowTemplate = SaveCashFlowTemplateSpec & {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+}
