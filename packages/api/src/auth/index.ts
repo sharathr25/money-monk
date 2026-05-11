@@ -1,4 +1,4 @@
-import { NextOrObserver, signInWithPopup, User } from "firebase/auth"
+import { type NextOrObserver, signInWithPopup, type User } from "firebase/auth"
 import { auth, googleAuthProvider } from "../firebase"
 
 export const signInWithGoogle = async () => {

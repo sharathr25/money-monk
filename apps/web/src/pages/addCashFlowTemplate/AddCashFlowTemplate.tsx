@@ -1,10 +1,3 @@
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@workspace/ui/components/tabs"
-
 import { type SubmitHandler } from "react-hook-form"
 import { saveCashFlowTemplate } from "@workspace/api/db/index"
 import type { Frequency, Type } from "@workspace/core/type/index"

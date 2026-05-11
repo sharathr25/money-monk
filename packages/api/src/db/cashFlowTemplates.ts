@@ -2,7 +2,7 @@ import {
   addDoc,
   collection,
   doc,
-  DocumentData,
+  type DocumentData,
   getDoc,
   getDocs,
   query,
@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore"
 import { db } from "../firebase"
 import { CASH_FLOW_TEMPLATES, USERS } from "./collections"
-import {
+import type {
   SaveCashFlowTemplateSpec,
   CashFlowTemplateQuery,
   CashFlowTemplate,
