@@ -9,13 +9,15 @@ import { CashFlowProjection } from "./pages/cashFlowProjection"
 import { AddCashFlowTemplate } from "./pages/addCashFlowTemplate"
 import { Layout } from "./components/Layout"
 import { SignIn } from "./pages/signIn"
+import { EditCashFlowTemplate } from "./pages/editCashFlowTemplate"
 
 export const ROUTE_NAMES = {
   ROOT: "/",
   CASH_FLOW_PROJECTION: "/cash-flow-projection",
   GOALS: "/goals",
-  MANAGE_CASH_FLOW_TEMPLATE: "/manage-cash-flow-template",
-  ADD_CASH_FLOW_TEMPLATE: "/add-cash-flow-template",
+  MANAGE_CASH_FLOW_TEMPLATE: "/manage-cash-flow-templates",
+  ADD_CASH_FLOW_TEMPLATE: "/manage-cash-flow-templates/add",
+  EDIT_CASH_FLOW_TEMPLATE: "/manage-cash-flow-templates/edit",
   ADD_GOAL: "/add-goal",
   SETTINGS: "/settings",
   SIGN_IN: "/sign-in",
@@ -53,6 +55,10 @@ const routes = [
       {
         path: ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE,
         Component: AddCashFlowTemplate,
+      },
+      {
+        path: ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE + "/:templateId",
+        Component: EditCashFlowTemplate,
       },
       {
         path: ROUTE_NAMES.GOALS,

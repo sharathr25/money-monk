@@ -1,7 +1,9 @@
 import {
   addDoc,
   collection,
+  doc,
   DocumentData,
+  getDoc,
   getDocs,
   query,
   QueryConstraint,
@@ -28,7 +30,7 @@ export const queryCashFlowTemplates = async ({
   }
 
   const q = query(
-    collection(db, USERS, uid || "", CASH_FLOW_TEMPLATES),
+    collection(db, USERS, uid, CASH_FLOW_TEMPLATES),
     ...contraints
   )
 
@@ -46,6 +48,28 @@ export const queryCashFlowTemplates = async ({
     createdAt: d.get("createdAt"),
     updatedAt: d.get("updatedAt"),
   }))
+}
+
+export const getCashFlowTemplate = async ({
+  uid,
+  id,
+}: {
+  uid: string
+  id: string
+}): Promise<CashFlowTemplate> => {
+  const docSnap = await getDoc(doc(db, USERS, uid, CASH_FLOW_TEMPLATES, id))
+  return {
+    description: docSnap.get("description"),
+    frequency: docSnap.get("frequency"),
+    name: docSnap.get("name"),
+    type: docSnap.get("type"),
+    amount: docSnap.get("amount"),
+    date: docSnap.get("date"),
+    icon: docSnap.get("icon"),
+    id: docSnap.id,
+    createdAt: docSnap.get("createdAt"),
+    updatedAt: docSnap.get("updatedAt"),
+  }
 }
 
 export const saveCashFlowTemplate = async (

@@ -115,6 +115,12 @@ export function ManageCashFlowTemplate() {
                       variant="ghost"
                       className="p-0 text-(--primary)"
                       size="xs"
+                      onClick={() =>
+                        navigate(
+                          ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE,
+                          "/" + e.id
+                        )
+                      }
                     >
                       <Pen />
                     </Button>

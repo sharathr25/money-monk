@@ -4,8 +4,8 @@ import { type RouteName } from "@/routes"
 export const useNavigator = () => {
   const _navigate = useNavigate()
 
-  const navigate = (routeName: RouteName) => {
-    _navigate(routeName)
+  const navigate = (routeName: RouteName, path: string = "") => {
+    _navigate(routeName + path)
   }
 
   const goBack = () => {
