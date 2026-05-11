@@ -36,7 +36,7 @@ export function CashFlow() {
   const [cashFlow, setCashFlow] = useState<CashFlowTemplate[]>([])
 
   useEffect(() => {
-    queryCashFlowTemplates({ uid: user?.uid || "" }).then(console.log)
+    queryCashFlowTemplates({ uid: user.uid || "" }).then(console.log)
   }, [])
 
   return (

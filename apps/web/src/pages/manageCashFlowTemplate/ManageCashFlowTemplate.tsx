@@ -1,5 +1,9 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
+import { getLoggedInUser } from "@workspace/api/auth/index"
+import { DynamicIcon, type IconName } from "lucide-react/dynamic"
+import { queryCashFlowTemplates } from "@workspace/api/db/index"
+import type { CashFlowTemplate } from "@workspace/core/types"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Card } from "@workspace/ui/components/card"
@@ -16,10 +20,23 @@ import {
   TabsList,
   TabsTrigger,
 } from "@workspace/ui/components/tabs"
-import { Banknote, Pen, Plus, Trash } from "lucide-react"
+import { formatAmount } from "@workspace/ui/lib/utils"
+import { Pen, Plus, Trash } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function ManageCashFlowTemplate() {
+  const user = getLoggedInUser()
   const { navigate } = useNavigator()
+  const [income, setIncome] = useState<CashFlowTemplate[]>([])
+  const [expenses, setExpenses] = useState<CashFlowTemplate[]>([])
+
+  useEffect(() => {
+    queryCashFlowTemplates({ uid: user.uid || "" }).then((cfts) => {
+      console.log(cfts)
+      setIncome(cfts.filter((t) => t.type === "INCOME"))
+      setExpenses(cfts.filter((t) => t.type === "EXPENSE"))
+    })
+  }, [])
 
   return (
     <div className="flex flex-1 flex-col gap-2">
@@ -39,136 +56,80 @@ export function ManageCashFlowTemplate() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="income" className="flex flex-col gap-3">
-          <Card className="p-0">
-            <Item>
-              <ItemMedia>
-                <Badge className="size-10" variant="secondary">
-                  <Banknote />
-                </Badge>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-                <ItemDescription>Monthly credit</ItemDescription>
-              </ItemContent>
-              <ItemContent className="flex flex-col items-end">
-                <ItemDescription>+ ₹1,500</ItemDescription>
-                <div className="flex gap-3">
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--primary)"
-                    size="xs"
-                  >
-                    <Pen />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--destructive)"
-                    size="xs"
-                  >
-                    <Trash />
-                  </Button>
-                </div>
-              </ItemContent>
-            </Item>
-          </Card>
-          <Card className="p-0">
-            <Item>
-              <ItemMedia>
-                <Badge className="size-10" variant="secondary">
-                  <Banknote />
-                </Badge>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-                <ItemDescription>Monthly credit</ItemDescription>
-              </ItemContent>
-              <ItemContent className="flex flex-col items-end">
-                <ItemDescription>+ ₹1,500</ItemDescription>
-                <div className="flex gap-3">
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--primary)"
-                    size="xs"
-                  >
-                    <Pen />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--destructive)"
-                    size="xs"
-                  >
-                    <Trash />
-                  </Button>
-                </div>
-              </ItemContent>
-            </Item>
-          </Card>
+          {income.map((i) => (
+            <Card className="p-0" key={i.id}>
+              <Item>
+                <ItemMedia>
+                  <Badge className="size-10" variant="secondary">
+                    <DynamicIcon name={i.icon as IconName} />
+                  </Badge>
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle className="line-clamp-1">{i.name}</ItemTitle>
+                  <ItemDescription>{i.description}</ItemDescription>
+                </ItemContent>
+                <ItemContent className="flex flex-col items-end">
+                  <ItemDescription>
+                    + {formatAmount(`${i.amount}`)}
+                  </ItemDescription>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="ghost"
+                      className="p-0 text-(--primary)"
+                      size="xs"
+                    >
+                      <Pen />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="p-0 text-(--destructive)"
+                      size="xs"
+                    >
+                      <Trash />
+                    </Button>
+                  </div>
+                </ItemContent>
+              </Item>
+            </Card>
+          ))}
         </TabsContent>
         <TabsContent value="expense" className="flex flex-col gap-3">
-          <Card className="p-0">
-            <Item>
-              <ItemMedia>
-                <Badge className="size-10" variant="secondary">
-                  <Banknote />
-                </Badge>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-                <ItemDescription>Monthly credit</ItemDescription>
-              </ItemContent>
-              <ItemContent className="flex flex-col items-end">
-                <ItemDescription>- ₹1,500</ItemDescription>
-                <div className="flex gap-3">
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--primary)"
-                    size="xs"
-                  >
-                    <Pen />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--destructive)"
-                    size="xs"
-                  >
-                    <Trash />
-                  </Button>
-                </div>
-              </ItemContent>
-            </Item>
-          </Card>
-          <Card className="p-0">
-            <Item>
-              <ItemMedia>
-                <Badge className="size-10" variant="secondary">
-                  <Banknote />
-                </Badge>
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-                <ItemDescription>Monthly credit</ItemDescription>
-              </ItemContent>
-              <ItemContent className="flex flex-col items-end">
-                <ItemDescription>- ₹1,500</ItemDescription>
-                <div className="flex gap-3">
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--primary)"
-                    size="xs"
-                  >
-                    <Pen />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--destructive)"
-                    size="xs"
-                  >
-                    <Trash />
-                  </Button>
-                </div>
-              </ItemContent>
-            </Item>
-          </Card>
+          {expenses.map((e) => (
+            <Card className="p-0" key={e.id}>
+              <Item>
+                <ItemMedia>
+                  <Badge className="size-10" variant="secondary">
+                    <DynamicIcon name={e.icon as IconName} />
+                  </Badge>
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle className="line-clamp-1">{e.name}</ItemTitle>
+                  <ItemDescription>{e.description}</ItemDescription>
+                </ItemContent>
+                <ItemContent className="flex flex-col items-end">
+                  <ItemDescription>
+                    - {formatAmount(`${e.amount}`)}
+                  </ItemDescription>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="ghost"
+                      className="p-0 text-(--primary)"
+                      size="xs"
+                    >
+                      <Pen />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="p-0 text-(--destructive)"
+                      size="xs"
+                    >
+                      <Trash />
+                    </Button>
+                  </div>
+                </ItemContent>
+              </Item>
+            </Card>
+          ))}
         </TabsContent>
       </Tabs>
       <Button

@@ -11,6 +11,7 @@ export type SaveCashFlowTemplateSpec = {
   description?: string
   frequency: Frequency
   name: string
+  icon: string
   type: Type
   amount: number
   date?: Date | null

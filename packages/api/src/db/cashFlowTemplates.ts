@@ -41,6 +41,7 @@ export const queryCashFlowTemplates = async ({
     type: d.get("type"),
     amount: d.get("amount"),
     date: d.get("date"),
+    icon: d.get("icon"),
     id: d.id,
     createdAt: d.get("createdAt"),
     updatedAt: d.get("updatedAt"),

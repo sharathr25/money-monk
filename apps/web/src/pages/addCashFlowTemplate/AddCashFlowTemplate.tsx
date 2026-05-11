@@ -29,7 +29,7 @@ import {
   RadioGroupItem,
 } from "@workspace/ui/components/radio-group"
 import { MoveDown, MoveUp, Repeat, Save, Calendar } from "lucide-react"
-import * as Icons from "lucide-react"
+import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
 import { Field, FieldLabel, FieldTitle } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
@@ -37,13 +37,12 @@ import { saveCashFlowTemplate } from "@workspace/api/db/index"
 import type { Frequency, Type } from "@workspace/core/type/index"
 import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 
-const ICON_NAMES = Object.keys(Icons) as Array<keyof typeof Icons>
 const ICONS_PAGE_SIZE = 10
 
 type AddCashFlowFormInputs = {
   name: string
   iconNameFilter?: string
-  icon?: string
+  icon: string
   description?: string
   amount: string
   frequency: Frequency
@@ -58,7 +57,7 @@ const Form = ({ type }: { type: Type }) => {
         date: new Date(),
         frequency: "MONTHLY",
         iconNameFilter: "bank",
-        icon: "Banknote",
+        icon: "banknote",
         type,
       },
     })
@@ -81,17 +80,13 @@ const Form = ({ type }: { type: Type }) => {
   const date = watch("date")
   const icon = watch("icon")
 
-  const filteredIcons = iconNameFilter
-    ? ICON_NAMES.filter((name) =>
-        name.toLowerCase().includes(iconNameFilter.toLowerCase())
-      )
+  const filteredIcons: IconName[] = iconNameFilter
+    ? iconNames
+        .filter((name) =>
+          name.toLowerCase().includes(iconNameFilter.toLowerCase())
+        )
         .slice(0, ICONS_PAGE_SIZE)
-        .map((name) => ({ Icon: Icons[name] as Icons.LucideIcon, name }))
     : []
-
-  const Icon = (
-    icon ? Icons[icon as keyof typeof Icons] : <Icons.Banknote />
-  ) as Icons.LucideIcon
 
   return (
     <Card className="w-full">
@@ -130,7 +125,7 @@ const Form = ({ type }: { type: Type }) => {
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="h-11">
-                    <Icon className="size-6" />
+                    <DynamicIcon name={icon as IconName} className="size-6" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -146,14 +141,14 @@ const Form = ({ type }: { type: Type }) => {
                   </DialogHeader>
                   <DialogFooter>
                     <div className="flex h-11 flex-wrap gap-8">
-                      {filteredIcons.map(({ Icon, name }) => (
+                      {filteredIcons.map((name) => (
                         <DialogClose asChild key={name}>
                           <Button
                             variant="ghost"
                             size="icon-lg"
                             onClick={() => setValue("icon", name)}
                           >
-                            <Icon />
+                            <DynamicIcon name={name} />
                           </Button>
                         </DialogClose>
                       ))}
@@ -166,6 +161,7 @@ const Form = ({ type }: { type: Type }) => {
           <Field>
             <FieldLabel>Frequency</FieldLabel>
             <RadioGroup
+              defaultValue="MONTHLY"
               onValueChange={(v: Frequency) => setValue("frequency", v)}
               className="flex flex-1"
             >
