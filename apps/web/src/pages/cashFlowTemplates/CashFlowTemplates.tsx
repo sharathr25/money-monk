@@ -24,7 +24,7 @@ import { formatAmount } from "@workspace/ui/lib/utils"
 import { Pen, Plus, Trash } from "lucide-react"
 import { useEffect, useState } from "react"
 
-export function ManageCashFlowTemplate() {
+export function CashFlowTemplates() {
   const user = getLoggedInUser()
   const { navigate } = useNavigator()
   const [income, setIncome] = useState<CashFlowTemplate[]>([])
@@ -77,10 +77,9 @@ export function ManageCashFlowTemplate() {
                       className="p-0 text-(--primary)"
                       size="xs"
                       onClick={() =>
-                        navigate(
-                          ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE,
-                          "/" + i.id
-                        )
+                        navigate(ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE, {
+                          templateId: i.id,
+                        })
                       }
                     >
                       <Pen />
@@ -121,10 +120,9 @@ export function ManageCashFlowTemplate() {
                       className="p-0 text-(--primary)"
                       size="xs"
                       onClick={() =>
-                        navigate(
-                          ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE,
-                          "/" + e.id
-                        )
+                        navigate(ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE, {
+                          templateId: e.id,
+                        })
                       }
                     >
                       <Pen />

@@ -153,7 +153,7 @@ export function CashFlow() {
       </div>
       <Button
         className="fixed right-6 bottom-20 h-12 w-20 rounded-full"
-        onClick={() => navigate(ROUTE_NAMES.MANAGE_CASH_FLOW_TEMPLATE)}
+        onClick={() => navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATES)}
       >
         <ArrowDownUp />
         <Cog />

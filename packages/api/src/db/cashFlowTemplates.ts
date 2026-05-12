@@ -58,8 +58,11 @@ export const getCashFlowTemplate = async ({
 }: {
   uid: string
   id: string
-}): Promise<CashFlowTemplate> => {
+}): Promise<CashFlowTemplate | null> => {
   const docSnap = await getDoc(doc(db, USERS, uid, CASH_FLOW_TEMPLATES, id))
+
+  if (!docSnap.data()) return null
+
   return {
     description: docSnap.get("description"),
     frequency: docSnap.get("frequency"),

@@ -4,7 +4,7 @@ import { CashFlow } from "@/pages/cashFlow"
 import { Goals } from "@/pages/goals"
 import { AddGoal } from "@/pages/addGoal"
 import { Settings } from "./pages/settings"
-import { ManageCashFlowTemplate } from "./pages/manageCashFlowTemplate"
+import { CashFlowTemplates } from "./pages/cashFlowTemplates"
 import { CashFlowProjection } from "./pages/cashFlowProjection"
 import { AddCashFlowTemplate } from "./pages/addCashFlowTemplate"
 import { Layout } from "./components/Layout"
@@ -15,9 +15,9 @@ export const ROUTE_NAMES = {
   ROOT: "/",
   CASH_FLOW_PROJECTION: "/cash-flow-projection",
   GOALS: "/goals",
-  MANAGE_CASH_FLOW_TEMPLATE: "/manage-cash-flow-templates",
-  ADD_CASH_FLOW_TEMPLATE: "/manage-cash-flow-templates/add",
-  EDIT_CASH_FLOW_TEMPLATE: "/manage-cash-flow-templates/edit",
+  CASH_FLOW_TEMPLATES: "/cash-flow-templates",
+  ADD_CASH_FLOW_TEMPLATE: "/cash-flow-templates/add",
+  EDIT_CASH_FLOW_TEMPLATE: "/cash-flow-templates/:templateId/edit",
   ADD_GOAL: "/add-goal",
   SETTINGS: "/settings",
   SIGN_IN: "/sign-in",
@@ -49,15 +49,15 @@ const routes = [
         ],
       },
       {
-        path: ROUTE_NAMES.MANAGE_CASH_FLOW_TEMPLATE,
-        Component: ManageCashFlowTemplate,
+        path: ROUTE_NAMES.CASH_FLOW_TEMPLATES,
+        Component: CashFlowTemplates,
       },
       {
         path: ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE,
         Component: AddCashFlowTemplate,
       },
       {
-        path: ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE + "/:templateId",
+        path: ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE,
         Component: EditCashFlowTemplate,
       },
       {

@@ -2,7 +2,7 @@ import { RouterProvider } from "react-router"
 import { router } from "./routes"
 import { onAuthStateChanged } from "@workspace/api/auth/index"
 import { useEffect, useState } from "react"
-import { Spinner } from "@workspace/ui/components/spinner"
+import { FullScreenLoader } from "@/components/FullScreenLoader"
 
 export function App() {
   const [loading, setLoading] = useState(true)
@@ -13,13 +13,7 @@ export function App() {
     })
   }, [])
 
-  if (loading)
-    return (
-      <div className="flex min-h-svh flex-1 flex-col items-center justify-center gap-2">
-        <Spinner className="size-8" />
-        <h1>Loading, Please wait</h1>
-      </div>
-    )
+  if (loading) return <FullScreenLoader />
 
   return <RouterProvider router={router()} />
 }
