@@ -28,7 +28,9 @@ export function Home() {
   ]
 
   useEffect(() => {
-    console.log(getLoggedInUser())
+    if (!getLoggedInUser().uid) {
+      navigate(ROUTE_NAMES.SIGN_IN)
+    }
   }, [])
 
   return (
