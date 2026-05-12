@@ -32,7 +32,6 @@ export function ManageCashFlowTemplate() {
 
   useEffect(() => {
     queryCashFlowTemplates({ uid: user.uid || "" }).then((cfts) => {
-      console.log(cfts)
       setIncome(cfts.filter((t) => t.type === "INCOME"))
       setExpenses(cfts.filter((t) => t.type === "EXPENSE"))
     })
