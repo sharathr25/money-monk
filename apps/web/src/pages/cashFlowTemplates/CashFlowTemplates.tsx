@@ -28,7 +28,7 @@ import {
   TabsTrigger,
 } from "@workspace/ui/components/tabs"
 import { formatAmount } from "@workspace/ui/lib/utils"
-import { Pen, Plus, Trash, FolderCode } from "lucide-react"
+import { Plus, FolderCode } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Spinner } from "@workspace/ui/components/spinner"
 
@@ -83,45 +83,30 @@ export function CashFlowTemplates() {
 
     return (
       <>
-        {income.map((i) => (
-          <Card className="p-0" key={i.id}>
+        {templates.map((t) => (
+          <Card
+            className="p-0"
+            key={t.id}
+            onClick={() =>
+              navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATE, { templateId: t.id })
+            }
+          >
             <Item className="flex items-center">
               <ItemMedia>
                 <Avatar size="lg" className="after:border-0">
                   <AvatarFallback className="rounded-none">
-                    <DynamicIcon name={i.icon as IconName} />
+                    <DynamicIcon name={t.icon as IconName} />
                   </AvatarFallback>
                 </Avatar>
               </ItemMedia>
               <ItemContent>
-                <ItemTitle className="line-clamp-1">{i.name}</ItemTitle>
-                <ItemDescription>{i.description}</ItemDescription>
+                <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
+                <ItemDescription>{t.description}</ItemDescription>
               </ItemContent>
               <ItemContent className="flex flex-col items-end">
                 <ItemDescription>
-                  {type === "INCOME" ? "+" : "-"} {formatAmount(`${i.amount}`)}
+                  {type === "INCOME" ? "+" : "-"} {formatAmount(`${t.amount}`)}
                 </ItemDescription>
-                <div className="flex gap-3">
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--primary)"
-                    size="xs"
-                    onClick={() =>
-                      navigate(ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE, {
-                        templateId: i.id,
-                      })
-                    }
-                  >
-                    <Pen />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="p-0 text-(--destructive)"
-                    size="xs"
-                  >
-                    <Trash />
-                  </Button>
-                </div>
               </ItemContent>
             </Item>
           </Card>

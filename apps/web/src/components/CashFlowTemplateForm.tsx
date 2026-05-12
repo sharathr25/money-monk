@@ -24,7 +24,15 @@ import {
   SelectContent,
   SelectItem,
 } from "@workspace/ui/components/select"
-import { MoveDown, MoveUp, Repeat, Save, Calendar } from "lucide-react"
+import {
+  MoveDown,
+  MoveUp,
+  Repeat,
+  Save,
+  Calendar,
+  Search,
+  IndianRupee,
+} from "lucide-react"
 import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
@@ -32,6 +40,11 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import type { Frequency, Type } from "@workspace/core/type/index"
 import { formatAmount } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@workspace/ui/components/input-group"
 
 const ICONS_PAGE_SIZE = 10
 
@@ -144,14 +157,18 @@ export const CashFlowTemplateForm = ({
           <div className="flex gap-2">
             <Field>
               <FieldLabel htmlFor="name">Amount</FieldLabel>
-              <Input
-                id="amount"
-                className="h-11"
-                {...register("amount", { required: true })}
-                onChange={(e) =>
-                  setValue("amount", formatAmount(e.target.value))
-                }
-              />
+              <InputGroup className="h-11">
+                <InputGroupInput
+                  id="amount"
+                  {...register("amount", { required: true })}
+                  onChange={(e) =>
+                    setValue("amount", formatAmount(e.target.value, false))
+                  }
+                />
+                <InputGroupAddon>
+                  <IndianRupee />
+                </InputGroupAddon>
+              </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="type">Type</FieldLabel>

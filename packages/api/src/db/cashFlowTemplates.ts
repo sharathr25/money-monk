@@ -20,6 +20,7 @@ import type {
   UpdateCashFlowTemplate,
 } from "@workspace/core/type/cashFlowTemplates"
 import { getLoggedInUser } from "../auth/index"
+import { toDate } from "./mapper"
 
 export const queryCashFlowTemplates = async ({
   uid,
@@ -69,11 +70,11 @@ export const getCashFlowTemplate = async ({
     name: docSnap.get("name"),
     type: docSnap.get("type"),
     amount: docSnap.get("amount"),
-    date: docSnap.get("date"),
+    date: docSnap.get("date") && toDate(docSnap.get("date")),
     icon: docSnap.get("icon"),
     id: docSnap.id,
-    createdAt: docSnap.get("createdAt"),
-    updatedAt: docSnap.get("updatedAt"),
+    createdAt: toDate(docSnap.get("createdAt")),
+    updatedAt: toDate(docSnap.get("updatedAt")),
   }
 }
 

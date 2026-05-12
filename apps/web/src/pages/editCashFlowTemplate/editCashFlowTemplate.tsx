@@ -26,6 +26,7 @@ export function EditCashFlowTemplate() {
 
   const [template, setTemplate] = useState<CashFlowTemplate>()
   const [loading, setLoading] = useState(false)
+  const [updateApiLoading, setUpdateApiLoading] = useState(false)
 
   const cashFlowTemplateId = templateId || ""
 
@@ -50,18 +51,22 @@ export function EditCashFlowTemplate() {
 
   const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async (data) => {
     try {
-      setLoading(true)
+      setUpdateApiLoading(true)
       const { iconNameFilter, ...rest } = data
       await updateCashFlowTemplate(cashFlowTemplateId, {
         ...rest,
         amount: amountToDouble(rest.amount),
       })
-      toast.success("Update successful.")
+      toast.success("Update successful.", {
+        onAutoClose() {
+          goBack()
+        },
+      })
     } catch (error) {
       console.error(error)
       toast.error("Update failed, Try again.")
     } finally {
-      setLoading(false)
+      setUpdateApiLoading(false)
     }
   }
 
@@ -92,11 +97,11 @@ export function EditCashFlowTemplate() {
       <CashFlowTemplateForm
         formInputs={{
           ...template,
-          amount: formatAmount(`${template.amount}`),
+          amount: formatAmount(`${template.amount}`, false),
           date: template.date || undefined,
         }}
         onSubmit={onSubmit}
-        loading={loading}
+        loading={updateApiLoading}
       />
     </div>
   )
