@@ -8,15 +8,19 @@ import {
   updateCashFlowTemplate,
 } from "@workspace/api/db/index"
 import type { CashFlowTemplate } from "@workspace/core/types"
-import { amountToDouble } from "@workspace/ui/lib/utils"
+import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { useEffect, useState } from "react"
 import type { SubmitHandler } from "react-hook-form"
 import { useParams } from "react-router"
+import { toast } from "sonner"
 
 export function EditCashFlowTemplate() {
   const user = getLoggedInUser()
-  const [template, setTemplate] = useState<CashFlowTemplate>()
   const { templateId } = useParams()
+
+  const [template, setTemplate] = useState<CashFlowTemplate>()
+  const [loading, setLoading] = useState(false)
+
   const cashFlowTemplateId = templateId || ""
 
   useEffect(() => {
@@ -27,13 +31,18 @@ export function EditCashFlowTemplate() {
 
   const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async (data) => {
     try {
+      setLoading(true)
       const { iconNameFilter, ...rest } = data
       await updateCashFlowTemplate(cashFlowTemplateId, {
         ...rest,
         amount: amountToDouble(rest.amount),
       })
+      toast.success("Update successful.")
     } catch (error) {
       console.error(error)
+      toast.error("Update failed, Try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -48,10 +57,11 @@ export function EditCashFlowTemplate() {
       <CashFlowTemplateForm
         formInputs={{
           ...template,
-          amount: `${template.amount}`,
+          amount: formatAmount(`${template.amount}`),
           date: template.date || undefined,
         }}
         onSubmit={onSubmit}
+        loading={loading}
       />
     </div>
   )

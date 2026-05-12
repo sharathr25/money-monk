@@ -31,6 +31,7 @@ import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import type { Frequency, Type } from "@workspace/core/type/index"
 import { formatAmount } from "@workspace/ui/lib/utils"
+import { Spinner } from "@workspace/ui/components/spinner"
 
 const ICONS_PAGE_SIZE = 10
 
@@ -58,9 +59,11 @@ export type CashFlowTemplateFormInputs = {
 export const CashFlowTemplateForm = ({
   formInputs,
   onSubmit,
+  loading,
 }: {
   formInputs?: CashFlowTemplateFormInputs
   onSubmit: SubmitHandler<CashFlowTemplateFormInputs>
+  loading: boolean
 }) => {
   const isEdit = Boolean(formInputs)
   const defaultValues = formInputs || DEFAULT_CASH_TEMPLATE
@@ -227,7 +230,7 @@ export const CashFlowTemplateForm = ({
             </Field>
           </div>
           <Button type="submit" className="h-13 w-full">
-            <Save />
+            {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}
           </Button>
         </form>

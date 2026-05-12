@@ -1,1 +1,1 @@
-export { EditCashFlowTemplate } from "./editCashFlowTemplate"
+export { EditCashFlowTemplate } from "./EditCashFlowTemplate"

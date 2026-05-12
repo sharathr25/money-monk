@@ -8,7 +8,7 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "deploy": "npm run build && firebase deploy"
+    "deploy": "turbo build && firebase deploy"
   },
   "devDependencies": {
     "prettier": "^3.8.1",
