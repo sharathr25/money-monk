@@ -2,11 +2,25 @@ import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import { getLoggedInUser } from "@workspace/api/auth/index"
-import { getCashFlowTemplate } from "@workspace/api/db/index"
+import {
+  deleteCashFlowTemplate,
+  getCashFlowTemplate,
+} from "@workspace/api/db/index"
 import type { CashFlowTemplate } from "@workspace/core/types"
+import { toast } from "sonner"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@workspace/ui/components/alert-dialog"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import {
   Item,
@@ -24,18 +38,20 @@ import {
   RefreshCcw,
   Repeat,
   Trash,
+  X,
 } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router"
+import { Spinner } from "@workspace/ui/components/spinner"
 
 export function CashFlowTemplate() {
-  const user = getLoggedInUser()
   const { templateId } = useParams()
   const { goBack, navigate } = useNavigator()
 
   const [template, setTemplate] = useState<CashFlowTemplate>()
   const [loading, setLoading] = useState(false)
+  const [deleteApiLoading, setDeleteApiLoading] = useState(false)
 
   const cashFlowTemplateId = templateId || ""
 
@@ -43,7 +59,6 @@ export function CashFlowTemplate() {
     try {
       setLoading(true)
       const cashFlowTemplate = await getCashFlowTemplate({
-        uid: user.uid,
         id: cashFlowTemplateId,
       })
       if (cashFlowTemplate) {
@@ -57,6 +72,21 @@ export function CashFlowTemplate() {
   useEffect(() => {
     init()
   }, [])
+
+  const deleteTemplate = async () => {
+    try {
+      setDeleteApiLoading(true)
+      await deleteCashFlowTemplate(cashFlowTemplateId)
+      toast.success("Successfully deleted.", {
+        onAutoClose: goBack,
+      })
+    } catch (error) {
+      console.error(error)
+      toast.error("Delete failed, Try again.")
+    } finally {
+      setDeleteApiLoading(false)
+    }
+  }
 
   if (loading) return <FullScreenLoader />
 
@@ -142,10 +172,33 @@ export function CashFlowTemplate() {
         </CardContent>
       </Card>
       <div className="flex gap-2">
-        <Button variant="destructive" className="h-11 flex-1">
-          <Trash />
-          Delete
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" className="h-11 flex-1">
+              {deleteApiLoading ? <Spinner /> : <Trash />}
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent size="sm">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                cash flow template from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex">
+              <AlertDialogCancel>
+                <X />
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={deleteTemplate}>
+                <Trash />
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <Button
           className="h-11 flex-1"
           onClick={() =>

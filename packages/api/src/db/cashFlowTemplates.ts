@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   type DocumentData,
   getDoc,
@@ -23,9 +24,14 @@ import { getLoggedInUser } from "../auth/index"
 import { toDate } from "./mapper"
 
 export const queryCashFlowTemplates = async ({
-  uid,
   type,
 }: CashFlowTemplateQuery): Promise<CashFlowTemplate[]> => {
+  const user = getLoggedInUser()
+  if (!user) {
+    console.log("Cannot save cash flow template without user")
+    return []
+  }
+
   const contraints: QueryConstraint[] = []
 
   if (type) {
@@ -33,7 +39,7 @@ export const queryCashFlowTemplates = async ({
   }
 
   const q = query(
-    collection(db, USERS, uid, CASH_FLOW_TEMPLATES),
+    collection(db, USERS, user.uid, CASH_FLOW_TEMPLATES),
     ...contraints
   )
 
@@ -54,13 +60,19 @@ export const queryCashFlowTemplates = async ({
 }
 
 export const getCashFlowTemplate = async ({
-  uid,
   id,
 }: {
-  uid: string
   id: string
 }): Promise<CashFlowTemplate | null> => {
-  const docSnap = await getDoc(doc(db, USERS, uid, CASH_FLOW_TEMPLATES, id))
+  const user = getLoggedInUser()
+  if (!user) {
+    console.log("Cannot save cash flow template without user")
+    return null
+  }
+
+  const docSnap = await getDoc(
+    doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id)
+  )
 
   if (!docSnap.data()) return null
 
@@ -138,4 +150,14 @@ export const updateCashFlowTemplate = async (
   await setDoc(doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id), data, {
     merge: true,
   })
+}
+
+export const deleteCashFlowTemplate = async (id: string) => {
+  const user = getLoggedInUser()
+  if (!user) {
+    console.log("Cannot update cash flow template without user")
+    return
+  }
+
+  await deleteDoc(doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id))
 }

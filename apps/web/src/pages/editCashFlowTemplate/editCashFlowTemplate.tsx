@@ -5,7 +5,6 @@ import {
 import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useNavigator } from "@/hooks/useNavigator"
-import { getLoggedInUser } from "@workspace/api/auth/index"
 import {
   getCashFlowTemplate,
   updateCashFlowTemplate,
@@ -20,7 +19,6 @@ import { useParams } from "react-router"
 import { toast } from "sonner"
 
 export function EditCashFlowTemplate() {
-  const user = getLoggedInUser()
   const { templateId } = useParams()
   const { goBack } = useNavigator()
 
@@ -34,7 +32,6 @@ export function EditCashFlowTemplate() {
     try {
       setLoading(true)
       const cashFlowTemplate = await getCashFlowTemplate({
-        uid: user.uid,
         id: cashFlowTemplateId,
       })
       if (cashFlowTemplate) {
