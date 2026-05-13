@@ -1,1 +1,1 @@
-export { Goals } from "./Goals"
+export { Goals as default } from "./Goals"

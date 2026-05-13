@@ -1,1 +1,1 @@
-export { CashFlowTemplates } from "./CashFlowTemplates"
+export { CashFlowTemplates as default } from "./CashFlowTemplates"

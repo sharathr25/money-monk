@@ -1,16 +1,7 @@
 import { createBrowserRouter } from "react-router"
 import { Home } from "@/pages/home"
-import { CashFlow } from "@/pages/cashFlow"
-import { Goals } from "@/pages/goals"
-import { AddGoal } from "@/pages/addGoal"
-import { Settings } from "./pages/settings"
-import { CashFlowTemplates } from "./pages/cashFlowTemplates"
-import { CashFlowProjection } from "./pages/cashFlowProjection"
-import { AddCashFlowTemplate } from "./pages/addCashFlowTemplate"
 import { Layout } from "./components/Layout"
-import { SignIn } from "./pages/signIn"
-import { EditCashFlowTemplate } from "./pages/editCashFlowTemplate"
-import { CashFlowTemplate } from "./pages/cashFlowTemplate"
+import { lazy } from "react"
 
 export const ROUTE_NAMES = {
   ROOT: "/",
@@ -26,6 +17,17 @@ export const ROUTE_NAMES = {
 } as const
 
 export type RouteName = (typeof ROUTE_NAMES)[keyof typeof ROUTE_NAMES]
+
+const CashFlow = lazy(() => import("@/pages/cashFlow"))
+const CashFlowProjection = lazy(() => import("@/pages/cashFlowProjection"))
+const Goals = lazy(() => import("@/pages/goals"))
+const CashFlowTemplates = lazy(() => import("@/pages/cashFlowTemplates"))
+const CashFlowTemplate = lazy(() => import("@/pages/cashFlowTemplate"))
+const AddCashFlowTemplate = lazy(() => import("@/pages/addCashFlowTemplate"))
+const EditCashFlowTemplate = lazy(() => import("@/pages/editCashFlowTemplate"))
+const AddGoal = lazy(() => import("@/pages/addGoal"))
+const Settings = lazy(() => import("@/pages/settings"))
+const SignIn = lazy(() => import("@/pages/signIn"))
 
 const routes = [
   {

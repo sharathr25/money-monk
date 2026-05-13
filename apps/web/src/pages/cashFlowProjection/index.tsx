@@ -1,1 +1,1 @@
-export { CashFlowProjection } from "./CashFlowProjection"
+export { CashFlowProjection as default } from "./CashFlowProjection"

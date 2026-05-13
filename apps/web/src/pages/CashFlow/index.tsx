@@ -1,1 +1,1 @@
-export { CashFlow } from "./CashFlow"
+export { CashFlow as default } from "./CashFlow"

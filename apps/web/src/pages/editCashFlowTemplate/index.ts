@@ -1,1 +1,1 @@
-export { EditCashFlowTemplate } from "./EditCashFlowTemplate"
+export { EditCashFlowTemplate as default } from "./EditCashFlowTemplate"
