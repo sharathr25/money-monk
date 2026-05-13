@@ -11,7 +11,6 @@ import {
   or,
   query,
   QueryCompositeFilterConstraint,
-  QueryConstraint,
   setDoc,
   Timestamp,
   where,
