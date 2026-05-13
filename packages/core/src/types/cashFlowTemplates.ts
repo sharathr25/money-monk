@@ -3,8 +3,9 @@ export type Frequency = "MONTHLY" | "ONE_TIME"
 export type Type = "INCOME" | "EXPENSE"
 
 export type CashFlowTemplateQuery = {
-  uid: string
   type?: string
+  startDate?: Date
+  endDate?: Date
 }
 
 export type SaveCashFlowTemplateSpec = {

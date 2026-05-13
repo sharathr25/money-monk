@@ -1,12 +1,16 @@
 import {
   addDoc,
+  and,
   collection,
   deleteDoc,
   doc,
   type DocumentData,
+  DocumentSnapshot,
   getDoc,
   getDocs,
+  or,
   query,
+  QueryCompositeFilterConstraint,
   QueryConstraint,
   setDoc,
   Timestamp,
@@ -23,8 +27,23 @@ import type {
 import { getLoggedInUser } from "../auth/index"
 import { toDate } from "./mapper"
 
+const toCashFlowTemplate = (docSnap: DocumentSnapshot) => ({
+  description: docSnap.get("description"),
+  frequency: docSnap.get("frequency"),
+  name: docSnap.get("name"),
+  type: docSnap.get("type"),
+  amount: docSnap.get("amount"),
+  date: docSnap.get("date") && toDate(docSnap.get("date")),
+  icon: docSnap.get("icon"),
+  id: docSnap.id,
+  createdAt: toDate(docSnap.get("createdAt")),
+  updatedAt: toDate(docSnap.get("updatedAt")),
+})
+
 export const queryCashFlowTemplates = async ({
   type,
+  startDate,
+  endDate,
 }: CashFlowTemplateQuery): Promise<CashFlowTemplate[]> => {
   const user = getLoggedInUser()
   if (!user) {
@@ -32,31 +51,30 @@ export const queryCashFlowTemplates = async ({
     return []
   }
 
-  const contraints: QueryConstraint[] = []
+  const contraints: QueryCompositeFilterConstraint[] = []
 
   if (type) {
-    contraints.push(where("type", "==", type))
+    contraints.push(and(where("type", "==", type)))
+  }
+
+  if (startDate) {
+    contraints.push(
+      or(where("date", "==", null), where("date", ">=", startDate))
+    )
+  }
+
+  if (endDate) {
+    contraints.push(or(where("date", "==", null), where("date", "<=", endDate)))
   }
 
   const q = query(
     collection(db, USERS, user.uid, CASH_FLOW_TEMPLATES),
-    ...contraints
+    and(...contraints)
   )
 
   const querySnapshot = await getDocs(q)
 
-  return querySnapshot.docs.map((d) => ({
-    description: d.get("description"),
-    frequency: d.get("frequency"),
-    name: d.get("name"),
-    type: d.get("type"),
-    amount: d.get("amount"),
-    date: d.get("date"),
-    icon: d.get("icon"),
-    id: d.id,
-    createdAt: d.get("createdAt"),
-    updatedAt: d.get("updatedAt"),
-  }))
+  return querySnapshot.docs.map(toCashFlowTemplate)
 }
 
 export const getCashFlowTemplate = async ({
@@ -66,7 +84,7 @@ export const getCashFlowTemplate = async ({
 }): Promise<CashFlowTemplate | null> => {
   const user = getLoggedInUser()
   if (!user) {
-    console.log("Cannot save cash flow template without user")
+    console.log("Cannot get cash flow template without user")
     return null
   }
 
@@ -76,18 +94,7 @@ export const getCashFlowTemplate = async ({
 
   if (!docSnap.data()) return null
 
-  return {
-    description: docSnap.get("description"),
-    frequency: docSnap.get("frequency"),
-    name: docSnap.get("name"),
-    type: docSnap.get("type"),
-    amount: docSnap.get("amount"),
-    date: docSnap.get("date") && toDate(docSnap.get("date")),
-    icon: docSnap.get("icon"),
-    id: docSnap.id,
-    createdAt: toDate(docSnap.get("createdAt")),
-    updatedAt: toDate(docSnap.get("updatedAt")),
-  }
+  return toCashFlowTemplate(docSnap)
 }
 
 export const saveCashFlowTemplate = async (
@@ -109,7 +116,7 @@ export const saveCashFlowTemplate = async (
   if (template.frequency === "ONE_TIME" && template.date) {
     doc.date = Timestamp.fromDate(template.date)
   } else {
-    delete doc.date
+    doc.date = null
   }
 
   if (!template.description) {
@@ -138,7 +145,7 @@ export const updateCashFlowTemplate = async (
   if (template.frequency === "ONE_TIME" && template.date) {
     data.date = Timestamp.fromDate(template.date)
   } else {
-    delete data.date
+    data.date = null
   }
 
   if (!template.description) {

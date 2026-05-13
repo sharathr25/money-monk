@@ -17,17 +17,149 @@ import {
   ArrowDownUp,
   Banknote,
   Cog,
+  FolderCode,
   MoveDown,
   MoveUp,
   Pen,
   TrendingUp,
   Wallet,
 } from "lucide-react"
+import dayjs from "dayjs"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
+import { useEffect, useState } from "react"
+import { queryCashFlowTemplates } from "@workspace/api/db/cashFlowTemplates"
+import type { CashFlowTemplate } from "@workspace/core/types/cashFlowTemplates"
+import { Spinner } from "@workspace/ui/components/spinner"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty"
+import { formatAmount } from "@workspace/ui/lib/utils"
 
 export function CashFlow() {
   const { navigate } = useNavigator()
+
+  const [templates, setTemplates] = useState<CashFlowTemplate[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const init = async () => {
+    try {
+      setLoading(true)
+      const cfts = await queryCashFlowTemplates({
+        startDate: dayjs().startOf("month").toDate(),
+        endDate: dayjs().endOf("month").toDate(),
+      })
+      setTemplates(cfts)
+    } catch {
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  const income = templates.filter((t) => t.type === "INCOME")
+  const expenses = templates.filter((t) => t.type === "EXPENSE")
+
+  const totalIncome = income.reduce((acc, cur) => acc + cur.amount, 0)
+  const totalExpenses = expenses.reduce((acc, cur) => acc + cur.amount, 0)
+
+  const Templates = () => {
+    if (loading) return <Spinner className="m-auto" />
+
+    if (templates.length === 0)
+      return (
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FolderCode />
+            </EmptyMedia>
+            <EmptyTitle className="capitalize">No Templates Yet</EmptyTitle>
+            <EmptyDescription>
+              Start by adding your first template below
+            </EmptyDescription>
+            <Button
+              onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE)}
+            >
+              + Add Template
+            </Button>
+          </EmptyHeader>
+        </Empty>
+      )
+
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between">
+          <div className="flex items-center gap-1">
+            <MoveDown className="text-[var(--success)]" />
+            Income
+          </div>
+          <div className="flex items-center gap-1">
+            + {formatAmount(`${totalIncome}`)}
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          {income.map((t) => (
+            <Card className="p-0" key={t.id}>
+              <Item>
+                <ItemMedia>
+                  <Badge className="size-10" variant="secondary">
+                    <Banknote />
+                  </Badge>
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
+                  <ItemDescription>{t.description}</ItemDescription>
+                </ItemContent>
+                <ItemContent className="flex-none text-center">
+                  <ItemDescription>
+                    + {formatAmount(`${t.amount}`)}
+                  </ItemDescription>
+                </ItemContent>
+              </Item>
+            </Card>
+          ))}
+        </div>
+        <div className="flex flex-col">
+          <div className="flex justify-between">
+            <div className="flex items-center gap-1">
+              <MoveUp className="text-[var(--destructive)]" size={20} />
+              Expenses
+            </div>
+            - {formatAmount(`${totalExpenses}`)}
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          {expenses.map((t) => (
+            <Card className="p-0" key={t.id}>
+              <Item>
+                <ItemMedia>
+                  <Badge className="size-10" variant="secondary">
+                    <Banknote />
+                  </Badge>
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
+                  <ItemDescription>{t.description}</ItemDescription>
+                </ItemContent>
+                <ItemContent className="flex-none text-center">
+                  <ItemDescription>
+                    - {formatAmount(`${t.amount}`)}
+                  </ItemDescription>
+                </ItemContent>
+              </Item>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,90 +199,7 @@ export function CashFlow() {
           </CardContent>
         </Card>
       </div>
-      <div className="flex justify-between">
-        <div className="flex items-center gap-1">
-          <MoveDown className="text-[var(--success)]" />
-          Income
-        </div>
-        <div className="flex items-center gap-1">+ ₹1,500</div>
-      </div>
-      <div className="flex flex-col gap-3">
-        <Card className="p-0">
-          <Item>
-            <ItemMedia>
-              <Badge className="size-10" variant="secondary">
-                <Banknote />
-              </Badge>
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-              <ItemDescription>Monthly credit</ItemDescription>
-            </ItemContent>
-            <ItemContent className="flex-none text-center">
-              <ItemDescription>+ ₹1,500</ItemDescription>
-            </ItemContent>
-          </Item>
-        </Card>
-        <Card className="p-0">
-          <Item>
-            <ItemMedia>
-              <Badge className="size-10" variant="secondary">
-                <Banknote />
-              </Badge>
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-              <ItemDescription>Monthly credit</ItemDescription>
-            </ItemContent>
-            <ItemContent className="flex-none text-center">
-              <ItemDescription>+ ₹1,500</ItemDescription>
-            </ItemContent>
-          </Item>
-        </Card>
-      </div>
-      <div className="flex flex-col">
-        <div className="flex justify-between">
-          <div className="flex items-center gap-1">
-            <MoveUp className="text-[var(--destructive)]" size={20} />
-            Expenses
-          </div>
-          - ₹1,500
-        </div>
-      </div>
-      <div className="flex flex-col gap-3">
-        <Card className="p-0">
-          <Item>
-            <ItemMedia>
-              <Badge className="size-10" variant="secondary">
-                <Banknote />
-              </Badge>
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-              <ItemDescription>Monthly credit</ItemDescription>
-            </ItemContent>
-            <ItemContent className="flex-none text-center">
-              <ItemDescription>- ₹1,500</ItemDescription>
-            </ItemContent>
-          </Item>
-        </Card>
-        <Card className="p-0">
-          <Item>
-            <ItemMedia>
-              <Badge className="size-10" variant="secondary">
-                <Banknote />
-              </Badge>
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle className="line-clamp-1">Salary</ItemTitle>
-              <ItemDescription>Monthly credit</ItemDescription>
-            </ItemContent>
-            <ItemContent className="flex-none text-center">
-              <ItemDescription>- ₹1,500</ItemDescription>
-            </ItemContent>
-          </Item>
-        </Card>
-      </div>
+      <Templates />
       <Button
         className="fixed right-6 bottom-20 h-12 w-20 rounded-full"
         onClick={() => navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATES)}

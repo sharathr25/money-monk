@@ -1,6 +1,5 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import { getLoggedInUser } from "@workspace/api/auth/index"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { queryCashFlowTemplates } from "@workspace/api/db/index"
 import type { CashFlowTemplate, Type } from "@workspace/core/types"
@@ -33,7 +32,6 @@ import { useEffect, useState } from "react"
 import { Spinner } from "@workspace/ui/components/spinner"
 
 export function CashFlowTemplates() {
-  const user = getLoggedInUser()
   const { navigate } = useNavigator()
   const [income, setIncome] = useState<CashFlowTemplate[]>([])
   const [expenses, setExpenses] = useState<CashFlowTemplate[]>([])
@@ -42,7 +40,7 @@ export function CashFlowTemplates() {
   const init = async () => {
     try {
       setLoading(true)
-      const templates = await queryCashFlowTemplates({ uid: user.uid || "" })
+      const templates = await queryCashFlowTemplates({})
       setIncome(templates.filter((t) => t.type === "INCOME"))
       setExpenses(templates.filter((t) => t.type === "EXPENSE"))
     } catch (error) {
