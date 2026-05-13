@@ -58,9 +58,7 @@ export function EditCashFlowTemplate() {
         amount: amountToDouble(rest.amount),
       })
       toast.success("Update successful.", {
-        onAutoClose() {
-          goBack()
-        },
+        onAutoClose: goBack,
       })
     } catch (error) {
       console.error(error)

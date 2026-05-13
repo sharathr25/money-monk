@@ -11,5 +11,6 @@ export const Layout = () => (
     <div className="mt-10 flex flex-1 flex-col px-6 py-2">
       <Outlet />
     </div>
+    <div className="h-2" />
   </div>
 )

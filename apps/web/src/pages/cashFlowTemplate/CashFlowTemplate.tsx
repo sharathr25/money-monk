@@ -77,28 +77,32 @@ export function CashFlowTemplate() {
     )
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
-      <Card className="flex justify-center bg-(--primary) p-0 text-(--secondary)">
-        <CardContent className="flex p-0">
-          <div className="flex basis-2/3 flex-col gap-2 p-4">
-            <h1 className="text-2xl font-bold">{template.name}</h1>
-            <p>{template.description}</p>
-            <h2 className="text-xl font-bold">
-              {formatAmount(`${template.amount}`)}
-            </h2>
-            <Badge variant="secondary">{template.type}</Badge>
-          </div>
-          <div className="flex basis-1/3 items-center justify-center bg-(--secondary)">
-            <DynamicIcon
-              name={template.icon as IconName}
-              strokeWidth={0.75}
-              className="size-15 text-(--primary)"
-            />
-          </div>
-        </CardContent>
+    <div className="flex flex-1 flex-col gap-3">
+      <Card className="flex flex-1 items-center justify-center bg-(--primary) p-10 text-(--secondary)">
+        <DynamicIcon
+          name={template.icon as IconName}
+          strokeWidth={0.5}
+          className="size-25"
+        />
       </Card>
+      <div>
+        <div className="flex justify-between">
+          <div>
+            <h1 className="text-xl font-bold">{template.name}</h1>
+            <p className="text-sm">{template.description}</p>
+          </div>
+          <div className="flex flex-col items-end">
+            <h2 className="font-bold">{formatAmount(`${template.amount}`)}</h2>
+            {template.type === "EXPENSE" ? (
+              <Badge className="bg-(--destructive)">{template.type}</Badge>
+            ) : (
+              <Badge className="bg-(--success)">{template.type}</Badge>
+            )}
+          </div>
+        </div>
+      </div>
       <Card>
-        <CardContent className="flex flex-col gap-2">
+        <CardContent className="flex flex-col">
           <Item>
             <ItemMedia variant="icon">
               <Calendar />
@@ -121,28 +125,20 @@ export function CashFlowTemplate() {
               </ItemDescription>
             </ItemContent>
           </Item>
-          <Item>
-            <ItemMedia variant="icon">
-              <Repeat />
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle>Frequency</ItemTitle>
-              <ItemDescription>{template.frequency}</ItemDescription>
-            </ItemContent>
-          </Item>
-          {!!template.date && (
+          <div className="flex">
             <Item>
               <ItemMedia variant="icon">
-                <Calendar />
+                <Repeat />
               </ItemMedia>
               <ItemContent>
-                <ItemTitle>Date</ItemTitle>
+                <ItemTitle>Frequency</ItemTitle>
                 <ItemDescription>
-                  {template.date.toLocaleString()}
+                  {template.frequency.replace("_", " ")}
+                  {!!template.date && " - " + template.date.toLocaleString()}
                 </ItemDescription>
               </ItemContent>
             </Item>
-          )}
+          </div>
         </CardContent>
       </Card>
       <div className="flex gap-2">

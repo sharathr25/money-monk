@@ -5,6 +5,7 @@ import type { Frequency, Type } from "@workspace/core/type/index"
 import { amountToDouble } from "@workspace/ui/lib/utils"
 import { CashFlowTemplateForm } from "@/components/CashFlowTemplateForm"
 import { useState } from "react"
+import { useNavigator } from "@/hooks/useNavigator"
 
 type AddCashFlowFormInputs = {
   name: string
@@ -19,6 +20,7 @@ type AddCashFlowFormInputs = {
 
 export function AddCashFlowTemplate() {
   const [loading, setLoading] = useState(false)
+  const { goBack } = useNavigator()
 
   const onSubmit: SubmitHandler<AddCashFlowFormInputs> = async (data) => {
     try {
@@ -28,7 +30,7 @@ export function AddCashFlowTemplate() {
         ...rest,
         amount: amountToDouble(rest.amount),
       })
-      toast.success("Save successful.")
+      toast.success("Save successful.", { onAutoClose: goBack })
     } catch (error) {
       console.error(error)
       toast.error("Save failed, Try again.")

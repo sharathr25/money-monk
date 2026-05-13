@@ -30,7 +30,6 @@ import {
   Repeat,
   Save,
   Calendar,
-  Search,
   IndianRupee,
 } from "lucide-react"
 import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
@@ -197,7 +196,7 @@ export const CashFlowTemplateForm = ({
               <FieldLabel>Frequency</FieldLabel>
               <Select
                 defaultValue={defaultValues.frequency}
-                onValueChange={(v: Type) => setValue("type", v)}
+                onValueChange={(v: Frequency) => setValue("frequency", v)}
               >
                 <SelectTrigger id="type" className="!h-11">
                   <SelectValue />
