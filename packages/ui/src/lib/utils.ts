@@ -76,3 +76,16 @@ export const formatDayOfMonth = (day: number): string => {
       return `${day}th`
   }
 }
+
+export function getMonthRanges(months: number, monthFormat: string = "MMMM") {
+  return Array.from({ length: months }, (_, index) => {
+    const date = dayjs().add(index, "month")
+
+    return {
+      month: date.format(monthFormat),
+      year: date.format("YYYY"),
+      startDate: date.startOf("month").toDate(),
+      endDate: date.endOf("month").toDate(),
+    }
+  })
+}
