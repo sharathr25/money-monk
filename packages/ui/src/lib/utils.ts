@@ -19,8 +19,11 @@ export function cn(...inputs: ClassValue[]) {
 export const removeCommas = (str: string) =>
   str.replace(/\D/g, "").replace("₹", "")
 
-export function formatAmount(amount: string, withCurrency: boolean = true) {
-  const amountWithoutCommas = removeCommas(amount)
+export function formatAmount(
+  amount: string | number,
+  withCurrency: boolean = true
+) {
+  const amountWithoutCommas = removeCommas(`${amount}`)
   const formater = withCurrency
     ? AMOUNT_FORMATER_WITH_CURRENCY
     : AMOUNT_FORMATER
@@ -31,8 +34,7 @@ export const formatCashFlowAmount = (
   type: Type,
   amount: string | number,
   withCurrency: boolean = true
-) =>
-  `${type === "INCOME" ? "+" : "-"} ${formatAmount(`${amount}`, withCurrency)}`
+) => `${type === "INCOME" ? "+" : "-"} ${formatAmount(amount, withCurrency)}`
 
 export const amountToDouble = (amount: string) =>
   parseFloat(amount.replace(/\D/g, ""))

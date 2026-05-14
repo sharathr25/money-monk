@@ -12,11 +12,11 @@ import { DEFAULT } from "@workspace/core/type/index"
 import { getLoggedInUser } from "../auth/index"
 import { toDate } from "./mapper"
 
-export const getUserData = async (): Promise<UserData | null> => {
+export const getUserData = async (): Promise<UserData> => {
   const user = getLoggedInUser()
   if (!user) {
     console.log("Cannot get without user")
-    return null
+    throw new Error("User need to login")
   }
 
   const docSnap = await getDoc(doc(db, USERS, user.uid))
@@ -25,8 +25,8 @@ export const getUserData = async (): Promise<UserData | null> => {
     currency: docSnap.get("currency") || DEFAULT.CURRENCY,
     locale: docSnap.get("locale") || DEFAULT.LOCALE,
     openingBalance: docSnap.get("openingBalance") || 0,
-    createdAt: toDate(docSnap.get("createdAt")),
-    updatedAt: toDate(docSnap.get("updatedAt")),
+    createdAt: docSnap.get("createdAt") && toDate(docSnap.get("createdAt")),
+    updatedAt: docSnap.get("updatedAt") && toDate(docSnap.get("updatedAt")),
   }
 }
 
