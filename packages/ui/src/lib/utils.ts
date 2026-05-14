@@ -3,14 +3,17 @@ import { twMerge } from "tailwind-merge"
 import dayjs from "dayjs"
 import type { Type } from "@workspace/core/type/cashFlowTemplates"
 
-const AMOUNT_FORMATER_WITH_CURRENCY = new Intl.NumberFormat("en-IN", {
+const numberFormatOptions = {
   currency: "INR",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+}
+const AMOUNT_FORMATER_WITH_CURRENCY = new Intl.NumberFormat("en-IN", {
+  ...numberFormatOptions,
   style: "currency",
 })
 
-const AMOUNT_FORMATER = new Intl.NumberFormat("en-IN", {
-  currency: "INR",
-})
+const AMOUNT_FORMATER = new Intl.NumberFormat("en-IN", numberFormatOptions)
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -21,20 +24,29 @@ export const removeCommas = (str: string) =>
 
 export function formatAmount(
   amount: string | number,
-  withCurrency: boolean = true
+  { withCurrency, withSign }: { withCurrency: boolean; withSign: boolean } = {
+    withCurrency: true,
+    withSign: false,
+  }
 ) {
   const amountWithoutCommas = removeCommas(`${amount}`)
   const formater = withCurrency
     ? AMOUNT_FORMATER_WITH_CURRENCY
     : AMOUNT_FORMATER
-  return amountWithoutCommas && formater.format(parseFloat(amountWithoutCommas))
+  const amountFloated = parseFloat(amountWithoutCommas)
+  const isPositive = amountFloated > 0
+  return (
+    amountWithoutCommas &&
+    (withSign ? (isPositive ? "+" : "-") + " " : "") +
+      formater.format(amountFloated)
+  )
 }
 
 export const formatCashFlowAmount = (
   type: Type,
   amount: string | number,
-  withCurrency: boolean = true
-) => `${type === "INCOME" ? "+" : "-"} ${formatAmount(amount, withCurrency)}`
+  options?: { withCurrency: boolean; withSign: boolean }
+) => `${type === "INCOME" ? "+" : "-"} ${formatAmount(amount, options)}`
 
 export const amountToDouble = (amount: string) =>
   parseFloat(amount.replace(/\D/g, ""))

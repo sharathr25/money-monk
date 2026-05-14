@@ -9,8 +9,6 @@ import { Wallet } from "lucide-react"
 import { formatAmount } from "@workspace/ui/lib/utils"
 
 export function ClosingBalance({ closingBalance }: { closingBalance: number }) {
-  const isPositive = closingBalance > 0
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -22,7 +20,10 @@ export function ClosingBalance({ closingBalance }: { closingBalance: number }) {
       <CardContent className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <div>
-            {`${isPositive ? "+" : "-"} ${formatAmount(closingBalance)}`}
+            {formatAmount(closingBalance, {
+              withCurrency: true,
+              withSign: true,
+            })}
           </div>
         </div>
       </CardContent>

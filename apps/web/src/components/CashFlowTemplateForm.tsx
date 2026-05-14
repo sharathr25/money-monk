@@ -163,7 +163,13 @@ export const CashFlowTemplateForm = ({
                   id="amount"
                   {...register("amount", { required: true })}
                   onChange={(e) =>
-                    setValue("amount", formatAmount(e.target.value, false))
+                    setValue(
+                      "amount",
+                      formatAmount(e.target.value, {
+                        withCurrency: false,
+                        withSign: false,
+                      })
+                    )
                   }
                 />
                 <InputGroupAddon>

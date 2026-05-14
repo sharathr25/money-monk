@@ -25,7 +25,9 @@ export function NetCashFlow({ netCashFlow }: { netCashFlow: number }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <div className="flex justify-between gap-1">
-          <div>{`${isPositive ? "+" : "-"} ${formatAmount(netCashFlow)}`}</div>
+          <div>
+            {formatAmount(netCashFlow, { withCurrency: true, withSign: true })}
+          </div>
           {/* <Badge variant="secondary">+21%</Badge> */}
         </div>
       </CardContent>

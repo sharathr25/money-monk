@@ -27,7 +27,7 @@ export const getCashFlow = async ({
 
   const openingBalance = userData.openingBalance
   const netCashFlow = totalIncome - totalExpenses
-  const closingBalance = openingBalance + netCashFlow
+  const closingBalance = getClosingBalance(openingBalance, netCashFlow)
 
   return {
     income,
@@ -39,3 +39,8 @@ export const getCashFlow = async ({
     closingBalance,
   }
 }
+
+export const getClosingBalance = (
+  openingBalance: number,
+  netCashFlow: number
+) => openingBalance + netCashFlow

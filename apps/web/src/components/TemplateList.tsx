@@ -44,11 +44,11 @@ export const TemplateList = ({
         </ItemContent>
         <ItemContent className="flex-none text-center">
           <ItemDescription className="flex flex-col items-end">
-            <div>{formatCashFlowAmount(t.type, t.amount)}</div>
-            <div>
+            <span>{formatCashFlowAmount(t.type, t.amount)}</span>
+            <span>
               {!!t.date && formatDate(t.date)}
               {!!t.day && "On " + formatDayOfMonth(t.day)}
-            </div>
+            </span>
           </ItemDescription>
         </ItemContent>
       </Item>

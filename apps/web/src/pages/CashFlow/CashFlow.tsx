@@ -6,11 +6,12 @@ import { ROUTE_NAMES } from "@/routes"
 import { useEffect, useState } from "react"
 import type { CashFlow } from "@workspace/core/types/cashFlow"
 import { Spinner } from "@workspace/ui/components/spinner"
-import { getCashFlow } from "@workspace/api/db/cashFlow"
+import { getCashFlow, getClosingBalance } from "@workspace/api/db/cashFlow"
 import { OpeningBalance } from "./OpeningBalance"
 import { ClosingBalance } from "./ClosingBalance"
 import { NetCashFlow } from "./NetCashFlow"
 import { Templates } from "./Templates"
+import { updateUserData } from "@workspace/api/db/users"
 
 export function CashFlow() {
   const { navigate } = useNavigator()
@@ -41,14 +42,32 @@ export function CashFlow() {
 
   if (!cashFlow) return null
 
+  const updateOpeningBalance = async (openingBalance: number) => {
+    try {
+      await updateUserData({ openingBalance })
+      setCashFlow({
+        ...cashFlow,
+        openingBalance,
+        closingBalance: getClosingBalance(openingBalance, cashFlow.netCashFlow),
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-end gap-2">
-        <div className="text-2xl/7 font-extrabold">March</div>
-        <div className="text-sm">2024</div>
+        <div className="text-2xl/7 font-extrabold">
+          {dayjs().format("MMMM")}
+        </div>
+        <div className="text-sm">{dayjs().format("YYYY")}</div>
       </div>
       <div className="flex gap-4">
-        <OpeningBalance openingBalance={cashFlow.openingBalance} />
+        <OpeningBalance
+          openingBalance={cashFlow.openingBalance}
+          updateOpeningBalance={updateOpeningBalance}
+        />
         <NetCashFlow netCashFlow={cashFlow.netCashFlow} />
       </div>
       <div className="flex gap-4">

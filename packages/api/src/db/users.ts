@@ -30,7 +30,7 @@ export const getUserData = async (): Promise<UserData> => {
   }
 }
 
-export const updateCashFlowTemplate = async (userData: UserDataUpdateSpec) => {
+export const updateUserData = async (userData: UserDataUpdateSpec) => {
   const user = getLoggedInUser()
   if (!user) {
     console.log("Cannot update without user")
