@@ -46,8 +46,10 @@ export const TemplateList = ({
           <ItemDescription className="flex flex-col items-end">
             <span>{formatCashFlowAmount(t.type, t.amount)}</span>
             <span>
-              {!!t.date && formatDate(t.date)}
-              {!!t.day && "On " + formatDayOfMonth(t.day)}
+              {!!t.date && t.frequency === "ONE_TIME" && formatDate(t.date)}
+              {!!t.day &&
+                t.frequency === "MONTHLY" &&
+                "On " + formatDayOfMonth(t.day)}
             </span>
           </ItemDescription>
         </ItemContent>

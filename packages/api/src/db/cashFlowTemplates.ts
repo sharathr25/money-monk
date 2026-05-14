@@ -119,6 +119,8 @@ export const saveCashFlowTemplate = async (
     doc.date = null
   }
 
+  doc.day = template.frequency === "MONTHLY" ? doc.day : null
+
   if (!template.description) {
     delete doc.description
   }
@@ -147,6 +149,8 @@ export const updateCashFlowTemplate = async (
   } else {
     data.date = null
   }
+
+  data.day = template.frequency === "MONTHLY" ? data.day : null
 
   if (!template.description) {
     delete data.description
