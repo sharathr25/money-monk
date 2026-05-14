@@ -16,6 +16,7 @@ export type SaveCashFlowTemplateSpec = {
   type: Type
   amount: number
   date?: Date | null
+  day?: number | null
 }
 
 export type CashFlowTemplate = SaveCashFlowTemplateSpec & {

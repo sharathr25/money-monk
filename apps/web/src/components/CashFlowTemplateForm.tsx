@@ -37,7 +37,7 @@ import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import type { Frequency, Type } from "@workspace/core/type/index"
-import { formatAmount } from "@workspace/ui/lib/utils"
+import { daysOfMonth, formatAmount } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
 import {
   InputGroup,
@@ -55,6 +55,7 @@ const DEFAULT_CASH_TEMPLATE = {
   iconNameFilter: "bank",
   icon: "banknote",
   type: "INCOME" as Type,
+  day: "1",
 }
 
 export type CashFlowTemplateFormInputs = {
@@ -66,6 +67,7 @@ export type CashFlowTemplateFormInputs = {
   frequency: Frequency
   type: Type
   date?: Date
+  day?: string
 }
 
 export const CashFlowTemplateForm = ({
@@ -213,37 +215,58 @@ export const CashFlowTemplateForm = ({
                 </SelectContent>
               </Select>
             </Field>
-            <Field>
-              <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    disabled={frequency !== "ONE_TIME"}
-                    variant="outline"
-                    id="date-picker-simple"
-                    className="h-11 justify-start font-normal"
-                  >
-                    <Calendar />
-                    {date?.toLocaleDateString()}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader className="flex items-start">
-                    <DialogTitle>Date</DialogTitle>
-                    <DialogDescription>Select a date.</DialogDescription>
-                  </DialogHeader>
-                  <CalendarInput
-                    required={frequency === "ONE_TIME"}
-                    mode="single"
-                    selected={date}
-                    onSelect={(d: Date | undefined) => setValue("date", d)}
-                    defaultMonth={date}
-                    captionLayout="dropdown"
-                    className="mx-auto"
-                  />
-                </DialogContent>
-              </Dialog>
-            </Field>
+            {frequency === "ONE_TIME" && (
+              <Field>
+                <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="date-picker-simple"
+                      className="h-11 justify-start font-normal"
+                    >
+                      <Calendar />
+                      {date?.toLocaleDateString()}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader className="flex items-start">
+                      <DialogTitle>Date</DialogTitle>
+                      <DialogDescription>Select a date.</DialogDescription>
+                    </DialogHeader>
+                    <CalendarInput
+                      required={frequency === "ONE_TIME"}
+                      mode="single"
+                      selected={date}
+                      onSelect={(d: Date | undefined) => setValue("date", d)}
+                      defaultMonth={date}
+                      captionLayout="dropdown"
+                      className="mx-auto"
+                    />
+                  </DialogContent>
+                </Dialog>
+              </Field>
+            )}
+            {frequency === "MONTHLY" && (
+              <Field>
+                <FieldLabel>Day</FieldLabel>
+                <Select
+                  defaultValue={defaultValues.day}
+                  onValueChange={(v) => setValue("day", v)}
+                >
+                  <SelectTrigger id="type" className="!h-11">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {daysOfMonth().map((day) => (
+                      <SelectItem value={`${day}`} key={day}>
+                        {day}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
           </div>
           <Button type="submit" className="h-13 w-full">
             {loading ? <Spinner /> : <Save />}

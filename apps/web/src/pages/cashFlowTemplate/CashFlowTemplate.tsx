@@ -30,7 +30,12 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 
-import { formatAmount } from "@workspace/ui/lib/utils"
+import {
+  formatAmount,
+  formatDate,
+  formatDateTime,
+  formatDayOfMonth,
+} from "@workspace/ui/lib/utils"
 import {
   Calendar,
   MoveLeft,
@@ -140,7 +145,7 @@ export function CashFlowTemplate() {
             <ItemContent>
               <ItemTitle>Created At</ItemTitle>
               <ItemDescription>
-                {template.createdAt.toLocaleString()}
+                {formatDateTime(template.createdAt)}
               </ItemDescription>
             </ItemContent>
           </Item>
@@ -151,7 +156,7 @@ export function CashFlowTemplate() {
             <ItemContent>
               <ItemTitle>Updated At</ItemTitle>
               <ItemDescription>
-                {template.updatedAt.toLocaleString()}
+                {formatDateTime(template.updatedAt)}
               </ItemDescription>
             </ItemContent>
           </Item>
@@ -164,7 +169,8 @@ export function CashFlowTemplate() {
                 <ItemTitle>Frequency</ItemTitle>
                 <ItemDescription>
                   {template.frequency.replace("_", " ")}
-                  {!!template.date && " - " + template.date.toLocaleString()}
+                  {!!template.date && " - " + formatDate(template.date)}
+                  {!!template.day && " - On " + formatDayOfMonth(template.day)}
                 </ItemDescription>
               </ItemContent>
             </Item>

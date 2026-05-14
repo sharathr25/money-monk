@@ -5,17 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@workspace/ui/components/item"
 import { Badge } from "@workspace/ui/components/badge"
 import {
   ArrowDownUp,
-  Banknote,
   Cog,
   FolderCode,
   MoveDown,
@@ -39,6 +31,7 @@ import {
   EmptyTitle,
 } from "@workspace/ui/components/empty"
 import { formatAmount } from "@workspace/ui/lib/utils"
+import { TemplateList } from "@/components/TemplateList"
 
 export function CashFlow() {
   const { navigate } = useNavigator()
@@ -105,26 +98,7 @@ export function CashFlow() {
           </div>
         </div>
         <div className="flex flex-col gap-3">
-          {income.map((t) => (
-            <Card className="p-0" key={t.id}>
-              <Item>
-                <ItemMedia>
-                  <Badge className="size-10" variant="secondary">
-                    <Banknote />
-                  </Badge>
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
-                  <ItemDescription>{t.description}</ItemDescription>
-                </ItemContent>
-                <ItemContent className="flex-none text-center">
-                  <ItemDescription>
-                    + {formatAmount(`${t.amount}`)}
-                  </ItemDescription>
-                </ItemContent>
-              </Item>
-            </Card>
-          ))}
+          <TemplateList templates={income} />
         </div>
         <div className="flex flex-col">
           <div className="flex justify-between">
@@ -136,26 +110,7 @@ export function CashFlow() {
           </div>
         </div>
         <div className="flex flex-col gap-3">
-          {expenses.map((t) => (
-            <Card className="p-0" key={t.id}>
-              <Item>
-                <ItemMedia>
-                  <Badge className="size-10" variant="secondary">
-                    <Banknote />
-                  </Badge>
-                </ItemMedia>
-                <ItemContent>
-                  <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
-                  <ItemDescription>{t.description}</ItemDescription>
-                </ItemContent>
-                <ItemContent className="flex-none text-center">
-                  <ItemDescription>
-                    - {formatAmount(`${t.amount}`)}
-                  </ItemDescription>
-                </ItemContent>
-              </Item>
-            </Card>
-          ))}
+          <TemplateList templates={expenses} />
         </div>
       </div>
     )

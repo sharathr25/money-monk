@@ -53,6 +53,7 @@ export function EditCashFlowTemplate() {
       await updateCashFlowTemplate(cashFlowTemplateId, {
         ...rest,
         amount: amountToDouble(rest.amount),
+        day: rest.day ? parseInt(rest.day) : undefined,
       })
       toast.success("Update successful.", {
         onAutoClose: goBack,
@@ -94,6 +95,7 @@ export function EditCashFlowTemplate() {
           ...template,
           amount: formatAmount(`${template.amount}`, false),
           date: template.date || undefined,
+          day: template.day ? `${template.day}` : undefined,
         }}
         onSubmit={onSubmit}
         loading={updateApiLoading}

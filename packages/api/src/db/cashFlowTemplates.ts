@@ -33,6 +33,7 @@ const toCashFlowTemplate = (docSnap: DocumentSnapshot) => ({
   type: docSnap.get("type"),
   amount: docSnap.get("amount"),
   date: docSnap.get("date") && toDate(docSnap.get("date")),
+  day: docSnap.get("day"),
   icon: docSnap.get("icon"),
   id: docSnap.id,
   createdAt: toDate(docSnap.get("createdAt")),
