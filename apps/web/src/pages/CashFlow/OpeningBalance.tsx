@@ -42,7 +42,7 @@ export function OpeningBalance({
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <div>{formatAmount(balance)}</div>
+          <div>{formatAmount(balance, { withCurrency: true })}</div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="secondary">
@@ -62,14 +62,7 @@ export function OpeningBalance({
                   id="opening-balance"
                   className="h-11"
                   value={balance}
-                  onChange={(e) =>
-                    setBalance(
-                      formatAmount(e.target.value, {
-                        withCurrency: false,
-                        withSign: false,
-                      })
-                    )
-                  }
+                  onChange={(e) => setBalance(formatAmount(e.target.value))}
                 />
               </Field>
               <AlertDialogFooter>

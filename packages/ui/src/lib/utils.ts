@@ -8,37 +8,31 @@ const numberFormatOptions = {
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
 }
-const AMOUNT_FORMATER_WITH_CURRENCY = new Intl.NumberFormat("en-IN", {
-  ...numberFormatOptions,
-  style: "currency",
-})
-
-const AMOUNT_FORMATER = new Intl.NumberFormat("en-IN", numberFormatOptions)
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
 export const removeCommas = (str: string) =>
-  str.replace(/\D/g, "").replace("₹", "")
+  str.replace(/,/g, "").replace("₹", "")
 
 export function formatAmount(
   amount: string | number,
-  { withCurrency, withSign }: { withCurrency: boolean; withSign: boolean } = {
-    withCurrency: true,
+  { withCurrency, withSign }: { withCurrency?: boolean; withSign?: boolean } = {
+    withCurrency: false,
     withSign: false,
   }
 ) {
-  const amountWithoutCommas = removeCommas(`${amount}`)
-  const formater = withCurrency
-    ? AMOUNT_FORMATER_WITH_CURRENCY
-    : AMOUNT_FORMATER
-  const amountFloated = parseFloat(amountWithoutCommas)
-  const isPositive = amountFloated > 0
-  return (
-    amountWithoutCommas &&
-    (withSign ? (isPositive ? "+" : "-") + " " : "") +
-      formater.format(amountFloated)
+  const opts: Intl.NumberFormatOptions = { ...numberFormatOptions }
+  if (withCurrency) {
+    opts.style = "currency"
+  }
+  if (withSign) {
+    opts.signDisplay = "always"
+  }
+
+  return new Intl.NumberFormat("en-IN", opts).format(
+    parseFloat(removeCommas(`${amount}`))
   )
 }
 
@@ -49,7 +43,7 @@ export const formatCashFlowAmount = (
 ) => `${type === "INCOME" ? "+" : "-"} ${formatAmount(amount, options)}`
 
 export const amountToDouble = (amount: string) =>
-  parseFloat(amount.replace(/\D/g, ""))
+  parseFloat(removeCommas(amount))
 
 export const daysOfMonth = (): number[] =>
   new Array(31).fill(null).map((_, i) => i + 1)

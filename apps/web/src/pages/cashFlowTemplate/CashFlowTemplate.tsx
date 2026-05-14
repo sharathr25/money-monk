@@ -127,7 +127,9 @@ export function CashFlowTemplate() {
             <p className="text-sm">{template.description}</p>
           </div>
           <div className="flex flex-col items-end">
-            <h2 className="font-bold">{formatAmount(`${template.amount}`)}</h2>
+            <h2 className="font-bold">
+              {formatAmount(template.amount, { withCurrency: true })}
+            </h2>
             {template.type === "EXPENSE" ? (
               <Badge className="bg-(--destructive)">{template.type}</Badge>
             ) : (

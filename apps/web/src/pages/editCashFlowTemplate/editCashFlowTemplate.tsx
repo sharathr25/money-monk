@@ -93,7 +93,7 @@ export function EditCashFlowTemplate() {
       <CashFlowTemplateForm
         formInputs={{
           ...template,
-          amount: formatAmount(`${template.amount}`, false),
+          amount: formatAmount(`${template.amount}`),
           date: template.date || undefined,
           day: template.day ? `${template.day}` : undefined,
         }}

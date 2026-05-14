@@ -42,7 +42,7 @@ export function Templates({ cashFlow }: { cashFlow: CashFlow }) {
           Income
         </div>
         <div className="flex items-center gap-1">
-          + {formatAmount(`${cashFlow.totalIncome}`)}
+          + {formatAmount(cashFlow.totalIncome, { withCurrency: true })}
         </div>
       </div>
       <div className="flex flex-col gap-3">
@@ -54,7 +54,7 @@ export function Templates({ cashFlow }: { cashFlow: CashFlow }) {
             <MoveUp className="text-[var(--destructive)]" size={20} />
             Expenses
           </div>
-          - {formatAmount(`${cashFlow.totalExpenses}`)}
+          - {formatAmount(cashFlow.totalExpenses, { withCurrency: true })}
         </div>
       </div>
       <div className="flex flex-col gap-3">
