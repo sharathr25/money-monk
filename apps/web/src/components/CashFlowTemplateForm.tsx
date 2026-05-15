@@ -44,6 +44,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@workspace/ui/components/input-group"
+import { useState } from "react"
 
 const ICONS_PAGE_SIZE = 10
 
@@ -85,6 +86,8 @@ export const CashFlowTemplateForm = ({
     useForm<CashFlowTemplateFormInputs>({
       defaultValues,
     })
+
+  const [calendarOpen, setCalenderOpen] = useState(false)
 
   const iconNameFilter = watch("iconNameFilter")
   const frequency = watch("frequency")
@@ -218,7 +221,7 @@ export const CashFlowTemplateForm = ({
             {frequency === "ONE_TIME" && (
               <Field>
                 <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
-                <Dialog>
+                <Dialog open={calendarOpen} onOpenChange={setCalenderOpen}>
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
@@ -231,14 +234,22 @@ export const CashFlowTemplateForm = ({
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader className="flex items-start">
-                      <DialogTitle>Date</DialogTitle>
-                      <DialogDescription>Select a date.</DialogDescription>
+                      <DialogTitle className="capitalize">
+                        Date of the One Time {type.toLowerCase()}
+                      </DialogTitle>
+                      <DialogDescription>
+                        If you don't know the exact day, just pick any date in
+                        that month
+                      </DialogDescription>
                     </DialogHeader>
                     <CalendarInput
                       required={frequency === "ONE_TIME"}
                       mode="single"
                       selected={date}
-                      onSelect={(d: Date | undefined) => setValue("date", d)}
+                      onSelect={(d: Date | undefined) => {
+                        setValue("date", d)
+                        setCalenderOpen(false)
+                      }}
                       defaultMonth={date}
                       captionLayout="dropdown"
                       className="mx-auto"
