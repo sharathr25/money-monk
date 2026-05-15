@@ -75,10 +75,8 @@ export function CashFlowTemplates() {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <div>
-        <h1 className="text-xl font-bold">Manage Cash Flow</h1>
-        <p className="text-sm">
-          Configure your recurring/one time income or expense
-        </p>
+        <h1 className="text-xl font-bold">Cash Flow Templates</h1>
+        <p className="text-sm">Your recurring/one time income and expenses</p>
       </div>
       <Tabs defaultValue="income">
         <TabsList className="flex w-full flex-1">
