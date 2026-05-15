@@ -31,8 +31,11 @@ export function formatAmount(
     opts.signDisplay = "always"
   }
 
-  return new Intl.NumberFormat("en-IN", opts).format(
-    parseFloat(removeCommas(`${amount}`))
+  const amountWithoutCommas = removeCommas(`${amount}`)
+
+  return (
+    amountWithoutCommas &&
+    new Intl.NumberFormat("en-IN", opts).format(parseFloat(amountWithoutCommas))
   )
 }
 

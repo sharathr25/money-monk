@@ -11,11 +11,13 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 import {
+  cn,
   formatCashFlowAmount,
   formatDate,
   formatDayOfMonth,
 } from "@workspace/ui/lib/utils"
-import { Calendar, Repeat } from "lucide-react"
+import dayjs from "dayjs"
+import { Calendar, CalendarCheck, Repeat } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 
 export const TemplateList = ({
@@ -38,9 +40,16 @@ export const TemplateList = ({
     (a, b) => (a.date || date).getTime() - (b.date || date).getTime()
   )
 
-  const renderCard = (t: CashFlowTemplate) => (
+  const futureOneTimeTemplates = oneTimeTemplates.filter((t) =>
+    dayjs(t.date).isAfter(date)
+  )
+  const pastOneTimeTemplates = oneTimeTemplates.filter((t) =>
+    dayjs(t.date).isBefore(date)
+  )
+
+  const renderCard = (t: CashFlowTemplate, old: boolean = false) => (
     <Card
-      className="p-0"
+      className={cn("p-0", old && "opacity-50")}
       key={t.id}
       onClick={() =>
         navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATE, { templateId: t.id })
@@ -60,13 +69,17 @@ export const TemplateList = ({
           <ItemDescription className="flex flex-col items-end">
             <span>{formatCashFlowAmount(t.type, t.amount)}</span>
             {!!t.date && t.frequency === "ONE_TIME" && (
-              <span className="flex items-center gap-2">
-                <Calendar className="size-3 text-(--primary)" />
+              <span className={cn("flex items-center gap-1")}>
+                {old ? (
+                  <CalendarCheck className="size-3 text-(--primary)" />
+                ) : (
+                  <Calendar className="size-3 text-(--primary)" />
+                )}
                 {formatDate(t.date)}
               </span>
             )}
             {t.frequency === "MONTHLY" && (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-1">
                 <Repeat className="size-3 text-(--primary)" />
                 {!!t.day && `On ${formatDayOfMonth(t.day)}`}
               </span>
@@ -79,8 +92,9 @@ export const TemplateList = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {recurringTemplates.map(renderCard)}
-      {oneTimeTemplates.map(renderCard)}
+      {recurringTemplates.map((t) => renderCard(t))}
+      {futureOneTimeTemplates.map((t) => renderCard(t))}
+      {pastOneTimeTemplates.map((t) => renderCard(t, true))}
     </div>
   )
 }

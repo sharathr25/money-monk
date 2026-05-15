@@ -170,7 +170,9 @@ export function CashFlowTemplate() {
               <ItemContent>
                 <ItemTitle>Frequency</ItemTitle>
                 <ItemDescription>
-                  {template.frequency.replace("_", " ")}
+                  <span className="capitalize">
+                    {template.frequency.replace("_", " ").toLowerCase()}
+                  </span>
                   {!!template.date && " - " + formatDate(template.date)}
                   {!!template.day && " - On " + formatDayOfMonth(template.day)}
                 </ItemDescription>
