@@ -1,36 +1,91 @@
-import { Alert, AlertDescription } from "@workspace/ui/components/alert"
+import { FullScreenError } from "@/components/FullScreenError"
+import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { useAuth } from "@/hooks/useAuth"
+import { useNavigator } from "@/hooks/useNavigator"
+import { ROUTE_NAMES } from "@/routes"
+import { useQuery } from "@tanstack/react-query"
+import { queryGoals } from "@workspace/api/db/goals"
+import type { Goal, GoalEventType } from "@workspace/core/types/goals"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import {
   Card,
+  CardAction,
   CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { Field, FieldLabel } from "@workspace/ui/components/field"
-import { Progress } from "@workspace/ui/components/progress"
-import {
-  Car,
-  Check,
-  House,
-  Info,
-  Laptop,
-  PlaneTakeoff,
-  Plus,
-} from "lucide-react"
+import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
+import { Plus } from "lucide-react"
+import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useState } from "react"
 
-const TABS = [
-  "All commitements",
-  "Planned",
-  "Started Saving",
-  "Active",
-  "Paused",
-  "Completed",
+const TABS: (GoalEventType | "ALL")[] = [
+  "ALL",
+  "PLANNED",
+  "ACTIVE",
+  "PAUSED",
+  "STARTED_SAVING",
+  "DONE",
 ]
 
+const BADGES: Record<GoalEventType, React.ReactElement> = {
+  PLANNED: <Badge variant="outline">Planned</Badge>,
+  ACTIVE: <Badge>Active</Badge>,
+  PAUSED: <Badge variant="destructive">Paused</Badge>,
+  STARTED_SAVING: <Badge>Started Saving</Badge>,
+  DONE: <Badge className="bg-(--success)">Done</Badge>,
+}
+
 export function Goals() {
+  const user = useAuth()
+  const queryGoalsForUser = queryGoals(user.uid)
+  const {
+    isPending,
+    error,
+    data: goals,
+  } = useQuery({
+    queryKey: ["goals"],
+    queryFn: queryGoalsForUser,
+  })
+
+  const { navigate } = useNavigator()
+
   const [tab, setTab] = useState(0)
+
+  if (isPending) return <FullScreenLoader />
+
+  if (error) return <FullScreenError msg="Failed to get goals" />
+
+  const renderCard = (g: Goal) => {
+    const state = g.state
+    return (
+      <Card key={g.id}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            {g.name}
+            {BADGES[state.type]}
+          </CardTitle>
+          <CardDescription>{g.description}</CardDescription>
+          <CardAction>
+            <DynamicIcon name={g.icon as IconName} />
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-1">
+          {formatAmount(state.amount, { withCurrency: true })}
+        </CardContent>
+        <CardFooter className="capitalize">
+          {`${state.type.toLowerCase().replace("_", " ")} On ${formatDate(state.startDate)}`}
+        </CardFooter>
+      </Card>
+    )
+  }
+
+  const goalsFiltered = goals.filter((g) =>
+    tab === 0 ? true : g.state.type === TABS[tab]
+  )
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,135 +99,17 @@ export function Goals() {
             key={t}
             variant={i === tab ? "default" : "secondary"}
             onClick={() => setTab(i)}
+            className="capitalize"
           >
-            {t}
+            {t.toLowerCase().replace("_", " ")}
           </Badge>
         ))}
       </div>
-      <div className="flex flex-col gap-4">
-        {/* Active card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex flex-col items-start">
-              <div className="flex w-full justify-between">
-                <Badge>Active</Badge>
-                <House strokeWidth={1} />
-              </div>
-              <div className="flex w-full flex-col">
-                <div className="text-lg font-bold capitalize">
-                  Mortage repayment
-                </div>
-                <div className="text-sm">₹ 30,00,00,000</div>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            <Field className="w-full max-w-sm">
-              <FieldLabel htmlFor="progress-upload">
-                <span>Completion progress</span>
-                <span className="ml-auto">66%</span>
-              </FieldLabel>
-              <Progress value={66} id="progress-upload" />
-            </Field>
-            <p className="mt-1 text-xs text-(--muted-foreground)">
-              Started On Oct 12, 2024
-            </p>
-          </CardContent>
-        </Card>
-        {/* Started saving card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex flex-col items-start">
-              <div className="flex w-full justify-between">
-                <Badge variant="secondary">Started Saving</Badge>
-                <PlaneTakeoff strokeWidth={1} />
-              </div>
-              <div className="flex w-full flex-col">
-                <div className="text-lg font-bold capitalize">
-                  Mortage repayment
-                </div>
-                <div className="text-sm">₹ 30,00,00,000</div>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            <Field className="w-full max-w-sm">
-              <FieldLabel htmlFor="progress-upload">
-                <span>Completion progress</span>
-                <span className="ml-auto">66%</span>
-              </FieldLabel>
-              <Progress value={66} id="progress-upload" />
-            </Field>
-            <p className="mt-1 text-xs text-(--muted-foreground)">
-              Started Saving On Oct 12, 2024
-            </p>
-          </CardContent>
-        </Card>
-        {/* Planned */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex flex-col items-start">
-              <div className="flex w-full justify-between">
-                <Badge variant="outline">Planned</Badge>
-                <Car strokeWidth={1} />
-              </div>
-              <div className="flex w-full flex-col">
-                <div className="text-lg font-bold capitalize">To Buy Car</div>
-                <div className="text-sm">₹ 30,00,00,000</div>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            <p className="mt-1 text-xs text-(--muted-foreground)">
-              Upcoming commitment
-            </p>
-          </CardContent>
-        </Card>
-        {/* Paused */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex flex-col items-start">
-              <div className="flex w-full justify-between">
-                <Badge variant="destructive">Paused</Badge>
-                <Laptop strokeWidth={1} className="text-(--destructive)" />
-              </div>
-              <div className="flex w-full flex-col">
-                <div className="text-lg font-bold capitalize">Laptop</div>
-                <div className="text-sm">₹ 30,00,00,000</div>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            <Alert variant="default" className="bg-(--primary)/10">
-              <Info strokeWidth={1} />
-              <AlertDescription>
-                Paused due to budget rellocation
-              </AlertDescription>
-            </Alert>
-          </CardContent>
-        </Card>
-        {/* Done */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex flex-col items-start">
-              <div className="flex w-full justify-between">
-                <Badge className="bg-(--success)">Done</Badge>
-                <Check className="text-(--success)" />
-              </div>
-              <div className="flex w-full flex-col">
-                <div className="text-lg font-bold capitalize">Student Loan</div>
-                <div className="text-sm">₹ 30,00,00,000</div>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            <p className="mt-1 text-xs text-(--muted-foreground)">
-              Completed On Oct 12, 2024
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-      <Button className="fixed right-6 bottom-20 h-12 w-12 rounded-full">
+      <div className="flex flex-col gap-4">{goalsFiltered.map(renderCard)}</div>
+      <Button
+        className="fixed right-6 bottom-20 h-12 w-12 rounded-full"
+        onClick={() => navigate(ROUTE_NAMES.ADD_GOAL)}
+      >
         <Plus />
       </Button>
     </div>

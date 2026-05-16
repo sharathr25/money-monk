@@ -1,6 +1,5 @@
 import {
   createBrowserRouter,
-  createContext,
   Outlet,
   redirect,
   type RouteObject,
@@ -8,8 +7,8 @@ import {
 import { Home } from "@/pages/home"
 import { Layout } from "./components/Layout"
 import { lazy } from "react"
-import type { User } from "firebase/auth"
 import { getLoggedInUser } from "@workspace/api/auth/index"
+import { AuthProvider } from "./components/AuthProvider"
 
 export const ROUTE_PATHS = {
   ROOT: "/",
@@ -99,8 +98,7 @@ const routes: RouteObject[] = [
       },
       {
         path: ROUTE_PATHS.AUTH,
-        Component: () => <Outlet />,
-        middleware: [authMiddleware],
+        Component: () => <AuthProvider />,
         children: [
           {
             index: true,
@@ -144,6 +142,10 @@ const routes: RouteObject[] = [
           },
           {
             path: ROUTE_PATHS.GOALS,
+            Component: Goals,
+          },
+          {
+            path: ROUTE_PATHS.ADD_GOAL,
             Component: AddGoal,
           },
           {
@@ -159,17 +161,5 @@ const routes: RouteObject[] = [
     ],
   },
 ]
-
-const userContext = createContext<User>()
-
-function authMiddleware({ context }: { context: any }) {
-  const user = getLoggedInUser()
-
-  if (!user) {
-    throw redirect(ROUTE_NAMES.SIGN_IN)
-  }
-
-  context.set(userContext, user)
-}
 
 export const router = () => createBrowserRouter(routes)
