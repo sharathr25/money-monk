@@ -1,8 +1,4 @@
-import { Button } from "@workspace/ui/components/button"
-import { ArrowDownUp, Cog } from "lucide-react"
 import dayjs from "dayjs"
-import { useNavigator } from "@/hooks/useNavigator"
-import { ROUTE_NAMES } from "@/routes"
 import { useEffect, useState } from "react"
 import type { CashFlow } from "@workspace/core/types/cashFlow"
 import { Spinner } from "@workspace/ui/components/spinner"
@@ -12,10 +8,9 @@ import { ClosingBalance } from "./ClosingBalance"
 import { NetCashFlow } from "./NetCashFlow"
 import { Templates } from "./Templates"
 import { updateUserData } from "@workspace/api/db/users"
+import { Month } from "./Month"
 
 export function CashFlow() {
-  const { navigate } = useNavigator()
-
   const [cashFlow, setCashFlow] = useState<CashFlow>()
   const [loading, setLoading] = useState(false)
 
@@ -57,30 +52,18 @@ export function CashFlow() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-end gap-2">
-        <div className="text-2xl/7 font-extrabold">
-          {dayjs().format("MMMM")}
-        </div>
-        <div className="text-sm">{dayjs().format("YYYY")}</div>
-      </div>
       <div className="flex gap-4">
+        <Month />
         <OpeningBalance
           openingBalance={cashFlow.openingBalance}
           updateOpeningBalance={updateOpeningBalance}
         />
-        <NetCashFlow netCashFlow={cashFlow.netCashFlow} />
       </div>
       <div className="flex gap-4">
+        <NetCashFlow netCashFlow={cashFlow.netCashFlow} />
         <ClosingBalance closingBalance={cashFlow.closingBalance} />
       </div>
       <Templates cashFlow={cashFlow} />
-      <Button
-        className="fixed right-6 bottom-20 h-12 w-20 rounded-full"
-        onClick={() => navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATES)}
-      >
-        <ArrowDownUp />
-        <Cog />
-      </Button>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { amountToDouble } from "@workspace/ui/lib/utils"
 import { CashFlowTemplateForm } from "@/components/CashFlowTemplateForm"
 import { useState } from "react"
 import { useNavigator } from "@/hooks/useNavigator"
+import { NavBack } from "@/components/NavBack"
 
 type AddCashFlowFormInputs = {
   name: string
@@ -41,6 +42,7 @@ export function AddCashFlowTemplate() {
 
   return (
     <div className="flex flex-1 flex-col gap-2">
+      <NavBack />
       <div>
         <h1 className="text-xl font-bold">Add Cash Flow</h1>
         <p className="text-sm">Add your recurring/one-time income/expense</p>

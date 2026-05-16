@@ -71,16 +71,16 @@ export const TemplateList = ({
             {!!t.date && t.frequency === "ONE_TIME" && (
               <span className={cn("flex items-center gap-1")}>
                 {old ? (
-                  <CalendarCheck className="size-3 text-(--primary)" />
+                  <CalendarCheck className="size-3.5 text-(--primary)" />
                 ) : (
-                  <Calendar className="size-3 text-(--primary)" />
+                  <Calendar className="size-3.5 text-(--primary)" />
                 )}
                 {formatDate(t.date)}
               </span>
             )}
             {t.frequency === "MONTHLY" && (
               <span className="flex items-center gap-1">
-                <Repeat className="size-3 text-(--primary)" />
+                <Repeat className="size-3.5 text-(--primary)" />
                 {!!t.day && `On ${formatDayOfMonth(t.day)}`}
               </span>
             )}

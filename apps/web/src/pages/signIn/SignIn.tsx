@@ -2,6 +2,7 @@ import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { signInWithGoogle } from "@workspace/api/auth/index"
 import { Button } from "@workspace/ui/components/button"
+import { LogIn } from "lucide-react"
 
 export function SignIn() {
   const navigate = useNavigator()
@@ -12,9 +13,15 @@ export function SignIn() {
   }
 
   return (
-    <div className="flex">
-      <h1 className="font-medium">SignIn</h1>
-      <Button onClick={onClick}>Login with google</Button>
+    <div className="flex flex-1 flex-col gap-2">
+      <div>
+        <h1 className="text-xl font-bold">Sign In</h1>
+        <p className="text-sm">Welcome to MoneyMonk 👋</p>
+      </div>
+      <Button onClick={onClick}>
+        <LogIn />
+        Login With Google
+      </Button>
     </div>
   )
 }

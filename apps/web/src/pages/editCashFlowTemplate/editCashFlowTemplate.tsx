@@ -4,6 +4,7 @@ import {
 } from "@/components/CashFlowTemplateForm"
 import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { NavBack } from "@/components/NavBack"
 import { useNavigator } from "@/hooks/useNavigator"
 import {
   getCashFlowTemplate,
@@ -86,6 +87,7 @@ export function EditCashFlowTemplate() {
 
   return (
     <div className="flex flex-1 flex-col gap-2">
+      <NavBack />
       <div>
         <h1 className="text-xl font-bold">Edit Cash Flow</h1>
         <p className="text-sm">Edit your recurring/one-time income/expense</p>

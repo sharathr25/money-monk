@@ -14,6 +14,10 @@ export const onAuthStateChanged = (cb: NextOrObserver<User | null>) => {
   auth.onAuthStateChanged(cb)
 }
 
-export const getLoggedInUser = () => {
-  return auth.currentUser || { uid: "" }
+export const getLoggedInUser = (): User | null => {
+  return auth.currentUser
+}
+
+export const signOut = async () => {
+  auth.signOut()
 }

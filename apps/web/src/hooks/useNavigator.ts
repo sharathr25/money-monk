@@ -8,16 +8,30 @@ export const useNavigator = () => {
     routeName: RouteName,
     pathParams: Record<string, string> = {}
   ) => {
-    let to = `${routeName}`
-    Object.keys(pathParams).forEach((k) => {
-      to = routeName.replace(`:${k}`, pathParams[k])
-    })
-    _navigate(to)
+    _navigate(getTo(routeName, pathParams))
   }
 
   const goBack = () => {
     _navigate(-1)
   }
 
-  return { navigate, goBack }
+  const replace = (
+    routeName: RouteName,
+    pathParams: Record<string, string> = {}
+  ) => {
+    _navigate(getTo(routeName, pathParams), { replace: true })
+  }
+
+  const getTo = (
+    routeName: RouteName,
+    pathParams: Record<string, string> = {}
+  ) => {
+    let to = `${routeName}`
+    Object.keys(pathParams).forEach((k) => {
+      to = routeName.replace(`:${k}`, pathParams[k])
+    })
+    return to
+  }
+
+  return { navigate, replace, goBack }
 }

@@ -23,8 +23,16 @@ import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
 import { cn, formatAmount } from "@workspace/ui/lib/utils"
 import dayjs from "dayjs"
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@workspace/ui/components/item"
+import { FullScreenLoader } from "@/components/FullScreenLoader"
 
 export function CashFlowProjection() {
+  const [loading, setLoading] = useState(false)
   const [cashFlowProjections, setCashFlowProjections] = useState<
     CashFlowProjection[]
   >([])
@@ -38,10 +46,13 @@ export function CashFlowProjection() {
 
   const init = async () => {
     try {
+      setLoading(true)
       const cashFlowProjections = await getCashFlowProjection(6)
       setCashFlowProjections(cashFlowProjections)
     } catch (e) {
       console.log(e)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -55,6 +66,8 @@ export function CashFlowProjection() {
   const surplusProjection = cashFlowProjections.find(
     (cp) => cp.closingBalance > 250000
   )
+
+  if (loading) return <FullScreenLoader />
 
   return (
     <div className="flex flex-col gap-4">
@@ -143,48 +156,62 @@ export function CashFlowProjection() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col items-start">
-                    <div>Opening Balance</div>
-                    <div className="text-bold">
-                      {formatAmount(cp.openingBalance, { withCurrency: true })}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <div>Closing Balance</div>
-                    <div className="text-bold">
-                      {formatAmount(cp.closingBalance, { withCurrency: true })}
-                    </div>
-                  </div>
+                <div className="flex">
+                  <Item className="p-0">
+                    <ItemContent>
+                      <ItemTitle>Opening Balance</ItemTitle>
+                      <ItemDescription>
+                        {formatAmount(cp.openingBalance, {
+                          withCurrency: true,
+                        })}
+                      </ItemDescription>
+                    </ItemContent>
+                  </Item>
+                  <Item className="p-0">
+                    <ItemContent>
+                      <ItemTitle>Closing Balance</ItemTitle>
+                      <ItemDescription>
+                        {formatAmount(cp.closingBalance, {
+                          withCurrency: true,
+                        })}
+                      </ItemDescription>
+                    </ItemContent>
+                  </Item>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col items-start">
-                    <div>Income</div>
-                    <div className="text-bold text-(--success)">
-                      {formatAmount(cp.totalIncome, {
-                        withCurrency: true,
-                        withSign: true,
-                      })}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div>Expenses</div>
-                    <div className="text-bold text-(--destructive)">
-                      {formatAmount(-1 * cp.totalExpenses, {
-                        withCurrency: true,
-                        withSign: true,
-                      })}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <div>Net Cash</div>
-                    <div className="text-bold">
-                      {formatAmount(cp.netCashFlow, {
-                        withCurrency: true,
-                        withSign: true,
-                      })}
-                    </div>
-                  </div>
+                <div className="flex">
+                  <Item className="p-0">
+                    <ItemContent>
+                      <ItemTitle>Income</ItemTitle>
+                      <ItemDescription className="text-(--success)">
+                        {formatAmount(cp.totalIncome, {
+                          withCurrency: true,
+                          withSign: true,
+                        })}
+                      </ItemDescription>
+                    </ItemContent>
+                  </Item>
+                  <Item className="p-0">
+                    <ItemContent>
+                      <ItemTitle>Expenses</ItemTitle>
+                      <ItemDescription className="text-(--destructive)">
+                        {formatAmount(-1 * cp.totalExpenses, {
+                          withCurrency: true,
+                          withSign: true,
+                        })}
+                      </ItemDescription>
+                    </ItemContent>
+                  </Item>
+                  <Item className="p-0">
+                    <ItemContent>
+                      <ItemTitle>Net Cash</ItemTitle>
+                      <ItemDescription>
+                        {formatAmount(cp.netCashFlow, {
+                          withCurrency: true,
+                          withSign: true,
+                        })}
+                      </ItemDescription>
+                    </ItemContent>
+                  </Item>
                 </div>
               </CardContent>
             </Card>

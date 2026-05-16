@@ -20,6 +20,7 @@ import { Plus, FolderCode } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { TemplateList } from "@/components/TemplateList"
+import { NavBack } from "@/components/NavBack"
 
 export function CashFlowTemplates() {
   const { navigate } = useNavigator()
@@ -74,6 +75,7 @@ export function CashFlowTemplates() {
 
   return (
     <div className="flex flex-1 flex-col gap-2">
+      <NavBack />
       <div>
         <h1 className="text-xl font-bold">Cash Flow Templates</h1>
         <p className="text-sm">Your recurring/one time income and expenses</p>

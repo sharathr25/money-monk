@@ -49,6 +49,7 @@ import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router"
 import { Spinner } from "@workspace/ui/components/spinner"
+import { NavBack } from "@/components/NavBack"
 
 export function CashFlowTemplate() {
   const { templateId } = useParams()
@@ -113,6 +114,7 @@ export function CashFlowTemplate() {
 
   return (
     <div className="flex flex-1 flex-col gap-3">
+      <NavBack />
       <Card className="flex flex-1 items-center justify-center bg-(--primary) p-10 text-(--secondary)">
         <DynamicIcon
           name={template.icon as IconName}

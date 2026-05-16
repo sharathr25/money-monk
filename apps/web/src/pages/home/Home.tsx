@@ -1,9 +1,13 @@
+import { UserAvatar } from "@/components/UserAvatar"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import { getLoggedInUser } from "@workspace/api/auth/index"
 import { Button } from "@workspace/ui/components/button"
-import { Target, ChartNoAxesCombined, ArrowDownUp } from "lucide-react"
-import { useEffect } from "react"
+import {
+  Target,
+  ChartNoAxesCombined,
+  ArrowDownUp,
+  LayoutDashboard,
+} from "lucide-react"
 import { Outlet } from "react-router"
 
 export function Home() {
@@ -14,6 +18,11 @@ export function Home() {
       label: "Cash Flow",
       to: ROUTE_NAMES.ROOT,
       Icon: ArrowDownUp,
+    },
+    {
+      label: "Templates",
+      to: ROUTE_NAMES.CASH_FLOW_TEMPLATES,
+      Icon: LayoutDashboard,
     },
     {
       label: "Projection",
@@ -27,23 +36,21 @@ export function Home() {
     },
   ]
 
-  useEffect(() => {
-    if (!getLoggedInUser().uid) {
-      navigate(ROUTE_NAMES.SIGN_IN)
-    }
-  }, [])
-
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mb-20 flex flex-1 flex-col">
+      <div className="fixed top-0 left-0 z-99 flex w-full items-center justify-between bg-(--background) px-6 py-3">
+        <h1 className="text-xl font-bold">Home</h1>
+        <UserAvatar />
+      </div>
+      <div className="mt-11 mb-20 flex flex-1 flex-col">
         <Outlet />
       </div>
-      <div className="fixed bottom-0 left-0 flex h-16 w-full items-center justify-between bg-(--background)">
+      <div className="fixed bottom-0 left-0 z-99 flex w-full items-center justify-between bg-(--background) py-3">
         {links.map(({ label, to, Icon }) => (
           <Button
             key={label}
             variant="ghost"
-            className="flex h-8 basis-1/3 flex-col"
+            className="flex h-8 flex-1 basis-1/4 flex-col"
             onClick={() => navigate(to)}
           >
             <Icon />
