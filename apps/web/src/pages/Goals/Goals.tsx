@@ -7,7 +7,17 @@ import { ROUTE_NAMES } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { queryGoals } from "@workspace/api/db/goals"
 import type { Goal, GoalStatus } from "@workspace/core/types/goals"
-import { Badge } from "@workspace/ui/components/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@workspace/ui/components/alert-dialog"
 import { Button } from "@workspace/ui/components/button"
 import {
   Card,
@@ -25,34 +35,45 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@workspace/ui/components/empty"
+import { Field, FieldLabel } from "@workspace/ui/components/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
-import { CirclePlus, FolderCode, Plus } from "lucide-react"
+import { CirclePlus, Filter, FolderCode, Plus, Save, X } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
 
-const TABS: (GoalStatus | "ALL")[] = [
-  "ALL",
-  "PLANNED",
-  "ACTIVE",
-  "STARTED_SAVING",
-  "DONE",
-]
+const DEFAULT_QUERY = { status: "ALL" as GoalStatus | "ALL" }
 
 export function Goals() {
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid).bind(null, {})
+  const { handleSubmit, setValue } = useForm<{ status: GoalStatus | "ALL" }>({
+    defaultValues: DEFAULT_QUERY,
+  })
+  const [filters, setFilters] = useState(DEFAULT_QUERY)
   const {
     isPending,
+    data: goals = [],
     error,
-    data: goals,
   } = useQuery({
-    queryKey: ["goals"],
-    queryFn: queryGoalsForUser,
+    queryKey: ["cashflow-templates", filters],
+    queryFn: queryGoals(user.uid).bind(null, filters),
   })
+  const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
+
+  const onSubmit = (filters: { status: GoalStatus | "ALL" }) => {
+    setFilters(filters)
+    setFiltersDialogOpen(false)
+  }
 
   const { navigate } = useNavigator()
-
-  const [tab, setTab] = useState(0)
 
   if (isPending) return <FullScreenLoader />
 
@@ -85,10 +106,6 @@ export function Goals() {
     )
   }
 
-  const goalsFiltered = goals.filter((g: Goal) =>
-    tab === 0 ? true : g.status === TABS[tab]
-  )
-
   const NoGoals = () => (
     <Empty className="border border-dashed">
       <EmptyHeader>
@@ -110,20 +127,57 @@ export function Goals() {
         <h1 className="text-xl font-extrabold">Commitments</h1>
         <p>Your financial journeys and milestones.</p>
       </div>
-      <div className="no-scrollbar flex w-full flex-1 gap-2 overflow-x-scroll">
-        {TABS.map((t, i) => (
-          <Badge
-            key={t}
-            variant={i === tab ? "default" : "secondary"}
-            onClick={() => setTab(i)}
-            className="capitalize"
-          >
-            {t.toLowerCase().replace("_", " ")}
-          </Badge>
-        ))}
+      <div className="flex items-center justify-between">
+        <h2>Filters</h2>
+        <AlertDialog
+          open={filtersDialogOpen}
+          onOpenChange={setFiltersDialogOpen}
+        >
+          <AlertDialogTrigger asChild>
+            <Button variant="outline">
+              <Filter />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent size="sm">
+            <AlertDialogHeader className="flex flex-col items-start">
+              <AlertDialogTitle>Change Filters</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription>
+              Apply filters to limit result
+            </AlertDialogDescription>
+            <Field>
+              <FieldLabel htmlFor="type">Type</FieldLabel>
+              <Select
+                defaultValue={DEFAULT_QUERY.status}
+                onValueChange={(v: GoalStatus) => setValue("status", v)}
+              >
+                <SelectTrigger id="type" className="!h-11 capitalize">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All</SelectItem>
+                  {GOAL_STATUSES.map((s) => (
+                    <SelectItem value={s} key={s} className="capitalize">
+                      {s.toLowerCase().replace("_", " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <AlertDialogFooter>
+              <AlertDialogCancel>
+                <X />
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={handleSubmit(onSubmit)}>
+                <Save /> Apply
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <div className="flex flex-col gap-4">
-        {goalsFiltered.length ? goalsFiltered.map(renderCard) : <NoGoals />}
+        {goals.length ? goals.map(renderCard) : <NoGoals />}
       </div>
       <Button
         className="fixed right-6 bottom-20 h-12 w-12 rounded-full"

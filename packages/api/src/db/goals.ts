@@ -49,7 +49,7 @@ export const queryGoals =
   async ({ status }: GoalQuery = {}): Promise<Goal[]> => {
     const contraints: QueryCompositeFilterConstraint[] = []
 
-    if (status) {
+    if (status && status !== "ALL") {
       contraints.push(
         and(or(...status.split(",").map((s) => where("status", "==", s))))
       )
