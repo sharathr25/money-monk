@@ -1,14 +1,10 @@
-export type GoalEventType =
-  | "PLANNED"
-  | "ACTIVE"
-  | "PAUSED"
-  | "STARTED_SAVING"
-  | "DONE"
+import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
 
-export type GoalEvent = {
-  type: GoalEventType
+export type GoalStatus = (typeof GOAL_STATUSES)[number]
+
+export type GoalStage = {
+  status: GoalStatus
   startDate: Date
-  amount: number
 }
 
 export type SaveGoalSpec = {
@@ -16,17 +12,16 @@ export type SaveGoalSpec = {
   name: string
   icon: string
   estimatedAmount: number
+  status: GoalStatus
 }
 
-export type Goal = Omit<
-  SaveGoalSpec & {
-    id: string
-    createdAt: Date
-    updatedAt: Date
-    events: GoalEvent[]
-    state: GoalEvent
-  },
-  "estimatedAmount"
->
+export type Goal = SaveGoalSpec & {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+  stages: GoalStage[]
+}
 
-export type UpdateGoalSpec = SaveGoalSpec
+export type UpdateGoalSpec = SaveGoalSpec & {
+  stages: GoalStage[]
+}

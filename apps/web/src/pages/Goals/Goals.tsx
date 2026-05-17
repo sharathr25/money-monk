@@ -1,11 +1,12 @@
 import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { GoalBadge } from "@/components/GoalBadge"
 import { useAuth } from "@/hooks/useAuth"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { queryGoals } from "@workspace/api/db/goals"
-import type { Goal, GoalEventType } from "@workspace/core/types/goals"
+import type { Goal, GoalStatus } from "@workspace/core/types/goals"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -17,12 +18,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty"
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
-import { Plus } from "lucide-react"
+import { CirclePlus, FolderCode, Plus } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useState } from "react"
 
-const TABS: (GoalEventType | "ALL")[] = [
+const TABS: (GoalStatus | "ALL")[] = [
   "ALL",
   "PLANNED",
   "ACTIVE",
@@ -30,14 +38,6 @@ const TABS: (GoalEventType | "ALL")[] = [
   "STARTED_SAVING",
   "DONE",
 ]
-
-const BADGES: Record<GoalEventType, React.ReactElement> = {
-  PLANNED: <Badge variant="outline">Planned</Badge>,
-  ACTIVE: <Badge>Active</Badge>,
-  PAUSED: <Badge variant="destructive">Paused</Badge>,
-  STARTED_SAVING: <Badge>Started Saving</Badge>,
-  DONE: <Badge className="bg-(--success)">Done</Badge>,
-}
 
 export function Goals() {
   const user = useAuth()
@@ -57,16 +57,21 @@ export function Goals() {
 
   if (isPending) return <FullScreenLoader />
 
+  console.log(error)
+
   if (error) return <FullScreenError msg="Failed to get goals" />
 
   const renderCard = (g: Goal) => {
-    const state = g.state
+    const lastStage = g.stages[g.stages.length - 1]
     return (
-      <Card key={g.id}>
+      <Card
+        key={g.id}
+        onClick={() => navigate(ROUTE_NAMES.GOAL, { goalId: g.id })}
+      >
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             {g.name}
-            {BADGES[state.type]}
+            <GoalBadge type={g.status} />
           </CardTitle>
           <CardDescription>{g.description}</CardDescription>
           <CardAction>
@@ -74,17 +79,32 @@ export function Goals() {
           </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-1">
-          {formatAmount(state.amount, { withCurrency: true })}
+          {formatAmount(g.estimatedAmount, { withCurrency: true })}
         </CardContent>
-        <CardFooter className="capitalize">
-          {`${state.type.toLowerCase().replace("_", " ")} On ${formatDate(state.startDate)}`}
+        <CardFooter className="py-1 capitalize">
+          {`${g.status.toLowerCase().replace("_", " ")} On ${formatDate(lastStage.startDate)}`}
         </CardFooter>
       </Card>
     )
   }
 
   const goalsFiltered = goals.filter((g) =>
-    tab === 0 ? true : g.state.type === TABS[tab]
+    tab === 0 ? true : g.status === TABS[tab]
+  )
+
+  const NoGoals = () => (
+    <Empty className="border border-dashed">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <FolderCode />
+        </EmptyMedia>
+        <EmptyTitle className="capitalize">No Goals Yet</EmptyTitle>
+        <EmptyDescription>
+          Start by clicking on <CirclePlus className="inline size-5" /> to add
+          your first goal
+        </EmptyDescription>
+      </EmptyHeader>
+    </Empty>
   )
 
   return (
@@ -105,7 +125,9 @@ export function Goals() {
           </Badge>
         ))}
       </div>
-      <div className="flex flex-col gap-4">{goalsFiltered.map(renderCard)}</div>
+      <div className="flex flex-col gap-4">
+        {goalsFiltered.length ? goalsFiltered.map(renderCard) : <NoGoals />}
+      </div>
       <Button
         className="fixed right-6 bottom-20 h-12 w-12 rounded-full"
         onClick={() => navigate(ROUTE_NAMES.ADD_GOAL)}

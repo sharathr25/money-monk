@@ -10,13 +10,10 @@ import {
 } from "@workspace/ui/components/item"
 import { MoveLeft } from "lucide-react"
 import { UserAvatar } from "./UserAvatar"
-import { useRouteLoaderData } from "react-router"
 
 export function Header() {
   const user = getLoggedInUser()
   const { goBack, navigate } = useNavigator()
-
-  console.log(useRouteLoaderData("app"))
 
   return (
     <Item size="sm" className="px-0">

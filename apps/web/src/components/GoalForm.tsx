@@ -22,15 +22,27 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@workspace/ui/components/input-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import {
+  GOAL_STATUSES,
+  STATUS_TO_AMOUNT_LABEL,
+} from "@workspace/ui/constants/goals"
+import type { GoalStatus } from "@workspace/core/types/goals"
 
 const ICONS_PAGE_SIZE = 10
 
 const DEFAULT_GOAL = {
   name: "",
-  amount: "",
+  estimatedAmount: "",
   iconNameFilter: "bank",
   icon: "banknote",
-  estimatedAmount: "",
+  status: "PLANNED" as GoalStatus,
 }
 
 export type GoalFormInputs = {
@@ -39,6 +51,7 @@ export type GoalFormInputs = {
   icon: string
   description?: string
   estimatedAmount: string
+  status: GoalStatus
 }
 
 export const GoalForm = ({
@@ -58,6 +71,7 @@ export const GoalForm = ({
 
   const iconNameFilter = watch("iconNameFilter")
   const icon = watch("icon")
+  const status = watch("status")
 
   const filteredIcons: IconName[] = iconNameFilter
     ? iconNames
@@ -118,7 +132,9 @@ export const GoalForm = ({
           </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="name">Estimated Amount</FieldLabel>
+              <FieldLabel htmlFor="name">
+                {STATUS_TO_AMOUNT_LABEL[status]}
+              </FieldLabel>
               <InputGroup className="h-11">
                 <InputGroupInput
                   id="amount"
@@ -133,7 +149,26 @@ export const GoalForm = ({
               </InputGroup>
             </Field>
           </div>
-          <div className="flex gap-2"></div>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel htmlFor="type">Status</FieldLabel>
+              <Select
+                defaultValue={defaultValues.status}
+                onValueChange={(v: GoalStatus) => setValue("status", v)}
+              >
+                <SelectTrigger id="type" className="!h-11 capitalize">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GOAL_STATUSES.map((t) => (
+                    <SelectItem value={t} key={t} className="capitalize">
+                      {t.toLowerCase().replace("_", " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
           <Button type="submit" className="h-13 w-full">
             {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}

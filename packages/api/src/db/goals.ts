@@ -17,28 +17,27 @@ import { db } from "../firebase"
 import { GOALS, USERS } from "./collections"
 import type {
   Goal,
-  GoalEvent,
+  GoalStage,
   SaveGoalSpec,
   UpdateGoalSpec,
 } from "@workspace/core/type/goals"
 import { toDate } from "./mapper"
 
 const toGoal = (docSnap: DocumentSnapshot) => {
-  const events: GoalEvent[] = docSnap
-    .get("events")
+  const stages: GoalStage[] = docSnap
+    .get("stages")
     .map((e: DocumentData) => ({ ...e, startDate: toDate(e.startDate) }))
 
-  const state = events[events.length - 1]
-
   return {
-    description: docSnap.get("description"),
-    name: docSnap.get("name"),
-    icon: docSnap.get("icon"),
     id: docSnap.id,
+    name: docSnap.get("name"),
+    description: docSnap.get("description"),
+    icon: docSnap.get("icon"),
+    status: docSnap.get("status"),
+    estimatedAmount: docSnap.get("estimatedAmount"),
     createdAt: toDate(docSnap.get("createdAt")),
     updatedAt: toDate(docSnap.get("updatedAt")),
-    events,
-    state,
+    stages,
   }
 }
 
@@ -69,11 +68,10 @@ export const saveGoal = (uid: string) => async (goal: SaveGoalSpec) => {
     ...goal,
     createdAt: date,
     updatedAt: date,
-    events: [
+    stages: [
       {
-        type: "PLANNED",
+        status: goal.status,
         startDate: date,
-        amount: goal.estimatedAmount,
       },
     ],
   }
@@ -81,8 +79,6 @@ export const saveGoal = (uid: string) => async (goal: SaveGoalSpec) => {
   if (!goal.description) {
     delete doc.description
   }
-
-  delete doc.estimatedAmount
 
   await addDoc(collection(db, USERS, uid, GOALS), doc)
 }
@@ -98,6 +94,13 @@ export const updateGoal =
 
     if (!goal.description) {
       delete data.description
+    }
+
+    if (goal.status !== goal.stages[goal.stages.length - 1].status) {
+      goal.stages.push({
+        status: goal.status,
+        startDate: date,
+      })
     }
 
     delete data.id

@@ -16,7 +16,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@workspace/ui/components/tabs"
-import { Plus, FolderCode } from "lucide-react"
+import { Plus, FolderCode, CirclePlus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { TemplateList } from "@/components/TemplateList"
@@ -64,7 +64,8 @@ export function CashFlowTemplates() {
               No {type.toLowerCase()} Yet
             </EmptyTitle>
             <EmptyDescription>
-              Start by adding your first {type.toLowerCase()} below
+              Start by by clicking on <CirclePlus /> to add your first{" "}
+              {type.toLowerCase()}
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

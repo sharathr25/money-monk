@@ -1,75 +1,47 @@
-import {
-  CashFlowTemplateForm,
-  type CashFlowTemplateFormInputs,
-} from "@/components/CashFlowTemplateForm"
 import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { GoalForm, type GoalFormInputs } from "@/components/GoalForm"
 import { NavBack } from "@/components/NavBack"
+import { useAuth } from "@/hooks/useAuth"
 import { useNavigator } from "@/hooks/useNavigator"
-import {
-  getCashFlowTemplate,
-  updateCashFlowTemplate,
-} from "@workspace/api/db/index"
-import type { CashFlowTemplate } from "@workspace/core/types"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { getGoal, updateGoal } from "@workspace/api/db/goals"
 import { Button } from "@workspace/ui/components/button"
-import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
+import { amountToDouble } from "@workspace/ui/lib/utils"
 import { MoveLeft, RefreshCcw } from "lucide-react"
-import { useEffect, useState } from "react"
 import type { SubmitHandler } from "react-hook-form"
 import { useParams } from "react-router"
 import { toast } from "sonner"
 
 export function EditGoal() {
-  const { goalId } = useParams()
+  const { goalId = "" } = useParams()
   const { goBack } = useNavigator()
+  const user = useAuth()
+  const getGoalForUser = getGoal(user.uid)
+  const updateGoalForUser = updateGoal(user.uid).bind(null, goalId)
 
-  const [template, setTemplate] = useState<CashFlowTemplate>()
-  const [loading, setLoading] = useState(false)
-  const [updateApiLoading, setUpdateApiLoading] = useState(false)
+  const {
+    isPending: getGoalPending,
+    error: getGoalError,
+    data: goal,
+    refetch,
+  } = useQuery({
+    queryKey: ["goal-edit-" + goalId],
+    queryFn: async () => getGoalForUser(goalId),
+  })
 
-  const cashFlowTemplateId = goalId || ""
+  const { mutate, isPending: updateGoalPending } = useMutation({
+    mutationFn: updateGoalForUser,
+    onSuccess: () =>
+      toast.success("Update successful.", { onAutoClose: goBack }),
+    onError: () => toast.error("Update failed, Try again."),
+  })
 
-  const init = async () => {
-    try {
-      setLoading(true)
-      const cashFlowTemplate = await getCashFlowTemplate({
-        id: cashFlowTemplateId,
-      })
-      if (cashFlowTemplate) {
-        setTemplate(cashFlowTemplate)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
+  if (getGoalPending) return <FullScreenLoader />
 
-  useEffect(() => {
-    init()
-  }, [])
+  if (getGoalError) return <FullScreenError msg="Something went wrong" />
 
-  const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async (data) => {
-    try {
-      setUpdateApiLoading(true)
-      const { iconNameFilter, ...rest } = data
-      await updateCashFlowTemplate(cashFlowTemplateId, {
-        ...rest,
-        amount: amountToDouble(rest.amount),
-        day: rest.day ? parseInt(rest.day) : undefined,
-      })
-      toast.success("Update successful.", {
-        onAutoClose: goBack,
-      })
-    } catch (error) {
-      console.error(error)
-      toast.error("Update failed, Try again.")
-    } finally {
-      setUpdateApiLoading(false)
-    }
-  }
-
-  if (loading) return <FullScreenLoader />
-
-  if (!template)
+  if (!goal)
     return (
       <FullScreenError msg="Cash flow template not found">
         <div className="flex gap-2">
@@ -77,13 +49,25 @@ export function EditGoal() {
             <MoveLeft />
             Go back
           </Button>
-          <Button onClick={init}>
+          <Button onClick={() => refetch()}>
             <RefreshCcw />
             Refresh
           </Button>
         </div>
       </FullScreenError>
     )
+
+  const onSubmit: SubmitHandler<GoalFormInputs> = async ({
+    iconNameFilter,
+    estimatedAmount,
+    ...data
+  }) => {
+    mutate({
+      ...data,
+      estimatedAmount: amountToDouble(estimatedAmount),
+      stages: goal.stages,
+    })
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-2">
@@ -92,15 +76,14 @@ export function EditGoal() {
         <h1 className="text-xl font-bold">Edit Goal</h1>
         <p className="text-sm">Edit your goal</p>
       </div>
-      <CashFlowTemplateForm
+      <GoalForm
         formInputs={{
-          ...template,
-          amount: formatAmount(`${template.amount}`),
-          date: template.date || undefined,
-          day: template.day ? `${template.day}` : undefined,
+          ...goal,
+          estimatedAmount: `${goal.estimatedAmount}`,
+          status: goal.status,
         }}
         onSubmit={onSubmit}
-        loading={updateApiLoading}
+        loading={updateGoalPending}
       />
     </div>
   )

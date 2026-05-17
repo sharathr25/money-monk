@@ -4,7 +4,6 @@ import { auth, googleAuthProvider } from "../firebase"
 export const signInWithGoogle = async () => {
   try {
     await signInWithPopup(auth, googleAuthProvider)
-    console.log(getLoggedInUser())
   } catch (error: any) {
     console.error(error)
   }

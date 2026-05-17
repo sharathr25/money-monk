@@ -45,7 +45,7 @@ export function Home() {
       <div className="mt-11 mb-20 flex flex-1 flex-col">
         <Outlet />
       </div>
-      <div className="fixed bottom-0 left-0 z-99 flex w-full items-center justify-between bg-(--background) py-3">
+      <div className="fixed bottom-0 left-0 z-99 flex w-full items-center justify-between bg-(--background) py-5 pb-5">
         {links.map(({ label, to, Icon }) => (
           <Button
             key={label}

@@ -1,71 +1,73 @@
-import {
-  createBrowserRouter,
-  Outlet,
-  redirect,
-  type RouteObject,
-} from "react-router"
+import { createBrowserRouter, redirect, type RouteObject } from "react-router"
 import { Home } from "@/pages/home"
 import { Layout } from "./components/Layout"
 import { lazy } from "react"
-import { getLoggedInUser } from "@workspace/api/auth/index"
 import { AuthProvider } from "./components/AuthProvider"
+import Goal from "./pages/goal/index.ts"
+import EditGoal from "./pages/editGoal.tsx"
 
 export const ROUTE_PATHS = {
   ROOT: "/",
   AUTH: "auth",
   HOME: "home",
   CASH_FLOW_PROJECTION: "cash-flow-projection",
-  GOALS: "goals",
   CASH_FLOW_TEMPLATES: "cash-flow-templates",
-  CASH_FLOW_TEMPLATE: "cash-flow-template/:templateId",
+  CASH_FLOW_TEMPLATE: "cash-flow-templates/:templateId",
   ADD_CASH_FLOW_TEMPLATE: "cash-flow-templates/add",
   EDIT_CASH_FLOW_TEMPLATE: "cash-flow-templates/:templateId/edit",
-  ADD_GOAL: "add-goal",
+  GOALS: "goals",
+  GOAL: "goals/:goalId",
+  ADD_GOAL: "goals/add",
+  EDIT_GOAL: "goals/:goalId/edit",
   SETTINGS: "settings",
   SIGN_IN: "sign-in",
   PROFILE: "profile",
 } as const
 
+const {
+  ROOT,
+  AUTH,
+  HOME,
+  CASH_FLOW_PROJECTION,
+  GOALS,
+  CASH_FLOW_TEMPLATES,
+  CASH_FLOW_TEMPLATE,
+  ADD_CASH_FLOW_TEMPLATE,
+  EDIT_CASH_FLOW_TEMPLATE,
+  GOAL,
+  ADD_GOAL,
+  EDIT_GOAL,
+  SETTINGS,
+  SIGN_IN,
+  PROFILE,
+} = ROUTE_PATHS
+
+const rootPath = (...pathParts: string[]) => ROOT + pathParts.join("/")
+const authPath = (...pathParts: string[]) => rootPath(AUTH, ...pathParts)
+const homePath = (...pathParts: string[]) => authPath(HOME, ...pathParts)
+
 export const ROUTE_NAMES = {
-  ROOT: "/",
+  ROOT: ROOT,
 
-  AUTH: ROUTE_PATHS.ROOT + "auth",
+  // Authenticated routes
+  AUTH: authPath(),
+  HOME: authPath(HOME),
+  CASH_FLOW_TEMPLATE: authPath(CASH_FLOW_TEMPLATE),
+  ADD_CASH_FLOW_TEMPLATE: authPath(ADD_CASH_FLOW_TEMPLATE),
+  EDIT_CASH_FLOW_TEMPLATE: authPath(EDIT_CASH_FLOW_TEMPLATE),
+  GOAL: authPath(GOAL),
+  ADD_GOAL: authPath(ADD_GOAL),
+  EDIT_GOAL: authPath(EDIT_GOAL),
+  SETTINGS: authPath(SETTINGS),
+  PROFILE: authPath(PROFILE),
 
-  HOME: ROUTE_PATHS.ROOT + ROUTE_PATHS.AUTH + "/" + "home",
-  CASH_FLOW_TEMPLATES:
-    ROUTE_PATHS.ROOT + ROUTE_PATHS.AUTH + "/" + "cash-flow-templates",
-  CASH_FLOW_TEMPLATE:
-    ROUTE_PATHS.ROOT +
-    ROUTE_PATHS.AUTH +
-    "/" +
-    "cash-flow-template/:templateId",
-  ADD_CASH_FLOW_TEMPLATE:
-    ROUTE_PATHS.ROOT + ROUTE_PATHS.AUTH + "/" + "cash-flow-templates/add",
-  EDIT_CASH_FLOW_TEMPLATE:
-    ROUTE_PATHS.ROOT +
-    ROUTE_PATHS.AUTH +
-    "/" +
-    "cash-flow-templates/:templateId/edit",
-  ADD_GOAL: ROUTE_PATHS.ROOT + ROUTE_PATHS.AUTH + "/" + "add-goal",
-  SETTINGS: ROUTE_PATHS.ROOT + ROUTE_PATHS.AUTH + "/" + "settings",
-  PROFILE: ROUTE_PATHS.ROOT + ROUTE_PATHS.AUTH + "/" + "profile",
+  // Home
+  CASH_FLOW_TEMPLATES: homePath(CASH_FLOW_TEMPLATES),
+  CASH_FLOW_PROJECTION: homePath(CASH_FLOW_PROJECTION),
+  GOALS: homePath(GOALS),
 
-  CASH_FLOW_PROJECTION:
-    ROUTE_PATHS.ROOT +
-    ROUTE_PATHS.AUTH +
-    "/" +
-    ROUTE_PATHS.HOME +
-    "/" +
-    "cash-flow-projection",
-  GOALS:
-    ROUTE_PATHS.ROOT +
-    ROUTE_PATHS.AUTH +
-    "/" +
-    ROUTE_PATHS.HOME +
-    "/" +
-    "goals",
-
-  SIGN_IN: ROUTE_PATHS.ROOT + "sign-in",
+  // Public routes
+  SIGN_IN: rootPath(SIGN_IN),
 } as const
 
 export type RouteName = (typeof ROUTE_NAMES)[keyof typeof ROUTE_NAMES]
@@ -143,6 +145,14 @@ const routes: RouteObject[] = [
           {
             path: ROUTE_PATHS.GOALS,
             Component: Goals,
+          },
+          {
+            path: ROUTE_PATHS.GOAL,
+            Component: Goal,
+          },
+          {
+            path: ROUTE_PATHS.EDIT_GOAL,
+            Component: EditGoal,
           },
           {
             path: ROUTE_PATHS.ADD_GOAL,
