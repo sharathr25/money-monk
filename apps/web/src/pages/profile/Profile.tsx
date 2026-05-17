@@ -1,11 +1,12 @@
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { NavBack } from "@/components/NavBack"
 import { UserAvatar } from "@/components/UserAvatar"
+import { useAuth } from "@/hooks/useAuth"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import { getLoggedInUser, signOut } from "@workspace/api/auth/index"
+import { useQuery } from "@tanstack/react-query"
+import { signOut } from "@workspace/api/auth/index"
 import { getUserData } from "@workspace/api/db/users"
-import type { UserData } from "@workspace/core/types/user"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,21 +37,14 @@ import {
   SquareX,
   X,
 } from "lucide-react"
-import { useEffect, useState } from "react"
 
 export function Profile() {
-  const [loading, setLoading] = useState(false)
-  const [userData, setUserData] = useState<UserData>()
-  const user = getLoggedInUser()
+  const user = useAuth()
   const { replace } = useNavigator()
-
-  useEffect(() => {
-    setLoading(true)
-    getUserData()
-      .then(setUserData)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: userData, isPending: loading } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getUserData.bind(null, user.uid),
+  })
 
   const logOut = async () => {
     await signOut()

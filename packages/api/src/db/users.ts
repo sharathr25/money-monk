@@ -9,17 +9,10 @@ import { db } from "../firebase"
 import { USERS } from "./collections"
 import type { UserData, UserDataUpdateSpec } from "@workspace/core/type/user"
 import { DEFAULT } from "@workspace/core/type/index"
-import { getLoggedInUser } from "../auth/index"
 import { toDate } from "./mapper"
 
-export const getUserData = async (): Promise<UserData> => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot get without user")
-    throw new Error("User need to login")
-  }
-
-  const docSnap = await getDoc(doc(db, USERS, user.uid))
+export const getUserData = async (uid: string): Promise<UserData> => {
+  const docSnap = await getDoc(doc(db, USERS, uid))
 
   return {
     currency: docSnap.get("currency") || DEFAULT.CURRENCY,
@@ -30,20 +23,16 @@ export const getUserData = async (): Promise<UserData> => {
   }
 }
 
-export const updateUserData = async (userData: UserDataUpdateSpec) => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot update without user")
-    return
-  }
-  const date = new Date()
+export const updateUserData =
+  (uid: string) => async (userData: UserDataUpdateSpec) => {
+    const date = new Date()
 
-  const data: DocumentData = {
-    ...userData,
-    updatedAt: Timestamp.fromDate(date),
-  }
+    const data: DocumentData = {
+      ...userData,
+      updatedAt: Timestamp.fromDate(date),
+    }
 
-  await setDoc(doc(db, USERS, user.uid), data, {
-    merge: true,
-  })
-}
+    await setDoc(doc(db, USERS, uid), data, {
+      merge: true,
+    })
+  }

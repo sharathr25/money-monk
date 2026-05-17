@@ -18,7 +18,7 @@ import {
 } from "@workspace/ui/components/card"
 import { Lightbulb, TriangleAlert } from "lucide-react"
 import { Badge } from "@workspace/ui/components/badge"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
 import { cn, formatAmount } from "@workspace/ui/lib/utils"
@@ -30,12 +30,15 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { useAuth } from "@/hooks/useAuth"
+import { useQuery } from "@tanstack/react-query"
 
 export function CashFlowProjection() {
-  const [loading, setLoading] = useState(false)
-  const [cashFlowProjections, setCashFlowProjections] = useState<
-    CashFlowProjection[]
-  >([])
+  const user = useAuth()
+  const { data: cashFlowProjections = [], isPending: loading } = useQuery({
+    queryKey: ["projections", 6],
+    queryFn: getCashFlowProjection(user.uid).bind(null, 6),
+  })
 
   const chartConfig = {
     closingBalance: {
@@ -43,22 +46,6 @@ export function CashFlowProjection() {
       color: "#2D3A4B",
     },
   } satisfies ChartConfig
-
-  const init = async () => {
-    try {
-      setLoading(true)
-      const cashFlowProjections = await getCashFlowProjection(6)
-      setCashFlowProjections(cashFlowProjections)
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    init()
-  }, [])
 
   const shortFallProjection = cashFlowProjections.find(
     (cp) => cp.closingBalance < 0
