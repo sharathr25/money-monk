@@ -23,7 +23,6 @@ import type {
   CashFlowTemplate,
   UpdateCashFlowTemplate,
 } from "@workspace/core/type/cashFlowTemplates"
-import { getLoggedInUser } from "../auth/index"
 import { toDate } from "./mapper"
 
 const toCashFlowTemplate = (docSnap: DocumentSnapshot) => ({
@@ -40,135 +39,104 @@ const toCashFlowTemplate = (docSnap: DocumentSnapshot) => ({
   updatedAt: toDate(docSnap.get("updatedAt")),
 })
 
-export const queryCashFlowTemplates = async ({
-  type,
-  startDate,
-  endDate,
-}: CashFlowTemplateQuery): Promise<CashFlowTemplate[]> => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot save cash flow template without user")
-    return []
-  }
+export const queryCashFlowTemplates =
+  (uid: string) =>
+  async ({
+    type,
+    startDate,
+    endDate,
+  }: CashFlowTemplateQuery): Promise<CashFlowTemplate[]> => {
+    const contraints: QueryCompositeFilterConstraint[] = []
 
-  const contraints: QueryCompositeFilterConstraint[] = []
+    if (type) {
+      contraints.push(and(where("type", "==", type)))
+    }
 
-  if (type) {
-    contraints.push(and(where("type", "==", type)))
-  }
+    if (startDate) {
+      contraints.push(
+        or(where("date", "==", null), where("date", ">=", startDate))
+      )
+    }
 
-  if (startDate) {
-    contraints.push(
-      or(where("date", "==", null), where("date", ">=", startDate))
+    if (endDate) {
+      contraints.push(
+        or(where("date", "==", null), where("date", "<=", endDate))
+      )
+    }
+
+    const q = query(
+      collection(db, USERS, uid, CASH_FLOW_TEMPLATES),
+      and(...contraints)
     )
+
+    const querySnapshot = await getDocs(q)
+
+    return querySnapshot.docs.map(toCashFlowTemplate)
   }
 
-  if (endDate) {
-    contraints.push(or(where("date", "==", null), where("date", "<=", endDate)))
+export const getCashFlowTemplate =
+  (uid: string) =>
+  async ({ id }: { id: string }): Promise<CashFlowTemplate | null> => {
+    const docSnap = await getDoc(doc(db, USERS, uid, CASH_FLOW_TEMPLATES, id))
+
+    if (!docSnap.data()) return null
+
+    return toCashFlowTemplate(docSnap)
   }
 
-  const q = query(
-    collection(db, USERS, user.uid, CASH_FLOW_TEMPLATES),
-    and(...contraints)
-  )
+export const saveCashFlowTemplate =
+  (uid: string) => async (template: SaveCashFlowTemplateSpec) => {
+    const date = new Date()
 
-  const querySnapshot = await getDocs(q)
+    const doc: DocumentData = {
+      ...template,
+      createdAt: Timestamp.fromDate(date),
+      updatedAt: Timestamp.fromDate(date),
+    }
 
-  return querySnapshot.docs.map(toCashFlowTemplate)
-}
+    if (template.frequency === "ONE_TIME" && template.date) {
+      doc.date = Timestamp.fromDate(template.date)
+    } else {
+      doc.date = null
+    }
 
-export const getCashFlowTemplate = async ({
-  id,
-}: {
-  id: string
-}): Promise<CashFlowTemplate | null> => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot get cash flow template without user")
-    return null
+    doc.day = template.frequency === "MONTHLY" ? doc.day : null
+
+    if (!template.description) {
+      delete doc.description
+    }
+
+    await addDoc(collection(db, USERS, uid, CASH_FLOW_TEMPLATES), doc)
   }
 
-  const docSnap = await getDoc(
-    doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id)
-  )
+export const updateCashFlowTemplate =
+  (uid: string) => async (id: string, template: UpdateCashFlowTemplate) => {
+    const date = new Date()
 
-  if (!docSnap.data()) return null
+    const data: DocumentData = {
+      ...template,
+      updatedAt: Timestamp.fromDate(date),
+    }
 
-  return toCashFlowTemplate(docSnap)
-}
+    if (template.frequency === "ONE_TIME" && template.date) {
+      data.date = Timestamp.fromDate(template.date)
+    } else {
+      data.date = null
+    }
 
-export const saveCashFlowTemplate = async (
-  template: SaveCashFlowTemplateSpec
-) => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot save cash flow template without user")
-    return
-  }
-  const date = new Date()
+    data.day = template.frequency === "MONTHLY" ? data.day : null
 
-  const doc: DocumentData = {
-    ...template,
-    createdAt: Timestamp.fromDate(date),
-    updatedAt: Timestamp.fromDate(date),
-  }
+    if (!template.description) {
+      delete data.description
+    }
 
-  if (template.frequency === "ONE_TIME" && template.date) {
-    doc.date = Timestamp.fromDate(template.date)
-  } else {
-    doc.date = null
+    delete data.id
+
+    await setDoc(doc(db, USERS, uid, CASH_FLOW_TEMPLATES, id), data, {
+      merge: true,
+    })
   }
 
-  doc.day = template.frequency === "MONTHLY" ? doc.day : null
-
-  if (!template.description) {
-    delete doc.description
-  }
-
-  await addDoc(collection(db, USERS, user.uid, CASH_FLOW_TEMPLATES), doc)
-}
-
-export const updateCashFlowTemplate = async (
-  id: string,
-  template: UpdateCashFlowTemplate
-) => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot update cash flow template without user")
-    return
-  }
-  const date = new Date()
-
-  const data: DocumentData = {
-    ...template,
-    updatedAt: Timestamp.fromDate(date),
-  }
-
-  if (template.frequency === "ONE_TIME" && template.date) {
-    data.date = Timestamp.fromDate(template.date)
-  } else {
-    data.date = null
-  }
-
-  data.day = template.frequency === "MONTHLY" ? data.day : null
-
-  if (!template.description) {
-    delete data.description
-  }
-
-  delete data.id
-
-  await setDoc(doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id), data, {
-    merge: true,
-  })
-}
-
-export const deleteCashFlowTemplate = async (id: string) => {
-  const user = getLoggedInUser()
-  if (!user) {
-    console.log("Cannot update cash flow template without user")
-    return
-  }
-
-  await deleteDoc(doc(db, USERS, user.uid, CASH_FLOW_TEMPLATES, id))
+export const deleteCashFlowTemplate = (uid: string) => async (id: string) => {
+  await deleteDoc(doc(db, USERS, uid, CASH_FLOW_TEMPLATES, id))
 }

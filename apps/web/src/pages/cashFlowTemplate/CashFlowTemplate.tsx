@@ -46,55 +46,41 @@ import {
   X,
 } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
-import { useEffect, useState } from "react"
 import { useParams } from "react-router"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { NavBack } from "@/components/NavBack"
+import { useAuth } from "@/hooks/useAuth"
+import { useMutation, useQuery } from "@tanstack/react-query"
 
 export function CashFlowTemplate() {
-  const { templateId } = useParams()
+  const user = useAuth()
+  const { templateId = "" } = useParams()
   const { goBack, navigate } = useNavigator()
 
-  const [template, setTemplate] = useState<CashFlowTemplate>()
-  const [loading, setLoading] = useState(false)
-  const [deleteApiLoading, setDeleteApiLoading] = useState(false)
+  const {
+    isPending: getApiLoading,
+    data: template,
+    refetch,
+  } = useQuery({
+    queryKey: ["add-goal", templateId],
+    queryFn: getCashFlowTemplate(user.uid).bind(null, { id: templateId }),
+  })
 
-  const cashFlowTemplateId = templateId || ""
-
-  const init = async () => {
-    try {
-      setLoading(true)
-      const cashFlowTemplate = await getCashFlowTemplate({
-        id: cashFlowTemplateId,
-      })
-      if (cashFlowTemplate) {
-        setTemplate(cashFlowTemplate)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    init()
-  }, [])
-
-  const deleteTemplate = async () => {
-    try {
-      setDeleteApiLoading(true)
-      await deleteCashFlowTemplate(cashFlowTemplateId)
-      toast.success("Successfully deleted.", {
+  const { mutate, isPending: deleteApiLoading } = useMutation({
+    mutationKey: [templateId],
+    mutationFn: deleteCashFlowTemplate(user.uid).bind(null, templateId),
+    onSuccess: () =>
+      toast.success("Delete successful.", {
         onAutoClose: goBack,
-      })
-    } catch (error) {
-      console.error(error)
-      toast.error("Delete failed, Try again.")
-    } finally {
-      setDeleteApiLoading(false)
-    }
+      }),
+    onError: () => toast.error("Delete failed, Try again."),
+  })
+
+  const deleteTemplate = () => {
+    mutate()
   }
 
-  if (loading) return <FullScreenLoader />
+  if (getApiLoading) return <FullScreenLoader />
 
   if (!template)
     return (
@@ -104,7 +90,7 @@ export function CashFlowTemplate() {
             <MoveLeft />
             Go back
           </Button>
-          <Button onClick={init}>
+          <Button onClick={() => refetch}>
             <RefreshCcw />
             Refresh
           </Button>

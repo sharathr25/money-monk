@@ -5,69 +5,54 @@ import {
 import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { NavBack } from "@/components/NavBack"
+import { useAuth } from "@/hooks/useAuth"
 import { useNavigator } from "@/hooks/useNavigator"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import {
   getCashFlowTemplate,
   updateCashFlowTemplate,
 } from "@workspace/api/db/index"
-import type { CashFlowTemplate } from "@workspace/core/types"
 import { Button } from "@workspace/ui/components/button"
 import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { MoveLeft, RefreshCcw } from "lucide-react"
-import { useEffect, useState } from "react"
 import type { SubmitHandler } from "react-hook-form"
 import { useParams } from "react-router"
 import { toast } from "sonner"
 
 export function EditCashFlowTemplate() {
-  const { templateId } = useParams()
+  const user = useAuth()
+  const { templateId = "" } = useParams()
   const { goBack } = useNavigator()
 
-  const [template, setTemplate] = useState<CashFlowTemplate>()
-  const [loading, setLoading] = useState(false)
-  const [updateApiLoading, setUpdateApiLoading] = useState(false)
+  const {
+    isPending: queryApiLoading,
+    data: template,
+    refetch,
+  } = useQuery({
+    queryKey: [templateId],
+    queryFn: getCashFlowTemplate(user.uid).bind(null, { id: templateId }),
+  })
 
-  const cashFlowTemplateId = templateId || ""
-
-  const init = async () => {
-    try {
-      setLoading(true)
-      const cashFlowTemplate = await getCashFlowTemplate({
-        id: cashFlowTemplateId,
-      })
-      if (cashFlowTemplate) {
-        setTemplate(cashFlowTemplate)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    init()
-  }, [])
-
-  const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async (data) => {
-    try {
-      setUpdateApiLoading(true)
-      const { iconNameFilter, ...rest } = data
-      await updateCashFlowTemplate(cashFlowTemplateId, {
-        ...rest,
-        amount: amountToDouble(rest.amount),
-        day: rest.day ? parseInt(rest.day) : undefined,
-      })
+  const { mutate, isPending: updateApiLoading } = useMutation({
+    mutationKey: [templateId],
+    mutationFn: updateCashFlowTemplate(user.uid).bind(null, templateId),
+    onSuccess: () =>
       toast.success("Update successful.", {
         onAutoClose: goBack,
-      })
-    } catch (error) {
-      console.error(error)
-      toast.error("Update failed, Try again.")
-    } finally {
-      setUpdateApiLoading(false)
-    }
+      }),
+    onError: () => toast.error("Update failed, Try again."),
+  })
+
+  const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async (data) => {
+    const { iconNameFilter, amount, day, ...rest } = data
+    mutate({
+      ...rest,
+      amount: amountToDouble(amount),
+      day: day ? parseInt(day) : undefined,
+    })
   }
 
-  if (loading) return <FullScreenLoader />
+  if (queryApiLoading) return <FullScreenLoader />
 
   if (!template)
     return (
@@ -77,7 +62,7 @@ export function EditCashFlowTemplate() {
             <MoveLeft />
             Go back
           </Button>
-          <Button onClick={init}>
+          <Button onClick={() => refetch()}>
             <RefreshCcw />
             Refresh
           </Button>
