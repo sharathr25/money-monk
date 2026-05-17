@@ -30,6 +30,11 @@ export function Home() {
       Icon: ChartNoAxesCombined,
     },
     {
+      label: "Transactions",
+      to: ROUTE_NAMES.TRANSACTIONS,
+      Icon: ChartNoAxesCombined,
+    },
+    {
       label: "Goals",
       to: ROUTE_NAMES.GOALS,
       Icon: Target,
@@ -50,7 +55,7 @@ export function Home() {
           <Button
             key={label}
             variant="ghost"
-            className="flex h-8 flex-1 basis-1/4 flex-col"
+            className="flex h-8 flex-1 basis-1/4 flex-col text-xs"
             onClick={() => navigate(to)}
           >
             <Icon />

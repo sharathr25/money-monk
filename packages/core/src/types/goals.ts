@@ -1,6 +1,4 @@
-import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
-
-export type GoalStatus = (typeof GOAL_STATUSES)[number]
+export type GoalStatus = "PLANNED" | "ACTIVE" | "STARTED_SAVING" | "DONE"
 
 export type GoalStage = {
   status: GoalStatus

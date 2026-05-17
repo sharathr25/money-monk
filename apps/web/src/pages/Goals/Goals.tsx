@@ -34,7 +34,6 @@ const TABS: (GoalStatus | "ALL")[] = [
   "ALL",
   "PLANNED",
   "ACTIVE",
-  "PAUSED",
   "STARTED_SAVING",
   "DONE",
 ]
@@ -56,8 +55,6 @@ export function Goals() {
   const [tab, setTab] = useState(0)
 
   if (isPending) return <FullScreenLoader />
-
-  console.log(error)
 
   if (error) return <FullScreenError msg="Failed to get goals" />
 
