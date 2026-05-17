@@ -7,6 +7,7 @@ import {
   ChartNoAxesCombined,
   ArrowDownUp,
   LayoutDashboard,
+  BookText,
 } from "lucide-react"
 import { Outlet } from "react-router"
 
@@ -32,7 +33,7 @@ export function Home() {
     {
       label: "Transactions",
       to: ROUTE_NAMES.TRANSACTIONS,
-      Icon: ChartNoAxesCombined,
+      Icon: BookText,
     },
     {
       label: "Goals",
@@ -55,7 +56,7 @@ export function Home() {
           <Button
             key={label}
             variant="ghost"
-            className="flex h-8 flex-1 basis-1/4 flex-col text-xs"
+            className="flex h-8 flex-1 basis-1/5 flex-col text-xs"
             onClick={() => navigate(to)}
           >
             <Icon />

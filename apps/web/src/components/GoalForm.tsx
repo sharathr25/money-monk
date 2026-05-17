@@ -29,10 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-import {
-  GOAL_STATUSES,
-  STATUS_TO_AMOUNT_LABEL,
-} from "@workspace/ui/constants/goals"
+import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
 import type { GoalStatus } from "@workspace/core/types/goals"
 
 const ICONS_PAGE_SIZE = 10
@@ -71,7 +68,6 @@ export const GoalForm = ({
 
   const iconNameFilter = watch("iconNameFilter")
   const icon = watch("icon")
-  const status = watch("status")
 
   const filteredIcons: IconName[] = iconNameFilter
     ? iconNames
@@ -132,9 +128,7 @@ export const GoalForm = ({
           </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="name">
-                {STATUS_TO_AMOUNT_LABEL[status]}
-              </FieldLabel>
+              <FieldLabel htmlFor="name">Estimated Amount</FieldLabel>
               <InputGroup className="h-11">
                 <InputGroupInput
                   id="amount"

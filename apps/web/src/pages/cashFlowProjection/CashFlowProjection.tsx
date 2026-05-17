@@ -18,7 +18,7 @@ import {
 } from "@workspace/ui/components/card"
 import { Lightbulb, TriangleAlert } from "lucide-react"
 import { Badge } from "@workspace/ui/components/badge"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
 import { cn, formatAmount } from "@workspace/ui/lib/utils"
@@ -65,6 +65,18 @@ export function CashFlowProjection() {
   )
   const surplusProjection = cashFlowProjections.find(
     (cp) => cp.closingBalance > 250000
+  )
+
+  const renderItem = (
+    title: string,
+    description: string | React.ReactElement
+  ) => (
+    <Item className="border-l-2 border-l-(--secondary) p-0 pl-2">
+      <ItemContent>
+        <ItemTitle>{title}</ItemTitle>
+        <ItemDescription>{description}</ItemDescription>
+      </ItemContent>
+    </Item>
   )
 
   if (loading) return <FullScreenLoader />
@@ -157,61 +169,45 @@ export function CashFlowProjection() {
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
                 <div className="flex">
-                  <Item className="p-0">
-                    <ItemContent>
-                      <ItemTitle>Opening Balance</ItemTitle>
-                      <ItemDescription>
-                        {formatAmount(cp.openingBalance, {
-                          withCurrency: true,
-                        })}
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
-                  <Item className="p-0">
-                    <ItemContent>
-                      <ItemTitle>Closing Balance</ItemTitle>
-                      <ItemDescription>
-                        {formatAmount(cp.closingBalance, {
-                          withCurrency: true,
-                        })}
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
+                  {renderItem(
+                    "Opening Balance",
+                    formatAmount(cp.openingBalance, {
+                      withCurrency: true,
+                    })
+                  )}
+                  {renderItem(
+                    "Closing Balance",
+                    formatAmount(cp.closingBalance, {
+                      withCurrency: true,
+                    })
+                  )}
                 </div>
                 <div className="flex">
-                  <Item className="p-0">
-                    <ItemContent>
-                      <ItemTitle>Income</ItemTitle>
-                      <ItemDescription className="text-(--success)">
-                        {formatAmount(cp.totalIncome, {
-                          withCurrency: true,
-                          withSign: true,
-                        })}
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
-                  <Item className="p-0">
-                    <ItemContent>
-                      <ItemTitle>Expenses</ItemTitle>
-                      <ItemDescription className="text-(--destructive)">
-                        {formatAmount(-1 * cp.totalExpenses, {
-                          withCurrency: true,
-                          withSign: true,
-                        })}
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
-                  <Item className="p-0">
-                    <ItemContent>
-                      <ItemTitle>Net Cash</ItemTitle>
-                      <ItemDescription>
-                        {formatAmount(cp.netCashFlow, {
-                          withCurrency: true,
-                          withSign: true,
-                        })}
-                      </ItemDescription>
-                    </ItemContent>
-                  </Item>
+                  {renderItem(
+                    "Income",
+                    <span className="text-(--success)">
+                      {formatAmount(cp.totalIncome, {
+                        withCurrency: true,
+                        withSign: true,
+                      })}
+                    </span>
+                  )}
+                  {renderItem(
+                    "Expenses",
+                    <span className="text-(--destructive)">
+                      {formatAmount(-1 * cp.totalExpenses, {
+                        withCurrency: true,
+                        withSign: true,
+                      })}
+                    </span>
+                  )}
+                  {renderItem(
+                    "Net Cash",
+                    formatAmount(cp.netCashFlow, {
+                      withCurrency: true,
+                      withSign: true,
+                    })
+                  )}
                 </div>
               </CardContent>
             </Card>

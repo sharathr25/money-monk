@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogClose,
 } from "@workspace/ui/components/dialog"
-import { Save, IndianRupee } from "lucide-react"
+import { Save, IndianRupee, Calendar as CalendarIcon } from "lucide-react"
 import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { useForm, type SubmitHandler } from "react-hook-form"
@@ -29,9 +29,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-import type { Goal, GoalStage, GoalStatus } from "@workspace/core/types/goals"
+import type { Goal, GoalStage } from "@workspace/core/types/goals"
 import type { TransactionType } from "@workspace/core/types/transactions"
 import { GoalBadge } from "./GoalBadge"
+import { useState } from "react"
+import { Calendar } from "@workspace/ui/components/calendar"
 
 const ICONS_PAGE_SIZE = 10
 
@@ -40,7 +42,7 @@ const DEFAULT_TRANSACTION = {
   estimatedAmount: "",
   iconNameFilter: "bank",
   icon: "banknote",
-  status: "PLANNED" as GoalStatus,
+  date: new Date(),
 }
 
 export type TransactionFormInputs = {
@@ -50,6 +52,7 @@ export type TransactionFormInputs = {
   icon: string
   amount: string
   type: TransactionType
+  date?: Date
   goalId?: string
   goalStage?: GoalStage
   category?: string
@@ -75,8 +78,11 @@ export const TransactionForm = ({
       defaultValues,
     })
 
+  const [calendarOpen, setCalenderOpen] = useState(false)
+
   const iconNameFilter = watch("iconNameFilter")
   const icon = watch("icon")
+  const date = watch("date")
 
   const filteredIcons: IconName[] = iconNameFilter
     ? iconNames
@@ -163,7 +169,7 @@ export const TransactionForm = ({
               <FieldLabel htmlFor="type">Goal</FieldLabel>
               <Select
                 defaultValue={formInputs?.goalId}
-                onValueChange={(v: GoalStatus) => setValue("goalId", v)}
+                onValueChange={(v) => setValue("goalId", v)}
               >
                 <SelectTrigger id="type" className="!h-11 capitalize">
                   <SelectValue />
@@ -177,6 +183,44 @@ export const TransactionForm = ({
                   ))}
                 </SelectContent>
               </Select>
+            </Field>
+          </div>
+          <div>
+            <Field>
+              <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
+              <Dialog open={calendarOpen} onOpenChange={setCalenderOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="date-picker-simple"
+                    className="h-11 justify-start font-normal"
+                  >
+                    <CalendarIcon />
+                    {date?.toLocaleDateString()}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader className="flex items-start">
+                    <DialogTitle className="capitalize">
+                      Date of the transaction
+                    </DialogTitle>
+                    <DialogDescription>
+                      By default today's date will be selected
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={(d: Date | undefined) => {
+                      setValue("date", d)
+                      setCalenderOpen(false)
+                    }}
+                    defaultMonth={date}
+                    captionLayout="dropdown"
+                    className="mx-auto"
+                  />
+                </DialogContent>
+              </Dialog>
             </Field>
           </div>
           <Button type="submit" className="h-13 w-full">

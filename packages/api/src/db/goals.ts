@@ -8,15 +8,18 @@ import {
   DocumentSnapshot,
   getDoc,
   getDocs,
+  or,
   query,
   QueryCompositeFilterConstraint,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore"
 import { db } from "../firebase"
 import { GOALS, USERS } from "./collections"
 import type {
   Goal,
+  GoalQuery,
   GoalStage,
   SaveGoalSpec,
   UpdateGoalSpec,
@@ -41,15 +44,23 @@ const toGoal = (docSnap: DocumentSnapshot) => {
   }
 }
 
-export const queryGoals = (uid: string) => async (): Promise<Goal[]> => {
-  const contraints: QueryCompositeFilterConstraint[] = []
+export const queryGoals =
+  (uid: string) =>
+  async ({ status }: GoalQuery = {}): Promise<Goal[]> => {
+    const contraints: QueryCompositeFilterConstraint[] = []
 
-  const q = query(collection(db, USERS, uid, GOALS), and(...contraints))
+    if (status) {
+      contraints.push(
+        and(or(...status.split(",").map((s) => where("status", "==", s))))
+      )
+    }
 
-  const querySnapshot = await getDocs(q)
+    const q = query(collection(db, USERS, uid, GOALS), and(...contraints))
 
-  return querySnapshot.docs.map(toGoal)
-}
+    const querySnapshot = await getDocs(q)
+
+    return querySnapshot.docs.map(toGoal)
+  }
 
 export const getGoal =
   (uid: string) =>

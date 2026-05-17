@@ -5,6 +5,10 @@ export type GoalStage = {
   startDate: Date
 }
 
+export type GoalQuery = {
+  status?: string
+}
+
 export type SaveGoalSpec = {
   description?: string
   name: string

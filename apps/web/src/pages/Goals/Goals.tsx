@@ -40,7 +40,7 @@ const TABS: (GoalStatus | "ALL")[] = [
 
 export function Goals() {
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid)
+  const queryGoalsForUser = queryGoals(user.uid).bind(null, {})
   const {
     isPending,
     error,
@@ -85,7 +85,7 @@ export function Goals() {
     )
   }
 
-  const goalsFiltered = goals.filter((g) =>
+  const goalsFiltered = goals.filter((g: Goal) =>
     tab === 0 ? true : g.status === TABS[tab]
   )
 

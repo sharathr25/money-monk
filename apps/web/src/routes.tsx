@@ -156,11 +156,11 @@ const routes: RouteObject[] = [
                 path: ROUTE_PATHS.TRANSACTIONS,
                 Component: Transactions,
               },
+              {
+                path: ROUTE_PATHS.CASH_FLOW_TEMPLATES,
+                Component: CashFlowTemplates,
+              },
             ],
-          },
-          {
-            path: ROUTE_PATHS.CASH_FLOW_TEMPLATES,
-            Component: CashFlowTemplates,
           },
           {
             path: ROUTE_PATHS.CASH_FLOW_TEMPLATE,

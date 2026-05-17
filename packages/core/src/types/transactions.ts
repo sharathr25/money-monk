@@ -1,7 +1,7 @@
 import type { Type } from "./cashFlowTemplates"
-import type { GoalStage } from "./goals"
+import type { GoalStatus } from "./goals"
 
-export type TransactionType = Type
+export type TransactionType = Type | "SAVINGS"
 
 export type SaveTransationSpec = {
   name: string
@@ -9,8 +9,12 @@ export type SaveTransationSpec = {
   icon: string
   amount: number
   type: TransactionType
-  goalId?: string
-  goalStage?: GoalStage
+  date: Date
+  goal?: {
+    id: string
+    name: string
+    status: GoalStatus
+  }
   paidTo?: string
   category?: string
   templateId?: string
@@ -20,6 +24,10 @@ export type Transaction = SaveTransationSpec & {
   id: string
   createdAt: Date
   updatedAt: Date
+  goal?: {
+    id: string
+    name: string
+  }
 }
 
 export type UpdateTransactionSpec = SaveTransationSpec

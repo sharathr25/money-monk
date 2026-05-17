@@ -11,10 +11,13 @@ import {
 } from "@/components/TransactionForm"
 import { saveTransaction } from "@workspace/api/db/transactions"
 import { queryGoals } from "@workspace/api/db/goals"
+import type { Goal } from "@workspace/core/types/goals"
 
 export function AddTransaction() {
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid)
+  const queryGoalsForUser = queryGoals(user.uid).bind(null, {
+    status: "STARTED_SAVING,ACTIVE",
+  })
   const saveTransactionForUser = saveTransaction(user.uid)
 
   const { goBack } = useNavigator()
@@ -30,13 +33,20 @@ export function AddTransaction() {
     onError: () => toast.error("Save failed, Try again."),
   })
 
+  const goalsMap: Record<string, Goal> = goals
+    ? goals.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {})
+    : {}
+
   const onSubmit: SubmitHandler<TransactionFormInputs> = async ({
     iconNameFilter,
     amount,
+    date,
     ...data
   }) => {
     mutate({
       ...data,
+      date: date || new Date(),
+      goal: data.goalId ? goalsMap[data.goalId] : undefined,
       amount: amountToDouble(amount),
     })
   }

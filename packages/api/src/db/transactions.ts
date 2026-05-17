@@ -19,8 +19,17 @@ import type {
   Transaction,
   SaveTransationSpec,
   UpdateTransactionSpec,
+  TransactionType,
 } from "@workspace/core/type/transactions"
 import { toDate } from "./mapper"
+import { type GoalStatus } from "@workspace/core/type/goals"
+
+const TransactionTypeMap: Record<GoalStatus, TransactionType> = {
+  ACTIVE: "EXPENSE",
+  STARTED_SAVING: "SAVINGS",
+  DONE: "SAVINGS",
+  PLANNED: "SAVINGS",
+}
 
 const toTransaction = (docSnap: DocumentSnapshot) => {
   return {
@@ -33,6 +42,8 @@ const toTransaction = (docSnap: DocumentSnapshot) => {
     type: docSnap.get("type"),
     paidTo: docSnap.get("paidTo"),
     amount: docSnap.get("amount"),
+    goal: docSnap.get("goal"),
+    date: toDate(docSnap.get("date")),
     createdAt: toDate(docSnap.get("createdAt")),
     updatedAt: toDate(docSnap.get("updatedAt")),
   }
@@ -72,8 +83,23 @@ export const saveTransaction =
       updatedAt: date,
     }
 
-    Object.keys(docData).forEach((k) => {
-      if (!docData[k]) delete docData[k]
+    if (transaction.goal) {
+      docData.goal = { id: transaction.goal.id, name: transaction.goal.name }
+      docData.type = TransactionTypeMap[transaction.goal.status]
+    }
+
+    const keysToDelete = [
+      ...Object.keys(docData).filter((k) => !docData[k]),
+      "id",
+      "goalId",
+    ]
+
+    if (transaction.goal && transaction.goal.status !== "ACTIVE") {
+      keysToDelete.push("paidTo")
+    }
+
+    keysToDelete.forEach((k) => {
+      delete docData[k]
     })
 
     await addDoc(collection(db, USERS, uid, TRANSACTIONS), docData)
@@ -83,16 +109,26 @@ export const updateTransaction =
   (uid: string) => async (id: string, transaction: UpdateTransactionSpec) => {
     const date = new Date()
 
-    const data: DocumentData = {
+    const docData: DocumentData = {
       ...transaction,
       updatedAt: Timestamp.fromDate(date),
     }
 
-    Object.keys(data).forEach((k) => {
-      if (!data[k]) delete data[k]
+    const keysToDelete = [
+      ...Object.keys(docData).filter((k) => !docData[k]),
+      "id",
+      "goalId",
+    ]
+
+    if (transaction.goal && transaction.goal.status !== "ACTIVE") {
+      keysToDelete.push("paidTo")
+    }
+
+    keysToDelete.forEach((k) => {
+      delete docData[k]
     })
 
-    await setDoc(doc(db, USERS, uid, TRANSACTIONS, id), data, {
+    await setDoc(doc(db, USERS, uid, TRANSACTIONS, id), docData, {
       merge: true,
     })
   }

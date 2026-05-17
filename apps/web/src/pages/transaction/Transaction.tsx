@@ -138,17 +138,19 @@ export function Transaction() {
               </ItemDescription>
             </ItemContent>
           </Item>
-          <Item>
-            <ItemMedia variant="icon">
-              <Banknote />
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle>For goal</ItemTitle>
-              <ItemDescription className="text-(--secondary)">
-                {transaction.goalId}
-              </ItemDescription>
-            </ItemContent>
-          </Item>
+          {transaction.goal && (
+            <Item>
+              <ItemMedia variant="icon">
+                <Banknote />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>For goal</ItemTitle>
+                <ItemDescription className="text-(--secondary)">
+                  {transaction.goal.name}
+                </ItemDescription>
+              </ItemContent>
+            </Item>
+          )}
           {transaction.templateId && (
             <Item>
               <ItemMedia variant="icon">

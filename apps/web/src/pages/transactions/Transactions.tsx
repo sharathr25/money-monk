@@ -8,7 +8,6 @@ import { queryTransactions } from "@workspace/api/db/transactions"
 import type { Transaction } from "@workspace/core/types/transactions"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
-import { Card } from "@workspace/ui/components/card"
 import {
   Empty,
   EmptyDescription,
@@ -35,7 +34,7 @@ export function Transactions() {
     error,
     data: transactions,
   } = useQuery({
-    queryKey: ["transaction"],
+    queryKey: ["transactions"],
     queryFn: qqueryTransactionsForUser,
   })
 
@@ -46,31 +45,36 @@ export function Transactions() {
   if (error) return <FullScreenError msg="Failed to get goals" />
 
   const renderCard = (t: Transaction) => (
-    <Card
-      className="p-0"
+    <Item
+      variant="outline"
       key={t.id}
       onClick={() => navigate(ROUTE_NAMES.TRANSACTION, { transactionId: t.id })}
     >
-      <Item>
-        <ItemMedia>
-          <Badge className="size-10" variant="secondary">
-            <DynamicIcon name={t.icon as IconName} />
+      <ItemMedia variant="image" className="bg-(--secondary)">
+        <DynamicIcon
+          name={t.icon as IconName}
+          className="size-8"
+          strokeWidth={1.5}
+        />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle className="line-clamp-1 flex capitalize">{t.name}</ItemTitle>
+        <ItemDescription>
+          {t.goal ? `For ${t.goal.name}` : t.description}
+        </ItemDescription>
+      </ItemContent>
+      <ItemContent className="flex items-end">
+        <ItemTitle className="line-clamp-1 flex">
+          <Badge variant="secondary" className="capitalize">
+            {t.type.toLowerCase()}
           </Badge>
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
-          <ItemDescription>{t.description}</ItemDescription>
-        </ItemContent>
-        <ItemContent className="flex-none text-center">
-          <ItemTitle className="line-clamp-1">
-            {formatAmount(t.amount, { withCurrency: true })}
-          </ItemTitle>
-          <ItemDescription className="text-xs">
-            {formatDate(t.updatedAt)}
-          </ItemDescription>
-        </ItemContent>
-      </Item>
-    </Card>
+          {formatAmount(t.amount, { withCurrency: true })}
+        </ItemTitle>
+        <ItemDescription className="text-xs">
+          {formatDate(t.updatedAt)}
+        </ItemDescription>
+      </ItemContent>
+    </Item>
   )
 
   const NoGoals = () => (
@@ -92,7 +96,7 @@ export function Transactions() {
     <div className="flex flex-col gap-4">
       <div>
         <h1 className="text-xl font-extrabold">Transactions</h1>
-        <p>Your financial transactions of templates and goals.</p>
+        <p>Your financial transactions.</p>
       </div>
       <div className="flex flex-col gap-4">
         {transactions.length ? transactions.map(renderCard) : <NoGoals />}

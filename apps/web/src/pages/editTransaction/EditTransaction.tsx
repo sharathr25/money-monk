@@ -24,7 +24,9 @@ export function EditTransaction() {
   const { transactionId = "" } = useParams()
   const { goBack } = useNavigator()
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid)
+  const queryGoalsForUser = queryGoals(user.uid).bind(null, {
+    status: "STARTED_SAVING,ACTIVE",
+  })
   const getTransactionForUser = getTransaction(user.uid)
   const updateTransactionForUser = updateTransaction(user.uid).bind(
     null,
@@ -81,10 +83,12 @@ export function EditTransaction() {
   const onSubmit: SubmitHandler<TransactionFormInputs> = async ({
     iconNameFilter,
     amount,
+    date,
     ...data
   }) => {
     mutate({
       ...data,
+      date: date || new Date(),
       amount: amountToDouble(amount),
     })
   }
