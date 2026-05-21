@@ -97,13 +97,16 @@ export const TransactionForm = ({
           <div className="flex gap-2">
             <Field className="basis-3/4">
               <FieldLabel htmlFor="name">Name</FieldLabel>
-              <Input id="name" className="h-11" {...register("name")} />
+              <Input id="name" className="h-12" {...register("name")} />
             </Field>
             <Field className="basis-1/4">
               <FieldLabel htmlFor="name">Icon</FieldLabel>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="h-11">
+                  <Button
+                    variant="outline"
+                    className="border-(--foreground) text-(--foreground)"
+                  >
                     <DynamicIcon name={icon as IconName} className="size-6" />
                   </Button>
                 </DialogTrigger>
@@ -113,13 +116,13 @@ export const TransactionForm = ({
                     <DialogDescription>Select an icon.</DialogDescription>
                     <Input
                       id="icon"
-                      className="h-11"
+                      className="h-12"
                       placeholder="Search icons..."
                       {...register("iconNameFilter")}
                     />
                   </DialogHeader>
                   <DialogFooter>
-                    <div className="flex h-11 flex-wrap gap-8">
+                    <div className="flex h-12 flex-wrap gap-8">
                       {filteredIcons.map((name) => (
                         <DialogClose asChild key={name}>
                           <Button
@@ -139,12 +142,12 @@ export const TransactionForm = ({
           </div>
           <Field>
             <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" className="h-11" {...register("description")} />
+            <Input id="desc" className="h-12" {...register("description")} />
           </Field>
           <div className="flex gap-2">
             <Field>
               <FieldLabel htmlFor="amount">Amount</FieldLabel>
-              <InputGroup className="h-11">
+              <InputGroup className="h-12">
                 <InputGroupInput
                   id="amount"
                   {...register("amount", { required: true })}
@@ -159,7 +162,7 @@ export const TransactionForm = ({
             </Field>
             <Field>
               <FieldLabel htmlFor="paidTo">Paid To</FieldLabel>
-              <InputGroup className="h-11">
+              <InputGroup className="h-12">
                 <InputGroupInput id="paidTo" {...register("paidTo")} />
               </InputGroup>
             </Field>
@@ -171,7 +174,7 @@ export const TransactionForm = ({
                 defaultValue={formInputs?.goalId}
                 onValueChange={(v) => setValue("goalId", v)}
               >
-                <SelectTrigger id="type" className="!h-11 capitalize">
+                <SelectTrigger id="type" className="!h-12 capitalize">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -193,7 +196,7 @@ export const TransactionForm = ({
                   <Button
                     variant="outline"
                     id="date-picker-simple"
-                    className="h-11 justify-start font-normal"
+                    className="justify-start border-(--foreground) font-normal text-(--foreground)"
                   >
                     <CalendarIcon />
                     {date?.toLocaleDateString()}

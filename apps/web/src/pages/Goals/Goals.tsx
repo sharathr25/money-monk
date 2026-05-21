@@ -24,7 +24,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
@@ -97,11 +96,14 @@ export function Goals() {
           </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-1">
-          {formatAmount(g.estimatedAmount, { withCurrency: true })}
+          <CardTitle>Estimated Amount</CardTitle>
+          <CardDescription className="flex justify-between">
+            <div>{formatAmount(g.estimatedAmount, { withCurrency: true })}</div>
+            <div className="text-sm capitalize">
+              {`${g.status.toLowerCase().replace("_", " ")} On ${formatDate(lastStage.startDate)}`}
+            </div>
+          </CardDescription>
         </CardContent>
-        <CardFooter className="py-1 capitalize">
-          {`${g.status.toLowerCase().replace("_", " ")} On ${formatDate(lastStage.startDate)}`}
-        </CardFooter>
       </Card>
     )
   }
@@ -134,7 +136,7 @@ export function Goals() {
           onOpenChange={setFiltersDialogOpen}
         >
           <AlertDialogTrigger asChild>
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               <Filter />
             </Button>
           </AlertDialogTrigger>

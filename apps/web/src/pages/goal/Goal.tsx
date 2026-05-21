@@ -16,25 +16,19 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog"
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
-import {
   Item,
   ItemContent,
   ItemDescription,
+  ItemHeader,
   ItemMedia,
   ItemTitle,
 } from "@workspace/ui/components/item"
 
-import { formatAmount, formatDateTime } from "@workspace/ui/lib/utils"
+import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import {
   Banknote,
   Calendar,
+  Info,
   MoveLeft,
   Pen,
   RefreshCcw,
@@ -49,6 +43,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { deleteGoal, getGoal } from "@workspace/api/db/goals"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { GoalBadge } from "@/components/GoalBadge"
+import { Badge } from "@workspace/ui/components/badge"
 
 export function Goal() {
   const { goalId = "" } = useParams()
@@ -107,86 +102,89 @@ export function Goal() {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <NavBack />
-      <Card className="flex-1">
-        <CardHeader>
-          <CardTitle>
-            <h1 className="flex items-center gap-1 text-xl font-bold">
-              {goal.name} <GoalBadge type={goal.status} />
-            </h1>
-          </CardTitle>
-          <CardDescription>{goal.description}</CardDescription>
-          <CardAction>
-            <DynamicIcon name={goal.icon as IconName} className="size-8" />
-          </CardAction>
-        </CardHeader>
-      </Card>
-      <Card className="flex-1 bg-(--primary) text-(--secondary)">
-        <CardContent className="flex flex-col gap-2">
-          <Item>
+      <div className="gap-3 border-0 p-0">
+        <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-bold">{goal.name}</h1>
+          <DynamicIcon
+            name={goal.icon as IconName}
+            strokeWidth={1.5}
+            className="size-15 text-(--primary)"
+          />
+        </div>
+        <div className="p-0">{goal.description}</div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
+            <ItemMedia variant="icon">
+              <Info />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Status</ItemDescription>
+              <ItemTitle className="font-bold capitalize">
+                <Badge variant="secondary">
+                  {goal.status.toLowerCase().replace("_", " ")}
+                </Badge>
+              </ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Banknote />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Estimated Amount</ItemTitle>
-              <ItemDescription className="text-(--secondary)">
+              <ItemDescription>Estimated</ItemDescription>
+              <ItemTitle>
                 {formatAmount(goal.estimatedAmount, { withCurrency: true })}
-              </ItemDescription>
+              </ItemTitle>
             </ItemContent>
           </Item>
-          <Item>
+        </div>
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Banknote />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Saved Amount</ItemTitle>
-              <ItemDescription className="text-(--secondary)">
-                {formatAmount(0, { withCurrency: true })}
-              </ItemDescription>
+              <ItemDescription>Saved</ItemDescription>
+              <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
             </ItemContent>
           </Item>
-          <Item>
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Banknote />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Actual Amount</ItemTitle>
-              <ItemDescription className="text-(--secondary)">
-                {formatAmount(0, { withCurrency: true })}
-              </ItemDescription>
+              <ItemDescription>Actual</ItemDescription>
+              <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
             </ItemContent>
           </Item>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="flex flex-col">
-          <Item>
+        </div>
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Calendar />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Created At</ItemTitle>
-              <ItemDescription>
-                {formatDateTime(goal.createdAt)}
-              </ItemDescription>
+              <ItemDescription>Created At</ItemDescription>
+              <ItemTitle>{formatDate(goal.createdAt)}</ItemTitle>
             </ItemContent>
           </Item>
-          <Item>
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Calendar />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Updated At</ItemTitle>
-              <ItemDescription>
-                {formatDateTime(goal.updatedAt)}
-              </ItemDescription>
+              <ItemDescription>Updated At</ItemDescription>
+              <ItemTitle>{formatDate(goal.updatedAt)}</ItemTitle>
             </ItemContent>
           </Item>
-        </CardContent>
-      </Card>
-      <div className="flex gap-2">
+        </div>
+      </div>
+      <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="h-11 flex-1">
+            <Button variant="outline" className="flex flex-1">
               {deleteGoalPending ? <Spinner /> : <Trash />}
               Delete
             </Button>
@@ -214,7 +212,7 @@ export function Goal() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button className="h-11 flex-1" onClick={onEdit}>
+        <Button className="flex-1" onClick={onEdit}>
           <Pen />
           Edit
         </Button>

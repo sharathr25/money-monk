@@ -45,7 +45,7 @@ export function OpeningBalance({
           <div>{formatAmount(balance, { withCurrency: true })}</div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="secondary">
+              <Button variant="link">
                 <Pen />
               </Button>
             </AlertDialogTrigger>
@@ -53,27 +53,30 @@ export function OpeningBalance({
               <AlertDialogHeader className="flex flex-col items-start">
                 <AlertDialogTitle>Change Opening Balance</AlertDialogTitle>
               </AlertDialogHeader>
-              <AlertDialogDescription></AlertDialogDescription>
-              <Field className="basis-3/4">
-                <FieldLabel htmlFor="opening-balance">
-                  Opening Balance
-                </FieldLabel>
-                <Input
-                  id="opening-balance"
-                  className="h-11"
-                  value={balance}
-                  onChange={(e) => setBalance(formatAmount(e.target.value))}
-                />
-              </Field>
-              <AlertDialogFooter>
+              <AlertDialogDescription>
+                <Field className="basis-3/4">
+                  <FieldLabel htmlFor="opening-balance">
+                    Opening Balance
+                  </FieldLabel>
+                  <Input
+                    id="opening-balance"
+                    className="h-11"
+                    value={balance}
+                    onChange={(e) => setBalance(formatAmount(e.target.value))}
+                  />
+                </Field>
+              </AlertDialogDescription>
+              <AlertDialogFooter className="border-0">
                 <AlertDialogCancel>
-                  <X />
                   Cancel
+                  <X />
                 </AlertDialogCancel>
+
                 <AlertDialogAction
                   onClick={() => updateOpeningBalance(amountToDouble(balance))}
                 >
-                  <Save /> Save
+                  Save
+                  <Save />
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

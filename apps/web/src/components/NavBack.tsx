@@ -7,14 +7,8 @@ export function NavBack() {
 
   return (
     <div>
-      <Button
-        variant="outline"
-        onClick={goBack}
-        className="fixed z-99 border-(--primary) bg-transparent"
-      >
-        <MoveLeft className="text-(--primary)" />
-      </Button>
-      <Button variant="ghost" disabled className="opacity-0"></Button>
+      <MoveLeft className="fixed z-99 text-(--primary)" onClick={goBack} />
+      <Button variant="ghost" disabled className="opacity-0" size="sm"></Button>
     </div>
   )
 }

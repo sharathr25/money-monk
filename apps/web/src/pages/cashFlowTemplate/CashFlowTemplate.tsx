@@ -21,7 +21,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog"
-import { Card, CardContent } from "@workspace/ui/components/card"
 import {
   Item,
   ItemContent,
@@ -34,14 +33,14 @@ import {
   formatAmount,
   formatDate,
   formatDateTime,
-  formatDayOfMonth,
 } from "@workspace/ui/lib/utils"
 import {
+  Banknote,
   Calendar,
+  Info,
   MoveLeft,
   Pen,
   RefreshCcw,
-  Repeat,
   Trash,
   X,
 } from "lucide-react"
@@ -98,81 +97,78 @@ export function CashFlowTemplate() {
       </FullScreenError>
     )
 
+  const onEdit = () => {
+    navigate(ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE, {
+      templateId: template.id,
+    })
+  }
+
   return (
-    <div className="flex flex-1 flex-col gap-3">
+    <div className="flex flex-1 flex-col gap-2">
       <NavBack />
-      <Card className="flex flex-1 items-center justify-center bg-(--primary) p-10 text-(--secondary)">
-        <DynamicIcon
-          name={template.icon as IconName}
-          strokeWidth={0.5}
-          className="size-25"
-        />
-      </Card>
-      <div>
-        <div className="flex justify-between">
-          <div>
-            <h1 className="text-xl font-bold">{template.name}</h1>
-            <p className="text-sm">{template.description}</p>
-          </div>
-          <div className="flex flex-col items-end">
-            <h2 className="font-bold">
-              {formatAmount(template.amount, { withCurrency: true })}
-            </h2>
-            {template.type === "EXPENSE" ? (
-              <Badge className="bg-(--destructive)">{template.type}</Badge>
-            ) : (
-              <Badge className="bg-(--success)">{template.type}</Badge>
-            )}
-          </div>
+      <div className="gap-3 border-0 p-0">
+        <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-bold">{template.name}</h1>
+          <DynamicIcon
+            name={template.icon as IconName}
+            strokeWidth={1.5}
+            className="size-15 text-(--primary)"
+          />
+        </div>
+        <div className="p-0">{template.description}</div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
+            <ItemMedia variant="icon">
+              <Info />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Frquency</ItemDescription>
+              <ItemTitle className="font-bold capitalize">
+                <Badge variant="secondary">
+                  {template.frequency.toLowerCase().replace("_", " ")}
+                </Badge>
+              </ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item className="flex-1 bg-(--accent) p-3">
+            <ItemMedia variant="icon">
+              <Banknote />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Amount</ItemDescription>
+              <ItemTitle>
+                {formatAmount(template.amount, { withCurrency: true })}
+              </ItemTitle>
+            </ItemContent>
+          </Item>
+        </div>
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
+            <ItemMedia variant="icon">
+              <Calendar />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Created At</ItemDescription>
+              <ItemTitle>{formatDate(template.createdAt)}</ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item className="flex-1 bg-(--accent) p-3">
+            <ItemMedia variant="icon">
+              <Calendar />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Updated At</ItemDescription>
+              <ItemTitle>{formatDate(template.updatedAt)}</ItemTitle>
+            </ItemContent>
+          </Item>
         </div>
       </div>
-      <Card>
-        <CardContent className="flex flex-col">
-          <Item>
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle>Created At</ItemTitle>
-              <ItemDescription>
-                {formatDateTime(template.createdAt)}
-              </ItemDescription>
-            </ItemContent>
-          </Item>
-          <Item>
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemTitle>Updated At</ItemTitle>
-              <ItemDescription>
-                {formatDateTime(template.updatedAt)}
-              </ItemDescription>
-            </ItemContent>
-          </Item>
-          <div className="flex">
-            <Item>
-              <ItemMedia variant="icon">
-                <Repeat />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>Frequency</ItemTitle>
-                <ItemDescription>
-                  <span className="capitalize">
-                    {template.frequency.replace("_", " ").toLowerCase()}
-                  </span>
-                  {!!template.date && " - " + formatDate(template.date)}
-                  {!!template.day && " - On " + formatDayOfMonth(template.day)}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          </div>
-        </CardContent>
-      </Card>
-      <div className="flex gap-2">
+      <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="h-11 flex-1">
+            <Button variant="outline" className="flex flex-1">
               {deleteApiLoading ? <Spinner /> : <Trash />}
               Delete
             </Button>
@@ -182,7 +178,7 @@ export function CashFlowTemplate() {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete your
-                cash flow template from our servers.
+                goal from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex">
@@ -197,14 +193,7 @@ export function CashFlowTemplate() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button
-          className="h-11 flex-1"
-          onClick={() =>
-            navigate(ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE, {
-              templateId: template.id,
-            })
-          }
-        >
+        <Button className="flex-1" onClick={onEdit}>
           <Pen />
           Edit
         </Button>

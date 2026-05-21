@@ -6,8 +6,10 @@ import { ROUTE_NAMES } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { queryTransactions } from "@workspace/api/db/transactions"
 import type { Transaction } from "@workspace/core/types/transactions"
+import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import { Card } from "@workspace/ui/components/card"
 import {
   Empty,
   EmptyDescription,
@@ -45,36 +47,43 @@ export function Transactions() {
   if (error) return <FullScreenError msg="Failed to get goals" />
 
   const renderCard = (t: Transaction) => (
-    <Item
-      variant="outline"
-      key={t.id}
-      onClick={() => navigate(ROUTE_NAMES.TRANSACTION, { transactionId: t.id })}
-    >
-      <ItemMedia variant="image" className="bg-(--secondary)">
-        <DynamicIcon
-          name={t.icon as IconName}
-          className="size-8"
-          strokeWidth={1.5}
-        />
-      </ItemMedia>
-      <ItemContent>
-        <ItemTitle className="line-clamp-1 flex capitalize">{t.name}</ItemTitle>
-        <ItemDescription>
-          {t.goal ? `For ${t.goal.name}` : t.description}
-        </ItemDescription>
-      </ItemContent>
-      <ItemContent className="flex items-end">
-        <ItemTitle className="line-clamp-1 flex">
-          <Badge variant="secondary" className="capitalize">
-            {t.type.toLowerCase()}
-          </Badge>
-          {formatAmount(t.amount, { withCurrency: true })}
-        </ItemTitle>
-        <ItemDescription className="text-xs">
-          {formatDate(t.updatedAt)}
-        </ItemDescription>
-      </ItemContent>
-    </Item>
+    <Card className="p-0" key={t.id}>
+      <Item
+        onClick={() =>
+          navigate(ROUTE_NAMES.TRANSACTION, { transactionId: t.id })
+        }
+      >
+        <ItemMedia>
+          <Avatar
+            size="lg"
+            className="bg-(--secondary) after:border-transparent"
+          >
+            <AvatarFallback>
+              <DynamicIcon name={t.icon as IconName} />
+            </AvatarFallback>
+          </Avatar>
+        </ItemMedia>
+        <ItemContent>
+          <ItemTitle className="line-clamp-1 flex capitalize">
+            {t.name}
+          </ItemTitle>
+          <ItemDescription>
+            {t.goal ? `For ${t.goal.name}` : t.description}
+          </ItemDescription>
+        </ItemContent>
+        <ItemContent className="flex items-end">
+          <ItemTitle className="line-clamp-1 flex">
+            <Badge variant="secondary" className="capitalize">
+              {t.type.toLowerCase()}
+            </Badge>
+            {formatAmount(t.amount, { withCurrency: true })}
+          </ItemTitle>
+          <ItemDescription className="text-xs">
+            {formatDate(t.updatedAt)}
+          </ItemDescription>
+        </ItemContent>
+      </Item>
+    </Card>
   )
 
   const NoGoals = () => (

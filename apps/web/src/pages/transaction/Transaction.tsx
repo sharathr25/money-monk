@@ -16,14 +16,6 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog"
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
-import {
   Item,
   ItemContent,
   ItemDescription,
@@ -31,10 +23,11 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 
-import { formatAmount, formatDateTime } from "@workspace/ui/lib/utils"
+import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import {
   Banknote,
   Calendar,
+  Info,
   MoveLeft,
   Pen,
   RefreshCcw,
@@ -51,6 +44,7 @@ import {
   deleteTransaction,
   getTransaction,
 } from "@workspace/api/db/transactions"
+import { Badge } from "@workspace/ui/components/badge"
 
 export function Transaction() {
   const { transactionId = "" } = useParams()
@@ -69,7 +63,7 @@ export function Transaction() {
     queryFn: async () => getTransactionForUser(transactionId),
   })
 
-  const { mutate, isPending: deleteGoalPending } = useMutation({
+  const { mutate, isPending: deleteTransactionPending } = useMutation({
     mutationFn: async () => deleteTransactionForUser(transactionId),
     onSuccess: () =>
       toast.success("Successfully deleted.", { onAutoClose: goBack }),
@@ -109,94 +103,70 @@ export function Transaction() {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <NavBack />
-      <Card className="flex-1">
-        <CardHeader>
-          <CardTitle>
-            <h1 className="flex items-center gap-1 text-xl font-bold">
-              {transaction.name}
-            </h1>
-          </CardTitle>
-          <CardDescription>{transaction.description}</CardDescription>
-          <CardAction>
-            <DynamicIcon
-              name={transaction.icon as IconName}
-              className="size-8"
-            />
-          </CardAction>
-        </CardHeader>
-      </Card>
-      <Card className="flex-1 bg-(--primary) text-(--secondary)">
-        <CardContent className="flex flex-col gap-2">
-          <Item>
+      <div className="gap-3 border-0 p-0">
+        <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-bold">{transaction.name}</h1>
+          <DynamicIcon
+            name={transaction.icon as IconName}
+            strokeWidth={1.5}
+            className="size-15 text-(--primary)"
+          />
+        </div>
+        <div className="p-0">{transaction.description}</div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
+            <ItemMedia variant="icon">
+              <Info />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Frquency</ItemDescription>
+              <ItemTitle className="font-bold capitalize">
+                <Badge variant="secondary">
+                  {transaction.type.toLowerCase().replace("_", " ")}
+                </Badge>
+              </ItemTitle>
+            </ItemContent>
+          </Item>
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Banknote />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Amount</ItemTitle>
-              <ItemDescription className="text-(--secondary)">
+              <ItemDescription>Amount</ItemDescription>
+              <ItemTitle>
                 {formatAmount(transaction.amount, { withCurrency: true })}
-              </ItemDescription>
+              </ItemTitle>
             </ItemContent>
           </Item>
-          {transaction.goal && (
-            <Item>
-              <ItemMedia variant="icon">
-                <Banknote />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>For goal</ItemTitle>
-                <ItemDescription className="text-(--secondary)">
-                  {transaction.goal.name}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          )}
-          {transaction.templateId && (
-            <Item>
-              <ItemMedia variant="icon">
-                <Banknote />
-              </ItemMedia>
-              <ItemContent>
-                <ItemTitle>From template</ItemTitle>
-                <ItemDescription className="text-(--secondary)">
-                  {transaction.templateId}
-                </ItemDescription>
-              </ItemContent>
-            </Item>
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="flex flex-col">
-          <Item>
+        </div>
+        <div className="flex gap-2">
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Calendar />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Created At</ItemTitle>
-              <ItemDescription>
-                {formatDateTime(transaction.createdAt)}
-              </ItemDescription>
+              <ItemDescription>Created At</ItemDescription>
+              <ItemTitle>{formatDate(transaction.createdAt)}</ItemTitle>
             </ItemContent>
           </Item>
-          <Item>
+          <Item className="flex-1 bg-(--accent) p-3">
             <ItemMedia variant="icon">
               <Calendar />
             </ItemMedia>
             <ItemContent>
-              <ItemTitle>Updated At</ItemTitle>
-              <ItemDescription>
-                {formatDateTime(transaction.updatedAt)}
-              </ItemDescription>
+              <ItemDescription>Updated At</ItemDescription>
+              <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
             </ItemContent>
           </Item>
-        </CardContent>
-      </Card>
-      <div className="flex gap-2">
+        </div>
+      </div>
+      <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="h-11 flex-1">
-              {deleteGoalPending ? <Spinner /> : <Trash />}
+            <Button variant="outline" className="flex flex-1">
+              {deleteTransactionPending ? <Spinner /> : <Trash />}
               Delete
             </Button>
           </AlertDialogTrigger>
@@ -205,7 +175,7 @@ export function Transaction() {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete your
-                transaction from our servers.
+                goal from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex">
@@ -223,7 +193,7 @@ export function Transaction() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button className="h-11 flex-1" onClick={onEdit}>
+        <Button className="flex-1" onClick={onEdit}>
           <Pen />
           Edit
         </Button>

@@ -34,12 +34,10 @@ export function AddGoal() {
   return (
     <div className="flex flex-1 flex-col gap-2">
       <NavBack />
-      <div>
-        <h1 className="text-xl font-bold">Add Goal</h1>
-        <p className="text-sm">
-          Add your planned goal like build a house, buy a car, repay loan etc
-        </p>
-      </div>
+      <h1 className="text-xl font-bold">Add Goal</h1>
+      <p className="text-sm">
+        Add your planned goal like build a house, buy a car, repay loan etc
+      </p>
       <GoalForm onSubmit={onSubmit} loading={false} />
     </div>
   )

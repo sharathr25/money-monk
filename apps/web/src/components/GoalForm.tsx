@@ -88,7 +88,10 @@ export const GoalForm = ({
               <FieldLabel htmlFor="name">Icon</FieldLabel>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="h-11">
+                  <Button
+                    variant="outline"
+                    className="border-(--foreground) text-(--foreground)"
+                  >
                     <DynamicIcon name={icon as IconName} className="size-6" />
                   </Button>
                 </DialogTrigger>

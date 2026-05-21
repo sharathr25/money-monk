@@ -20,10 +20,12 @@ export function UserAvatar(
   if (!user) return null
 
   return (
-    <Avatar {...props} onClick={() => navigate(ROUTE_NAMES.PROFILE)}>
-      {user.photoURL && (
-        <AvatarImage src={user.photoURL!} alt={user.displayName!} />
-      )}
+    <Avatar
+      {...props}
+      onClick={() => navigate(ROUTE_NAMES.PROFILE)}
+      className="after:border-transparent"
+    >
+      <AvatarImage src={user.photoURL!} alt={user.displayName!} />
       <AvatarFallback>
         {user.displayName ? user.displayName.charAt(0) : <User />}
       </AvatarFallback>

@@ -109,7 +109,7 @@ export function CashFlowTemplates() {
           onOpenChange={setFiltersDialogOpen}
         >
           <AlertDialogTrigger asChild>
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               <Filter />
             </Button>
           </AlertDialogTrigger>
@@ -157,7 +157,7 @@ export function CashFlowTemplates() {
         type={filters.type}
       />
       <Button
-        className="fixed right-6 bottom-6 h-12 w-12 rounded-full"
+        className="fixed right-6 bottom-20 h-12 w-12 rounded-full"
         onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE)}
       >
         <Plus />

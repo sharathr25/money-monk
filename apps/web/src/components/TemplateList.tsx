@@ -1,6 +1,7 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import type { CashFlowTemplate } from "@workspace/core/types"
+import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
 import { Card } from "@workspace/ui/components/card"
 import {
@@ -56,10 +57,15 @@ export const TemplateList = ({
       }
     >
       <Item>
-        <ItemMedia>
-          <Badge className="size-10" variant="secondary">
-            <DynamicIcon name={t.icon as IconName} />
-          </Badge>
+        <ItemMedia variant="image">
+          <Avatar
+            size="lg"
+            className="bg-(--secondary) after:border-transparent"
+          >
+            <AvatarFallback>
+              <DynamicIcon name={t.icon as IconName} />
+            </AvatarFallback>
+          </Avatar>
         </ItemMedia>
         <ItemContent>
           <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
