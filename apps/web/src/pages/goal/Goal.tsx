@@ -19,7 +19,6 @@ import {
   Item,
   ItemContent,
   ItemDescription,
-  ItemHeader,
   ItemMedia,
   ItemTitle,
 } from "@workspace/ui/components/item"
@@ -42,7 +41,6 @@ import { NavBack } from "@/components/NavBack"
 import { useAuth } from "@/hooks/useAuth"
 import { deleteGoal, getGoal } from "@workspace/api/db/goals"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { GoalBadge } from "@/components/GoalBadge"
 import { Badge } from "@workspace/ui/components/badge"
 
 export function Goal() {

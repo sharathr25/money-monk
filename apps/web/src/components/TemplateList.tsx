@@ -2,7 +2,6 @@ import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import type { CashFlowTemplate } from "@workspace/core/types"
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
-import { Badge } from "@workspace/ui/components/badge"
 import { Card } from "@workspace/ui/components/card"
 import {
   Item,
