@@ -58,12 +58,10 @@ export function CashFlowProjection() {
     title: string,
     description: string | React.ReactElement
   ) => (
-    <Item className="border-l-2 border-l-(--secondary) p-0 pl-2">
-      <ItemContent>
-        <ItemTitle>{title}</ItemTitle>
-        <ItemDescription>{description}</ItemDescription>
-      </ItemContent>
-    </Item>
+    <div className="flex justify-between">
+      <ItemDescription>{title}</ItemDescription>
+      <ItemTitle>{description}</ItemTitle>
+    </div>
   )
 
   if (loading) return <FullScreenLoader />
@@ -155,7 +153,7 @@ export function CashFlowProjection() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-2">
-                <div className="flex">
+                <div className="flex flex-col">
                   {renderItem(
                     "Opening Balance",
                     formatAmount(cp.openingBalance, {
@@ -168,8 +166,6 @@ export function CashFlowProjection() {
                       withCurrency: true,
                     })
                   )}
-                </div>
-                <div className="flex">
                   {renderItem(
                     "Income",
                     <span className="text-(--success)">

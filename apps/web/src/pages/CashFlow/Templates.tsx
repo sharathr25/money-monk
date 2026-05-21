@@ -38,8 +38,12 @@ export function Templates({ cashFlow }: { cashFlow: CashFlow }) {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between">
         <div className="flex items-center gap-1">
-          <MoveDown className="text-[var(--success)]" />
           Income
+          <MoveDown
+            className="text-[var(--success)]"
+            size="15"
+            strokeWidth={3}
+          />
         </div>
         <div className="flex items-center gap-1">
           + {formatAmount(cashFlow.totalIncome, { withCurrency: true })}
@@ -51,8 +55,12 @@ export function Templates({ cashFlow }: { cashFlow: CashFlow }) {
       <div className="flex flex-col">
         <div className="flex justify-between">
           <div className="flex items-center gap-1">
-            <MoveUp className="text-[var(--destructive)]" size={20} />
             Expenses
+            <MoveUp
+              className="text-[var(--destructive)]"
+              size="15"
+              strokeWidth={3}
+            />
           </div>
           - {formatAmount(cashFlow.totalExpenses, { withCurrency: true })}
         </div>

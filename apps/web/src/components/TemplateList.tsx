@@ -74,19 +74,19 @@ export const TemplateList = ({
           <ItemDescription className="flex flex-col items-end">
             <span>{formatCashFlowAmount(t.type, t.amount)}</span>
             {!!t.date && t.frequency === "ONE_TIME" && (
-              <span className={cn("flex items-center gap-1")}>
+              <span className="flex items-center gap-1 text-xs">
+                {formatDate(t.date)}
                 {old ? (
                   <CalendarCheck className="size-3.5 text-(--primary)" />
                 ) : (
                   <Calendar className="size-3.5 text-(--primary)" />
                 )}
-                {formatDate(t.date)}
               </span>
             )}
             {t.frequency === "MONTHLY" && (
-              <span className="flex items-center gap-1">
-                <Repeat className="size-3.5 text-(--primary)" />
+              <span className="flex items-center gap-1 text-xs">
                 {!!t.day && `On ${formatDayOfMonth(t.day)}`}
+                <Repeat className="size-3.5 text-(--primary)" />
               </span>
             )}
           </ItemDescription>

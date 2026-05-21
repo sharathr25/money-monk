@@ -99,7 +99,7 @@ export function Goals() {
           <CardTitle>Estimated Amount</CardTitle>
           <CardDescription className="flex justify-between">
             <div>{formatAmount(g.estimatedAmount, { withCurrency: true })}</div>
-            <div className="text-sm capitalize">
+            <div className="text-xs capitalize">
               {`${g.status.toLowerCase().replace("_", " ")} On ${formatDate(lastStage.startDate)}`}
             </div>
           </CardDescription>

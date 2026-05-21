@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog"
 import { Button } from "@workspace/ui/components/button"
+import { Switch } from "@workspace/ui/components/switch"
 import { Card } from "@workspace/ui/components/card"
 import {
   Item,
@@ -33,13 +34,16 @@ import {
   Banknote,
   LogOut,
   MapPinned,
+  Moon,
   Power,
   SquareCheck,
   SquareX,
   X,
 } from "lucide-react"
+import { useTheme } from "@/components/theme-provider"
 
 export function Profile() {
+  const { theme, setTheme } = useTheme()
   const user = useAuth()
   const { replace } = useNavigator()
   const { data: userData, isPending: loading } = useQuery({
@@ -108,6 +112,23 @@ export function Profile() {
               <ItemTitle>Locale</ItemTitle>
             </ItemContent>
             <ItemActions>{userData?.locale}</ItemActions>
+          </Item>
+        </Card>
+        <Card className="p-0">
+          <Item>
+            <ItemMedia>
+              <Moon />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle>Dark Mode</ItemTitle>
+            </ItemContent>
+            <ItemActions>
+              <Switch
+                className="data-[state=unchecked]:bg-gray-300"
+                checked={theme === "dark"}
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              />
+            </ItemActions>
           </Item>
         </Card>
         <Card className="p-0">
