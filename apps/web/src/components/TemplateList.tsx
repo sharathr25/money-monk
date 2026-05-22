@@ -11,7 +11,6 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 import {
-  cn,
   formatCashFlowAmount,
   formatDate,
   formatDayOfMonth,
@@ -49,7 +48,7 @@ export const TemplateList = ({
 
   const renderCard = (t: CashFlowTemplate, old: boolean = false) => (
     <Card
-      className={cn("p-0", old && "opacity-50")}
+      className="p-0"
       key={t.id}
       onClick={() =>
         navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATE, { templateId: t.id })

@@ -89,7 +89,7 @@ export const saveTransaction =
     }
 
     const keysToDelete = [
-      ...Object.keys(docData).filter((k) => !docData[k]),
+      ...Object.keys(docData).filter((k) => docData[k] === undefined),
       "id",
       "goalId",
     ]
@@ -115,7 +115,7 @@ export const updateTransaction =
     }
 
     const keysToDelete = [
-      ...Object.keys(docData).filter((k) => !docData[k]),
+      ...Object.keys(docData).filter((k) => docData[k] === undefined),
       "id",
       "goalId",
     ]

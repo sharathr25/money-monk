@@ -14,7 +14,7 @@ export type SaveTransationSpec = {
     id: string
     name: string
     status: GoalStatus
-  }
+  } | null
   paidTo?: string
   category?: string
   templateId?: string

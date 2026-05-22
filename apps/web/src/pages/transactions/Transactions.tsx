@@ -68,7 +68,13 @@ export function Transactions() {
             {t.name}
           </ItemTitle>
           <ItemDescription>
-            {t.goal ? `For ${t.goal.name}` : t.description}
+            {t.goal ? (
+              <>
+                For <span className="font-extrabold">{t.goal.name}</span>
+              </>
+            ) : (
+              t.description
+            )}
           </ItemDescription>
         </ItemContent>
         <ItemContent className="flex items-end">

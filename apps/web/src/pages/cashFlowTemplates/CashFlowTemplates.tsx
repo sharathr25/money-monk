@@ -1,7 +1,11 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { queryCashFlowTemplates } from "@workspace/api/db/index"
-import type { CashFlowTemplate, Type } from "@workspace/core/types"
+import type {
+  CashFlowTemplate,
+  CashFlowTemplateQuery,
+  Type,
+} from "@workspace/core/types"
 import { Button } from "@workspace/ui/components/button"
 import {
   Empty,
@@ -19,6 +23,7 @@ import {
   MoveUp,
   X,
   Save,
+  ArrowDownUp,
 } from "lucide-react"
 import { useState } from "react"
 import { Spinner } from "@workspace/ui/components/spinner"
@@ -45,34 +50,57 @@ import {
 } from "@workspace/ui/components/alert-dialog"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
+import { Switch } from "@workspace/ui/components/switch"
 
-const DEFAULT_QUERY: { type: Type } = { type: "INCOME" }
+type Query = { type: string; showPastTemplates: boolean }
+
+const DEFAULT_QUERY: Query = {
+  type: "ALL",
+  showPastTemplates: false,
+}
 
 export function CashFlowTemplates() {
   const user = useAuth()
   const { navigate } = useNavigator()
-  const { handleSubmit, setValue } = useForm<{ type: Type }>({
+  const { handleSubmit, setValue, watch } = useForm<Query>({
     defaultValues: DEFAULT_QUERY,
   })
-  const [filters, setFilters] = useState(DEFAULT_QUERY)
-  const { isPending, data: templates = [] } = useQuery({
+  const [filters, setFilters] = useState<Query>(DEFAULT_QUERY)
+
+  const showPastTemplates = watch("showPastTemplates")
+  const type = watch("type")
+
+  const toQueryFilters = (filters: Query): CashFlowTemplateQuery => {
+    const query: CashFlowTemplateQuery = { ...filters }
+    if (filters.type === "ALL") {
+      query.type = undefined
+    }
+    if (!filters.showPastTemplates) {
+      query.startDate = new Date()
+    }
+    return query
+  }
+
+  const {
+    isPending,
+    data: templates = [],
+    refetch,
+  } = useQuery({
     queryKey: ["cashflow-templates", filters],
-    queryFn: queryCashFlowTemplates(user.uid).bind(null, filters),
+    queryFn: queryCashFlowTemplates(user.uid).bind(
+      null,
+      toQueryFilters(filters)
+    ),
   })
   const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
-  const onSubmit = (filters: { type: Type }) => {
+  const onSubmit = (filters: Query) => {
     setFilters(filters)
     setFiltersDialogOpen(false)
+    refetch()
   }
 
-  const Templates = ({
-    templates,
-    type,
-  }: {
-    templates: CashFlowTemplate[]
-    type: Type
-  }) => {
+  const Templates = ({ templates }: { templates: CashFlowTemplate[] }) => {
     if (isPending) return <Spinner className="m-auto" />
 
     if (templates.length === 0)
@@ -82,12 +110,9 @@ export function CashFlowTemplates() {
             <EmptyMedia variant="icon">
               <FolderCode />
             </EmptyMedia>
-            <EmptyTitle className="capitalize">
-              No {type.toLowerCase()} Yet
-            </EmptyTitle>
+            <EmptyTitle className="capitalize">No Templates Yet</EmptyTitle>
             <EmptyDescription>
-              Start by by clicking on <CirclePlus /> to add your first{" "}
-              {type.toLowerCase()}
+              Start by by clicking on <CirclePlus /> to add your first template.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -117,29 +142,46 @@ export function CashFlowTemplates() {
             <AlertDialogHeader className="flex flex-col items-start">
               <AlertDialogTitle>Change Filters</AlertDialogTitle>
             </AlertDialogHeader>
-            <AlertDialogDescription>
-              <Field>
-                <FieldLabel htmlFor="type">Type</FieldLabel>
-                <Select
-                  defaultValue={DEFAULT_QUERY.type}
-                  onValueChange={(v: Type) => setValue("type", v)}
-                >
-                  <SelectTrigger id="type" className="!h-11">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="INCOME">
-                      <MoveDown />
-                      Income
-                    </SelectItem>
-                    <SelectItem value="EXPENSE">
-                      <MoveUp />
-                      Expense
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
-            </AlertDialogDescription>
+            <AlertDialogDescription></AlertDialogDescription>
+            <Field>
+              <FieldLabel htmlFor="type">Type</FieldLabel>
+              <Select
+                defaultValue={DEFAULT_QUERY.type}
+                value={type}
+                onValueChange={(v: Type) => setValue("type", v)}
+              >
+                <SelectTrigger id="type" className="!h-11">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">
+                    <ArrowDownUp />
+                    All
+                  </SelectItem>
+                  <SelectItem value="INCOME">
+                    <MoveDown />
+                    Income
+                  </SelectItem>
+                  <SelectItem value="EXPENSE">
+                    <MoveUp />
+                    Expense
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field orientation="horizontal" className="max-w-sm">
+              <FieldLabel htmlFor="switch-focus-mode">
+                Show past templates
+              </FieldLabel>
+              <Switch
+                className="data-[state=unchecked]:bg-gray-300"
+                id="switch-focus-mode"
+                checked={showPastTemplates}
+                onCheckedChange={(showPastTemplates) =>
+                  setValue("showPastTemplates", showPastTemplates)
+                }
+              />
+            </Field>
             <AlertDialogFooter>
               <AlertDialogCancel>
                 <X />
@@ -152,10 +194,7 @@ export function CashFlowTemplates() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <Templates
-        templates={templates.filter((t) => t.type === filters.type)}
-        type={filters.type}
-      />
+      <Templates templates={templates} />
       <Button
         className="fixed right-6 bottom-20 h-12 w-12 rounded-full"
         onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE)}

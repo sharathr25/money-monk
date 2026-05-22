@@ -2,7 +2,6 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@workspace/ui/components/chart"
 import {
   Alert,
@@ -27,20 +26,34 @@ import { ItemDescription, ItemTitle } from "@workspace/ui/components/item"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
+import { Field, FieldLabel } from "@workspace/ui/components/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import { useForm } from "react-hook-form"
+
+const MONTH_OPTIONS = [3, 6, 9, 12].map((m) => ({
+  label: `${m} Months`,
+  value: `${m}`,
+}))
 
 export function CashFlowProjection() {
   const user = useAuth()
-  const { data: cashFlowProjections = [], isPending: loading } = useQuery({
-    queryKey: ["projections", 6],
-    queryFn: getCashFlowProjection(user.uid).bind(null, 6),
+  const { setValue, watch } = useForm<{
+    months: string
+  }>({
+    defaultValues: { months: "6" },
   })
+  const months = watch("months")
 
-  const chartConfig = {
-    closingBalance: {
-      label: "",
-      color: "#2D3A4B",
-    },
-  } satisfies ChartConfig
+  const { data: cashFlowProjections = [], isPending: loading } = useQuery({
+    queryKey: ["projections", months],
+    queryFn: getCashFlowProjection(user.uid).bind(null, parseInt(months)),
+  })
 
   const shortFallProjection = cashFlowProjections.find(
     (cp) => cp.closingBalance < 0
@@ -63,14 +76,28 @@ export function CashFlowProjection() {
 
   return (
     <div className="flex flex-col gap-4">
+      <Field>
+        <FieldLabel htmlFor="months">Insights For</FieldLabel>
+        <Select value={months} onValueChange={(v) => setValue("months", v)}>
+          <SelectTrigger id="months" className="!h-12">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {MONTH_OPTIONS.map((m) => (
+              <SelectItem value={m.value} key={m.value}>
+                {m.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Field>
       <div className="flex flex-col gap-2">
-        <h1 className="font-extrabold">6-Month Closing Balance Trend</h1>
+        <h1 className="font-extrabold">
+          {months}-Months Closing Balance Trend
+        </h1>
         <Card>
           <CardContent>
-            <ChartContainer
-              config={chartConfig}
-              className="min-h-[200px] w-full"
-            >
+            <ChartContainer config={{}} className="min-h-[200px] w-full">
               <BarChart accessibilityLayer data={cashFlowProjections}>
                 <XAxis
                   dataKey="month"

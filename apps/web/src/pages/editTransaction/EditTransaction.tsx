@@ -88,7 +88,7 @@ export function EditTransaction() {
   }) => {
     mutate({
       ...data,
-      goal: goalId && goalId !== "NONE" ? goalsMap[goalId] : undefined,
+      goal: goalId ? (goalId === "NONE" ? null : goalsMap[goalId]) : undefined,
       date: date || new Date(),
       amount: amountToDouble(amount),
     })

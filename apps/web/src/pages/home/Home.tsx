@@ -2,6 +2,7 @@ import { UserAvatar } from "@/components/UserAvatar"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { Button } from "@workspace/ui/components/button"
+import { cn } from "@workspace/ui/lib/utils"
 import {
   Target,
   ChartNoAxesCombined,
@@ -9,35 +10,41 @@ import {
   LayoutDashboard,
   BookText,
 } from "lucide-react"
-import { Outlet } from "react-router"
+import { Outlet, useLocation } from "react-router"
 
 export function Home() {
   const { navigate } = useNavigator()
+  const { pathname } = useLocation()
 
   const links = [
     {
       label: "Cash Flow",
       to: ROUTE_NAMES.ROOT,
+      isActive: pathname.endsWith("/home"),
       Icon: ArrowDownUp,
     },
     {
       label: "Templates",
       to: ROUTE_NAMES.CASH_FLOW_TEMPLATES,
+      isActive: pathname.endsWith("/cash-flow-templates"),
       Icon: LayoutDashboard,
     },
     {
-      label: "Projection",
+      label: "Insights",
       to: ROUTE_NAMES.CASH_FLOW_PROJECTION,
+      isActive: pathname.endsWith("/cash-flow-projection"),
       Icon: ChartNoAxesCombined,
     },
     {
       label: "Transactions",
       to: ROUTE_NAMES.TRANSACTIONS,
+      isActive: pathname.endsWith("/transactions"),
       Icon: BookText,
     },
     {
       label: "Goals",
       to: ROUTE_NAMES.GOALS,
+      isActive: pathname.endsWith("/goals"),
       Icon: Target,
     },
   ]
@@ -52,11 +59,14 @@ export function Home() {
         <Outlet />
       </div>
       <div className="fixed bottom-0 left-0 z-99 flex w-full items-center justify-between bg-(--background) py-5 pb-5">
-        {links.map(({ label, to, Icon }) => (
+        {links.map(({ label, to, Icon, isActive }) => (
           <Button
             key={label}
             variant="ghost"
-            className="flex h-8 flex-1 basis-1/5 flex-col text-xs"
+            className={cn(
+              "flex h-8 flex-1 basis-1/5 flex-col text-xs",
+              isActive && "text-primary"
+            )}
             onClick={() => navigate(to)}
           >
             <Icon />
