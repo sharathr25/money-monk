@@ -113,14 +113,19 @@ export const CashFlowTemplateForm = ({
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-2">
             <Field className="basis-3/4">
-              <FieldLabel htmlFor="name">Name</FieldLabel>
-              <Input id="name" className="h-11" {...register("name")} />
+              <FieldLabel htmlFor="name">
+                Name<span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input id="name" {...register("name", { required: true })} />
             </Field>
             <Field className="basis-1/4">
               <FieldLabel htmlFor="name">Icon</FieldLabel>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="h-11">
+                  <Button
+                    variant="outline"
+                    className="border-(--foreground) text-(--foreground)"
+                  >
                     <DynamicIcon name={icon as IconName} className="size-6" />
                   </Button>
                 </DialogTrigger>
@@ -130,13 +135,12 @@ export const CashFlowTemplateForm = ({
                     <DialogDescription>Select an icon.</DialogDescription>
                     <Input
                       id="icon"
-                      className="h-11"
                       placeholder="Search icons..."
                       {...register("iconNameFilter")}
                     />
                   </DialogHeader>
                   <DialogFooter>
-                    <div className="flex h-11 flex-wrap gap-8">
+                    <div className="flex h-12 flex-wrap gap-8">
                       {filteredIcons.map((name) => (
                         <DialogClose asChild key={name}>
                           <Button
@@ -156,12 +160,14 @@ export const CashFlowTemplateForm = ({
           </div>
           <Field>
             <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" className="h-11" {...register("description")} />
+            <Input id="desc" {...register("description")} />
           </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="name">Amount</FieldLabel>
-              <InputGroup className="h-11">
+              <FieldLabel htmlFor="name">
+                Amount<span className="text-destructive">*</span>
+              </FieldLabel>
+              <InputGroup>
                 <InputGroupInput
                   id="amount"
                   {...register("amount", { required: true })}
@@ -180,7 +186,7 @@ export const CashFlowTemplateForm = ({
                 defaultValue={defaultValues.type}
                 onValueChange={(v: Type) => setValue("type", v)}
               >
-                <SelectTrigger id="type" className="!h-11">
+                <SelectTrigger id="type" className="!h-12">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -203,7 +209,7 @@ export const CashFlowTemplateForm = ({
                 defaultValue={defaultValues.frequency}
                 onValueChange={(v: Frequency) => setValue("frequency", v)}
               >
-                <SelectTrigger id="type" className="!h-11">
+                <SelectTrigger id="type" className="!h-12">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -226,7 +232,7 @@ export const CashFlowTemplateForm = ({
                     <Button
                       variant="outline"
                       id="date-picker-simple"
-                      className="h-11 justify-start font-normal"
+                      className="justify-start border-(--foreground) font-normal text-(--foreground)"
                     >
                       <Calendar />
                       {date?.toLocaleDateString()}
@@ -265,7 +271,7 @@ export const CashFlowTemplateForm = ({
                   defaultValue={defaultValues.day}
                   onValueChange={(v) => setValue("day", v)}
                 >
-                  <SelectTrigger id="type" className="!h-11">
+                  <SelectTrigger id="type" className="!h-12">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -279,7 +285,7 @@ export const CashFlowTemplateForm = ({
               </Field>
             )}
           </div>
-          <Button type="submit" className="h-13 w-full">
+          <Button type="submit" className="w-full">
             {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}
           </Button>

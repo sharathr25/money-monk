@@ -23,12 +23,7 @@ import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
 import { cn, formatAmount } from "@workspace/ui/lib/utils"
 import dayjs from "dayjs"
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@workspace/ui/components/item"
+import { ItemDescription, ItemTitle } from "@workspace/ui/components/item"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"

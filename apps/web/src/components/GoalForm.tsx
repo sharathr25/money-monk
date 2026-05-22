@@ -81,8 +81,10 @@ export const GoalForm = ({
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-2">
             <Field className="basis-3/4">
-              <FieldLabel htmlFor="name">Name</FieldLabel>
-              <Input id="name" className="h-11" {...register("name")} />
+              <FieldLabel htmlFor="name">
+                Name<span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input id="name" {...register("name", { required: true })} />
             </Field>
             <Field className="basis-1/4">
               <FieldLabel htmlFor="name">Icon</FieldLabel>
@@ -101,13 +103,12 @@ export const GoalForm = ({
                     <DialogDescription>Select an icon.</DialogDescription>
                     <Input
                       id="icon"
-                      className="h-11"
                       placeholder="Search icons..."
                       {...register("iconNameFilter")}
                     />
                   </DialogHeader>
                   <DialogFooter>
-                    <div className="flex h-11 flex-wrap gap-8">
+                    <div className="flex h-12 flex-wrap gap-8">
                       {filteredIcons.map((name) => (
                         <DialogClose asChild key={name}>
                           <Button
@@ -127,12 +128,14 @@ export const GoalForm = ({
           </div>
           <Field>
             <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" className="h-11" {...register("description")} />
+            <Input id="desc" {...register("description")} />
           </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="name">Estimated Amount</FieldLabel>
-              <InputGroup className="h-11">
+              <FieldLabel htmlFor="name">
+                Estimated Amount<span className="text-destructive">*</span>
+              </FieldLabel>
+              <InputGroup>
                 <InputGroupInput
                   id="amount"
                   {...register("estimatedAmount", { required: true })}
@@ -153,7 +156,7 @@ export const GoalForm = ({
                 defaultValue={defaultValues.status}
                 onValueChange={(v: GoalStatus) => setValue("status", v)}
               >
-                <SelectTrigger id="type" className="!h-11 capitalize">
+                <SelectTrigger id="type" className="!h-12 capitalize">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,7 +169,7 @@ export const GoalForm = ({
               </Select>
             </Field>
           </div>
-          <Button type="submit" className="h-13 w-full">
+          <Button type="submit" className="w-full">
             {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}
           </Button>

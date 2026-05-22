@@ -41,12 +41,13 @@ export function AddTransaction() {
     iconNameFilter,
     amount,
     date,
+    goalId,
     ...data
   }) => {
     mutate({
       ...data,
       date: date || new Date(),
-      goal: data.goalId ? goalsMap[data.goalId] : undefined,
+      goal: goalId && goalId !== "NONE" ? goalsMap[goalId] : undefined,
       amount: amountToDouble(amount),
     })
   }

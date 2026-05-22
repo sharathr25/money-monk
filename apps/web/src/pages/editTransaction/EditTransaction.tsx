@@ -13,6 +13,7 @@ import {
   getTransaction,
   updateTransaction,
 } from "@workspace/api/db/transactions"
+import type { Goal } from "@workspace/core/types/goals"
 import { Button } from "@workspace/ui/components/button"
 import { amountToDouble } from "@workspace/ui/lib/utils"
 import { MoveLeft, RefreshCcw } from "lucide-react"
@@ -47,18 +48,16 @@ export function EditTransaction() {
     queryFn: async () => getTransactionForUser(transactionId),
   })
 
-  const {
-    mutate,
-    isPending: updateGoalPending,
-    error,
-  } = useMutation({
+  const { mutate, isPending: updateGoalPending } = useMutation({
     mutationFn: updateTransactionForUser,
     onSuccess: () =>
       toast.success("Update successful.", { onAutoClose: goBack }),
     onError: () => toast.error("Update failed, Try again."),
   })
 
-  console.log(error)
+  const goalsMap: Record<string, Goal> = goals
+    ? goals.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {})
+    : {}
 
   if (getTransactionPending) return <FullScreenLoader />
 
@@ -84,10 +83,12 @@ export function EditTransaction() {
     iconNameFilter,
     amount,
     date,
+    goalId,
     ...data
   }) => {
     mutate({
       ...data,
+      goal: goalId && goalId !== "NONE" ? goalsMap[goalId] : undefined,
       date: date || new Date(),
       amount: amountToDouble(amount),
     })

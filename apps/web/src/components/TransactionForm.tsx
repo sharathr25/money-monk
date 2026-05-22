@@ -96,8 +96,10 @@ export const TransactionForm = ({
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-2">
             <Field className="basis-3/4">
-              <FieldLabel htmlFor="name">Name</FieldLabel>
-              <Input id="name" className="h-12" {...register("name")} />
+              <FieldLabel htmlFor="name">
+                Name<span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input id="name" {...register("name", { required: true })} />
             </Field>
             <Field className="basis-1/4">
               <FieldLabel htmlFor="name">Icon</FieldLabel>
@@ -116,7 +118,6 @@ export const TransactionForm = ({
                     <DialogDescription>Select an icon.</DialogDescription>
                     <Input
                       id="icon"
-                      className="h-12"
                       placeholder="Search icons..."
                       {...register("iconNameFilter")}
                     />
@@ -142,12 +143,14 @@ export const TransactionForm = ({
           </div>
           <Field>
             <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" className="h-12" {...register("description")} />
+            <Input id="desc" {...register("description")} />
           </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="amount">Amount</FieldLabel>
-              <InputGroup className="h-12">
+              <FieldLabel htmlFor="amount">
+                Amount<span className="text-destructive">*</span>
+              </FieldLabel>
+              <InputGroup>
                 <InputGroupInput
                   id="amount"
                   {...register("amount", { required: true })}
@@ -162,7 +165,7 @@ export const TransactionForm = ({
             </Field>
             <Field>
               <FieldLabel htmlFor="paidTo">Paid To</FieldLabel>
-              <InputGroup className="h-12">
+              <InputGroup>
                 <InputGroupInput id="paidTo" {...register("paidTo")} />
               </InputGroup>
             </Field>
@@ -171,13 +174,16 @@ export const TransactionForm = ({
             <Field>
               <FieldLabel htmlFor="type">Goal</FieldLabel>
               <Select
-                defaultValue={formInputs?.goalId}
+                defaultValue={formInputs?.goalId || "NONE"}
                 onValueChange={(v) => setValue("goalId", v)}
               >
                 <SelectTrigger id="type" className="!h-12 capitalize">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="NONE" key="NONE" className="capitalize">
+                    None
+                  </SelectItem>
                   {goals.map((g) => (
                     <SelectItem value={g.id} key={g.id} className="capitalize">
                       {g.name}
@@ -226,7 +232,7 @@ export const TransactionForm = ({
               </Dialog>
             </Field>
           </div>
-          <Button type="submit" className="h-13 w-full">
+          <Button type="submit" className="w-full">
             {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}
           </Button>
