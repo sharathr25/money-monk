@@ -41,7 +41,7 @@ export function EditTransaction() {
   const {
     isPending: getTransactionPending,
     error: getTransactionError,
-    data: goal,
+    data: transaction,
     refetch,
   } = useQuery({
     queryKey: ["transaction-edit-" + transactionId],
@@ -63,7 +63,7 @@ export function EditTransaction() {
 
   if (getTransactionError) return <FullScreenError msg="Something went wrong" />
 
-  if (!goal)
+  if (!transaction)
     return (
       <FullScreenError msg="Cash flow template not found">
         <div className="flex gap-2">
@@ -103,8 +103,9 @@ export function EditTransaction() {
       </div>
       <TransactionForm
         formInputs={{
-          ...goal,
-          amount: `${goal.amount}`,
+          ...transaction,
+          goalId: transaction.goal?.id,
+          amount: `${transaction.amount}`,
         }}
         goals={goals || []}
         onSubmit={onSubmit}
