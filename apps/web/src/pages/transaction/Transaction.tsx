@@ -26,6 +26,7 @@ import {
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import {
   Banknote,
+  Boxes,
   Calendar,
   Info,
   MoveLeft,
@@ -176,7 +177,19 @@ export function Transaction() {
               </ItemContent>
             </Item>
           )}
-          <Item className="flex-1" />
+          {transaction.category && (
+            <Item className="flex-1 bg-(--accent) p-3">
+              <ItemMedia variant="icon">
+                <Boxes />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Category</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  {transaction.category.name}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          )}
         </div>
       </div>
       <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">

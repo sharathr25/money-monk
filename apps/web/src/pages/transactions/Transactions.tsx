@@ -67,22 +67,17 @@ export function Transactions() {
           <ItemTitle className="line-clamp-1 flex capitalize">
             {t.name}
           </ItemTitle>
-          <ItemDescription>
-            {t.goal ? (
-              <>
-                For <span className="font-extrabold">{t.goal.name}</span>
-              </>
-            ) : (
-              t.description
-            )}
+          <ItemDescription className="flex gap-1">
+            For <span className="font-extrabold">{t.goal.name}</span>
+            {t.category && <Badge variant="outline">{t.category.name}</Badge>}
           </ItemDescription>
         </ItemContent>
         <ItemContent className="flex items-end">
           <ItemTitle className="line-clamp-1 flex">
-            <Badge variant="secondary" className="capitalize">
-              {t.type.toLowerCase()}
-            </Badge>
-            {formatAmount(t.amount, { withCurrency: true })}
+            {formatAmount(t.type === "EXPENSE" ? -1 : 1 * t.amount, {
+              withCurrency: true,
+              withSign: t.type === "EXPENSE" || t.type === "INCOME",
+            })}
           </ItemTitle>
           <ItemDescription className="text-xs">
             {formatDate(t.updatedAt)}

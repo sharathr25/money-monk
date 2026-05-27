@@ -78,7 +78,7 @@ export const saveGoal = (uid: string) => async (goal: SaveGoalSpec) => {
 
   const docData: DocumentData = {
     ...goal,
-    breakdown: goal.breakdown?.map((b, i) => ({
+    breakdown: goal.breakdown?.map((b) => ({
       ...b,
       id: b.id || doc(collection(db, "breakdown")).id,
     })),

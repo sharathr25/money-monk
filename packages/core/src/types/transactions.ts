@@ -1,5 +1,4 @@
 import type { Type } from "./cashFlowTemplates"
-import type { GoalStatus } from "./goals"
 
 export type TransactionType = Type | "SAVINGS"
 
@@ -26,7 +25,7 @@ export type Transaction = SaveTransationSpec & {
   id: string
   createdAt: Date
   updatedAt: Date
-  goal?: {
+  goal: {
     id: string
     name: string
   }
