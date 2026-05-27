@@ -53,7 +53,9 @@ const DEFAULT_QUERY = { status: "ALL" as GoalStatus | "ALL" }
 
 export function Goals() {
   const user = useAuth()
-  const { handleSubmit, setValue } = useForm<{ status: GoalStatus | "ALL" }>({
+  const { handleSubmit, setValue, watch } = useForm<{
+    status: GoalStatus | "ALL"
+  }>({
     defaultValues: DEFAULT_QUERY,
   })
   const [filters, setFilters] = useState(DEFAULT_QUERY)
@@ -68,11 +70,14 @@ export function Goals() {
   const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
   const onSubmit = (filters: { status: GoalStatus | "ALL" }) => {
+    console.log(filters)
     setFilters(filters)
     setFiltersDialogOpen(false)
   }
 
   const { navigate } = useNavigator()
+
+  const status = watch("status")
 
   if (isPending) return <FullScreenLoader />
 
@@ -148,10 +153,10 @@ export function Goals() {
               Apply filters to limit result
             </AlertDialogDescription>
             <Field>
-              <FieldLabel htmlFor="type">Type</FieldLabel>
+              <FieldLabel htmlFor="type">Status</FieldLabel>
               <Select
-                defaultValue={DEFAULT_QUERY.status}
-                onValueChange={(v: GoalStatus) => setValue("status", v)}
+                defaultValue={status}
+                onValueChange={(v: GoalStatus | "ALL") => setValue("status", v)}
               >
                 <SelectTrigger id="type" className="!h-11 capitalize">
                   <SelectValue />

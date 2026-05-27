@@ -42,12 +42,20 @@ export function AddTransaction() {
     amount,
     date,
     goalId,
+    categoryId,
     ...data
   }) => {
     mutate({
       ...data,
       date: date || new Date(),
-      goal: goalId && goalId !== "NONE" ? goalsMap[goalId] : undefined,
+      goal: goalId ? goalsMap[goalId] : undefined,
+      category:
+        (categoryId &&
+          goalId &&
+          goalsMap[goalId].breakdown
+            .filter((b) => b.id === categoryId)
+            .map((b) => ({ id: b.id, name: b.category }))[0]) ||
+        undefined,
       amount: amountToDouble(amount),
     })
   }
@@ -61,7 +69,7 @@ export function AddTransaction() {
       </div>
       <TransactionForm
         onSubmit={onSubmit}
-        goals={goals || []}
+        goalsMap={goalsMap}
         loading={isUpdatingTransaction}
       />
     </div>

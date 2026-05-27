@@ -61,6 +61,10 @@ export const formatDayOfMonth = (day: number): string => {
     return `${day}`
   }
 
+  if (day > dayjs(new Date()).daysInMonth()) {
+    return "Last Day"
+  }
+
   const remainder10 = day % 10
   const remainder100 = day % 100
 
@@ -91,4 +95,8 @@ export function getMonthRanges(months: number, monthFormat: string = "MMMM") {
       endDate: date.endOf("month").toDate(),
     }
   })
+}
+
+export function isNumber(str: string) {
+  return !Number.isNaN(parseInt(str))
 }

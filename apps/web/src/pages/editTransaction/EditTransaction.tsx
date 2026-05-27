@@ -104,10 +104,11 @@ export function EditTransaction() {
       <TransactionForm
         formInputs={{
           ...transaction,
+          categoryId: transaction.category?.id,
           goalId: transaction.goal?.id,
           amount: `${transaction.amount}`,
         }}
-        goals={goals || []}
+        goalsMap={goalsMap}
         onSubmit={onSubmit}
         loading={updateGoalPending}
       />

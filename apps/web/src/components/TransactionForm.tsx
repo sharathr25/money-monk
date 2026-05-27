@@ -15,7 +15,7 @@ import { Save, IndianRupee, Calendar as CalendarIcon } from "lucide-react"
 import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { useForm, type SubmitHandler } from "react-hook-form"
-import { formatAmount } from "@workspace/ui/lib/utils"
+import { formatAmount, isNumber } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
 import {
   InputGroup,
@@ -31,9 +31,9 @@ import {
 } from "@workspace/ui/components/select"
 import type { Goal, GoalStage } from "@workspace/core/types/goals"
 import type { TransactionType } from "@workspace/core/types/transactions"
-import { GoalBadge } from "./GoalBadge"
 import { useState } from "react"
 import { Calendar } from "@workspace/ui/components/calendar"
+import { TRANSACTION_TYPES } from "@workspace/ui/constants/transactions"
 
 const ICONS_PAGE_SIZE = 10
 
@@ -41,6 +41,7 @@ const DEFAULT_TRANSACTION = {
   name: "",
   estimatedAmount: "",
   iconNameFilter: "bank",
+  type: "EXPENSE" as TransactionType,
   icon: "banknote",
   date: new Date(),
 }
@@ -54,8 +55,8 @@ export type TransactionFormInputs = {
   type: TransactionType
   date?: Date
   goalId?: string
+  categoryId?: string
   goalStage?: GoalStage
-  category?: string
   paidTo?: string
   templateId?: string
 }
@@ -64,10 +65,10 @@ export const TransactionForm = ({
   formInputs,
   onSubmit,
   loading,
-  goals,
+  goalsMap,
 }: {
   formInputs?: TransactionFormInputs
-  goals: Goal[]
+  goalsMap: Record<string, Goal>
   onSubmit: SubmitHandler<TransactionFormInputs>
   loading: boolean
 }) => {
@@ -83,6 +84,9 @@ export const TransactionForm = ({
   const iconNameFilter = watch("iconNameFilter")
   const icon = watch("icon")
   const date = watch("date")
+  const goalId = watch("goalId")
+  const categoryId = watch("categoryId")
+  const type = watch("type")
 
   const filteredIcons: IconName[] = iconNameFilter
     ? iconNames
@@ -141,27 +145,10 @@ export const TransactionForm = ({
               </Dialog>
             </Field>
           </div>
-          <Field>
-            <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" {...register("description")} />
-          </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="amount">
-                Amount<span className="text-destructive">*</span>
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  id="amount"
-                  {...register("amount", { required: true })}
-                  onChange={(e) =>
-                    setValue("amount", formatAmount(e.target.value))
-                  }
-                />
-                <InputGroupAddon>
-                  <IndianRupee />
-                </InputGroupAddon>
-              </InputGroup>
+              <FieldLabel htmlFor="desc">Description</FieldLabel>
+              <Input id="desc" {...register("description")} />
             </Field>
             <Field>
               <FieldLabel htmlFor="paidTo">Paid To</FieldLabel>
@@ -172,22 +159,85 @@ export const TransactionForm = ({
           </div>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="type">Goal</FieldLabel>
+              <FieldLabel htmlFor="amount">
+                Amount<span className="text-destructive">*</span>
+              </FieldLabel>
+              <InputGroup>
+                <InputGroupInput
+                  id="amount"
+                  inputMode="numeric"
+                  {...register("amount", { required: true })}
+                  onChange={(e) =>
+                    setValue(
+                      "amount",
+                      isNumber(e.target.value)
+                        ? formatAmount(e.target.value)
+                        : ""
+                    )
+                  }
+                />
+                <InputGroupAddon>
+                  <IndianRupee />
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="goal">
+                Type<span className="text-destructive">*</span>
+              </FieldLabel>
               <Select
-                defaultValue={formInputs?.goalId || "NONE"}
-                onValueChange={(v) => setValue("goalId", v)}
+                required
+                value={type}
+                onValueChange={(v: TransactionType) => setValue("type", v)}
               >
-                <SelectTrigger id="type" className="!h-12 capitalize">
+                <SelectTrigger id="goal" className="!h-12 capitalize">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="NONE" key="NONE" className="capitalize">
-                    None
-                  </SelectItem>
-                  {goals.map((g) => (
+                  {TRANSACTION_TYPES.map((t) => (
+                    <SelectItem value={t} key={t} className="capitalize">
+                      {t.toLowerCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel htmlFor="goal">
+                Goal<span className="text-destructive">*</span>
+              </FieldLabel>
+              <Select
+                value={goalId}
+                required
+                onValueChange={(v) => setValue("goalId", v)}
+              >
+                <SelectTrigger id="goal" className="!h-12 capitalize">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(goalsMap).map((g) => (
                     <SelectItem value={g.id} key={g.id} className="capitalize">
                       {g.name}
-                      <GoalBadge type={g.status} />
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="goal">Category</FieldLabel>
+              <Select
+                value={categoryId}
+                onValueChange={(v) => setValue("categoryId", v)}
+              >
+                <SelectTrigger id="goal" className="!h-12 capitalize">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {goalsMap[goalId || ""]?.breakdown?.map((c) => (
+                    <SelectItem value={c.id} key={c.id} className="capitalize">
+                      {c.category}
                     </SelectItem>
                   ))}
                 </SelectContent>

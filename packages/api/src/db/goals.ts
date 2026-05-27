@@ -40,6 +40,7 @@ const toGoal = (docSnap: DocumentSnapshot) => {
     estimatedAmount: docSnap.get("estimatedAmount"),
     createdAt: toDate(docSnap.get("createdAt")),
     updatedAt: toDate(docSnap.get("updatedAt")),
+    breakdown: docSnap.get("breakdown") || [],
     stages,
   }
 }
@@ -75,8 +76,12 @@ export const getGoal =
 export const saveGoal = (uid: string) => async (goal: SaveGoalSpec) => {
   const date = Timestamp.fromDate(new Date())
 
-  const doc: DocumentData = {
+  const docData: DocumentData = {
     ...goal,
+    breakdown: goal.breakdown?.map((b, i) => ({
+      ...b,
+      id: b.id || doc(collection(db, "breakdown")).id,
+    })),
     createdAt: date,
     updatedAt: date,
     stages: [
@@ -88,10 +93,10 @@ export const saveGoal = (uid: string) => async (goal: SaveGoalSpec) => {
   }
 
   if (!goal.description) {
-    delete doc.description
+    delete docData.description
   }
 
-  await addDoc(collection(db, USERS, uid, GOALS), doc)
+  await addDoc(collection(db, USERS, uid, GOALS), docData)
 }
 
 export const updateGoal =
@@ -100,6 +105,10 @@ export const updateGoal =
 
     const data: DocumentData = {
       ...goal,
+      breakdown: goal.breakdown?.map((b) => ({
+        ...b,
+        id: b.id || doc(collection(db, "breakdown")).id,
+      })),
       updatedAt: Timestamp.fromDate(date),
     }
 

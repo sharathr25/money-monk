@@ -7,7 +7,7 @@ import { useNavigator } from "@/hooks/useNavigator"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { getGoal, updateGoal } from "@workspace/api/db/goals"
 import { Button } from "@workspace/ui/components/button"
-import { amountToDouble } from "@workspace/ui/lib/utils"
+import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { MoveLeft, RefreshCcw } from "lucide-react"
 import type { SubmitHandler } from "react-hook-form"
 import { useParams } from "react-router"
@@ -60,12 +60,18 @@ export function EditGoal() {
   const onSubmit: SubmitHandler<GoalFormInputs> = async ({
     iconNameFilter,
     estimatedAmount,
+    breakdown,
     ...data
   }) => {
     mutate({
       ...data,
       estimatedAmount: amountToDouble(estimatedAmount),
       stages: goal.stages,
+      breakdown: breakdown.map((b) => ({
+        ...b,
+        id: b.id || "",
+        amount: amountToDouble(b.amount),
+      })),
     })
   }
 
@@ -79,7 +85,9 @@ export function EditGoal() {
       <GoalForm
         formInputs={{
           ...goal,
-          estimatedAmount: `${goal.estimatedAmount}`,
+          breakdown:
+            goal.breakdown?.map((b) => ({ ...b, amount: `${b.amount}` })) || [],
+          estimatedAmount: formatAmount(`${goal.estimatedAmount}`),
           status: goal.status,
         }}
         onSubmit={onSubmit}

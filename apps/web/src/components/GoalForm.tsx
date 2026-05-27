@@ -11,11 +11,20 @@ import {
   DialogDescription,
   DialogClose,
 } from "@workspace/ui/components/dialog"
-import { Save, IndianRupee } from "lucide-react"
+import { Save, IndianRupee, Plus, Minus } from "lucide-react"
 import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
-import { Field, FieldLabel } from "@workspace/ui/components/field"
-import { useForm, type SubmitHandler } from "react-hook-form"
-import { formatAmount } from "@workspace/ui/lib/utils"
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+} from "@workspace/ui/components/field"
+import {
+  useFieldArray,
+  useForm,
+  type FieldArrayWithId,
+  type SubmitHandler,
+} from "react-hook-form"
+import { amountToDouble, formatAmount, isNumber } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
 import {
   InputGroup,
@@ -49,6 +58,7 @@ export type GoalFormInputs = {
   description?: string
   estimatedAmount: string
   status: GoalStatus
+  breakdown: { category: string; amount: string; id: string }[]
 }
 
 export const GoalForm = ({
@@ -62,18 +72,72 @@ export const GoalForm = ({
 }) => {
   const isEdit = Boolean(formInputs)
   const defaultValues = formInputs || DEFAULT_GOAL
-  const { handleSubmit, register, setValue, watch } = useForm<GoalFormInputs>({
-    defaultValues,
+  const { handleSubmit, register, setValue, watch, control } =
+    useForm<GoalFormInputs>({
+      defaultValues,
+    })
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "breakdown",
   })
 
   const iconNameFilter = watch("iconNameFilter")
   const icon = watch("icon")
+  const totalBreakdownAmount = watch("breakdown")?.reduce(
+    (acc, cur) => acc + amountToDouble(cur.amount),
+    0
+  )
 
   const filteredIcons: IconName[] = iconNameFilter
     ? iconNames
         .filter((name) => name.includes(iconNameFilter.toLowerCase()))
         .slice(0, ICONS_PAGE_SIZE)
     : []
+
+  const renderBreakdownFields = (
+    field: FieldArrayWithId<GoalFormInputs, "breakdown", "id">,
+    index: number
+  ) => {
+    return (
+      <div key={field.id} className="flex items-end gap-2">
+        <Field>
+          <FieldLabel htmlFor="category">
+            Category<span className="text-destructive">*</span>
+          </FieldLabel>
+          <Input
+            id="category"
+            {...register(`breakdown.${index}.category`, {
+              required: true,
+            })}
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="estimatedAmount">
+            Amount<span className="text-destructive">*</span>
+          </FieldLabel>
+          <InputGroup>
+            <InputGroupInput
+              id="amount"
+              inputMode="numeric"
+              {...register(`breakdown.${index}.amount`, { required: true })}
+              onChange={(e) =>
+                setValue(
+                  `breakdown.${index}.amount`,
+                  formatAmount(isNumber(e.target.value) ? e.target.value : "")
+                )
+              }
+            />
+            <InputGroupAddon>
+              <IndianRupee />
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+        <Button variant="outline" onClick={() => remove(index)}>
+          <Minus />
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <Card className="w-full">
@@ -132,25 +196,6 @@ export const GoalForm = ({
           </Field>
           <div className="flex gap-2">
             <Field>
-              <FieldLabel htmlFor="name">
-                Estimated Amount<span className="text-destructive">*</span>
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  id="amount"
-                  {...register("estimatedAmount", { required: true })}
-                  onChange={(e) =>
-                    setValue("estimatedAmount", formatAmount(e.target.value))
-                  }
-                />
-                <InputGroupAddon>
-                  <IndianRupee />
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-          </div>
-          <div className="flex gap-2">
-            <Field>
               <FieldLabel htmlFor="type">Status</FieldLabel>
               <Select
                 defaultValue={defaultValues.status}
@@ -169,6 +214,45 @@ export const GoalForm = ({
               </Select>
             </Field>
           </div>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel htmlFor="amount">
+                Estimated Amount
+                <span className="text-destructive">*</span>
+              </FieldLabel>
+              {!!totalBreakdownAmount && (
+                <FieldDescription>
+                  Total breakdown amount is {formatAmount(totalBreakdownAmount)}
+                </FieldDescription>
+              )}
+              <InputGroup>
+                <InputGroupInput
+                  id="amount"
+                  inputMode="numeric"
+                  {...register("estimatedAmount", { required: true })}
+                  onChange={(e) =>
+                    setValue(
+                      "estimatedAmount",
+                      formatAmount(
+                        isNumber(e.target.value) ? e.target.value : ""
+                      )
+                    )
+                  }
+                />
+                <InputGroupAddon>
+                  <IndianRupee />
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+          </div>
+          {fields.map(renderBreakdownFields)}
+          <Button
+            variant="outline"
+            onClick={() => append({ category: "", amount: "", id: "" })}
+          >
+            <Plus />
+            Add Breakdown
+          </Button>
           <Button type="submit" className="w-full">
             {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}

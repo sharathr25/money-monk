@@ -31,6 +31,7 @@ import {
   MoveLeft,
   Pen,
   RefreshCcw,
+  Target,
   Trash,
   X,
 } from "lucide-react"
@@ -105,7 +106,7 @@ export function Transaction() {
       <NavBack />
       <div className="gap-3 border-0 p-0">
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-bold">{transaction.name}</h1>
+          <h1 className="text-4xl font-bold capitalize">{transaction.name}</h1>
           <DynamicIcon
             name={transaction.icon as IconName}
             strokeWidth={1.5}
@@ -121,7 +122,7 @@ export function Transaction() {
               <Info />
             </ItemMedia>
             <ItemContent>
-              <ItemDescription>Frquency</ItemDescription>
+              <ItemDescription>Type</ItemDescription>
               <ItemTitle className="font-bold capitalize">
                 <Badge variant="secondary">
                   {transaction.type.toLowerCase().replace("_", " ")}
@@ -160,6 +161,22 @@ export function Transaction() {
               <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
             </ItemContent>
           </Item>
+        </div>
+        <div className="flex gap-2">
+          {transaction.goal && (
+            <Item className="flex-1 bg-(--accent) p-3">
+              <ItemMedia variant="icon">
+                <Target />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Goal</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  {transaction.goal.name}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          )}
+          <Item className="flex-1" />
         </div>
       </div>
       <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">

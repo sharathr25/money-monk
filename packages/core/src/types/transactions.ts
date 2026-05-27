@@ -13,10 +13,12 @@ export type SaveTransationSpec = {
   goal?: {
     id: string
     name: string
-    status: GoalStatus
+  } | null
+  category?: {
+    id: string
+    name: string
   } | null
   paidTo?: string
-  category?: string
   templateId?: string
 }
 

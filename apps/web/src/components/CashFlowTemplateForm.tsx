@@ -37,7 +37,7 @@ import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { Calendar as CalendarInput } from "@workspace/ui/components/calendar"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import type { Frequency, Type } from "@workspace/core/type/index"
-import { daysOfMonth, formatAmount } from "@workspace/ui/lib/utils"
+import { daysOfMonth, formatAmount, isNumber } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
 import {
   InputGroup,
@@ -170,8 +170,10 @@ export const CashFlowTemplateForm = ({
               <InputGroup>
                 <InputGroupInput
                   id="amount"
+                  inputMode="numeric"
                   {...register("amount", { required: true })}
                   onChange={(e) =>
+                    isNumber(e.target.value) &&
                     setValue("amount", formatAmount(e.target.value))
                   }
                 />

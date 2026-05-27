@@ -5,6 +5,8 @@ export type GoalStage = {
   startDate: Date
 }
 
+export type GoalBreakdown = { category: string; amount: number; id: string }
+
 export type GoalQuery = {
   status?: string
 }
@@ -15,6 +17,7 @@ export type SaveGoalSpec = {
   icon: string
   estimatedAmount: number
   status: GoalStatus
+  breakdown?: GoalBreakdown[]
 }
 
 export type Goal = SaveGoalSpec & {
@@ -22,6 +25,7 @@ export type Goal = SaveGoalSpec & {
   createdAt: Date
   updatedAt: Date
   stages: GoalStage[]
+  breakdown: GoalBreakdown[]
 }
 
 export type UpdateGoalSpec = SaveGoalSpec & {

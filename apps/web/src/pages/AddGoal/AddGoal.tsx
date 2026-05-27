@@ -23,11 +23,16 @@ export function AddGoal() {
   const onSubmit: SubmitHandler<GoalFormInputs> = async ({
     iconNameFilter,
     estimatedAmount,
+    breakdown,
     ...data
   }) => {
     mutate({
       ...data,
       estimatedAmount: amountToDouble(estimatedAmount),
+      breakdown: breakdown.map((b) => ({
+        ...b,
+        amount: amountToDouble(b.amount),
+      })),
     })
   }
 
