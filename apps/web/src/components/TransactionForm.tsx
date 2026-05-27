@@ -39,7 +39,6 @@ const ICONS_PAGE_SIZE = 10
 
 const DEFAULT_TRANSACTION = {
   name: "",
-  estimatedAmount: "",
   iconNameFilter: "bank",
   type: "EXPENSE" as TransactionType,
   icon: "banknote",
@@ -78,6 +77,8 @@ export const TransactionForm = ({
     useForm<TransactionFormInputs>({
       defaultValues,
     })
+
+  console.log(defaultValues)
 
   const [calendarOpen, setCalenderOpen] = useState(false)
 
@@ -187,7 +188,7 @@ export const TransactionForm = ({
               </FieldLabel>
               <Select
                 required
-                value={type}
+                defaultValue={type}
                 onValueChange={(v: TransactionType) => setValue("type", v)}
               >
                 <SelectTrigger id="goal" className="!h-12 capitalize">
@@ -209,7 +210,7 @@ export const TransactionForm = ({
                 Goal<span className="text-destructive">*</span>
               </FieldLabel>
               <Select
-                value={goalId}
+                defaultValue={goalId}
                 required
                 onValueChange={(v) => setValue("goalId", v)}
               >
@@ -228,7 +229,7 @@ export const TransactionForm = ({
             <Field>
               <FieldLabel htmlFor="goal">Category</FieldLabel>
               <Select
-                value={categoryId}
+                defaultValue={categoryId}
                 onValueChange={(v) => setValue("categoryId", v)}
               >
                 <SelectTrigger id="goal" className="!h-12 capitalize">

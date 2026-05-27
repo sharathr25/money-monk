@@ -84,15 +84,25 @@ export function EditTransaction() {
     amount,
     date,
     goalId,
+    categoryId,
     ...data
   }) => {
     mutate({
       ...data,
-      goal: goalId ? (goalId === "NONE" ? null : goalsMap[goalId]) : undefined,
+      goal: goalId ? goalsMap[goalId] : undefined,
+      category:
+        (categoryId &&
+          goalId &&
+          goalsMap[goalId].breakdown
+            .filter((b) => b.id === categoryId)
+            .map((b) => ({ id: b.id, name: b.category }))[0]) ||
+        undefined,
       date: date || new Date(),
       amount: amountToDouble(amount),
     })
   }
+
+  console.log(transaction)
 
   return (
     <div className="flex flex-1 flex-col gap-2">

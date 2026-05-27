@@ -19,17 +19,8 @@ import type {
   Transaction,
   SaveTransationSpec,
   UpdateTransactionSpec,
-  TransactionType,
 } from "@workspace/core/type/transactions"
 import { toDate } from "./mapper"
-import { type GoalStatus } from "@workspace/core/type/goals"
-
-const TransactionTypeMap: Record<GoalStatus, TransactionType> = {
-  ACTIVE: "EXPENSE",
-  STARTED_SAVING: "SAVINGS",
-  DONE: "SAVINGS",
-  PLANNED: "SAVINGS",
-}
 
 const toTransaction = (docSnap: DocumentSnapshot) => {
   return {
@@ -43,6 +34,7 @@ const toTransaction = (docSnap: DocumentSnapshot) => {
     paidTo: docSnap.get("paidTo"),
     amount: docSnap.get("amount"),
     goal: docSnap.get("goal"),
+    category: docSnap.get("category"),
     date: toDate(docSnap.get("date")),
     createdAt: toDate(docSnap.get("createdAt")),
     updatedAt: toDate(docSnap.get("updatedAt")),
@@ -85,7 +77,6 @@ export const saveTransaction =
 
     if (transaction.goal) {
       docData.goal = { id: transaction.goal.id, name: transaction.goal.name }
-      docData.type = TransactionTypeMap[transaction.goal.status]
     }
 
     const keysToDelete = [
@@ -93,10 +84,6 @@ export const saveTransaction =
       "id",
       "goalId",
     ]
-
-    if (transaction.goal && transaction.goal.status !== "ACTIVE") {
-      keysToDelete.push("paidTo")
-    }
 
     keysToDelete.forEach((k) => {
       delete docData[k]
@@ -114,15 +101,16 @@ export const updateTransaction =
       updatedAt: Timestamp.fromDate(date),
     }
 
+    if (transaction.goal) {
+      docData.goal = { id: transaction.goal.id, name: transaction.goal.name }
+    }
+
     const keysToDelete = [
       ...Object.keys(docData).filter((k) => docData[k] === undefined),
       "id",
       "goalId",
+      "categoryId",
     ]
-
-    if (transaction.goal && transaction.goal.status !== "ACTIVE") {
-      keysToDelete.push("paidTo")
-    }
 
     keysToDelete.forEach((k) => {
       delete docData[k]
