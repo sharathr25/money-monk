@@ -78,8 +78,6 @@ export const TransactionForm = ({
       defaultValues,
     })
 
-  console.log(defaultValues)
-
   const [calendarOpen, setCalenderOpen] = useState(false)
 
   const iconNameFilter = watch("iconNameFilter")

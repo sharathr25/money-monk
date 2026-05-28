@@ -44,7 +44,8 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
         </ItemMedia>
         <ItemContent>
           <ItemTitle className="line-clamp-1 flex capitalize">
-            {transaction.name} - For {transaction.goal.name}
+            {transaction.name}
+            {transaction.goal?.name && `- For ${transaction.goal?.name}`}
           </ItemTitle>
           <ItemDescription className="flex gap-1">
             {transaction.category?.name && (

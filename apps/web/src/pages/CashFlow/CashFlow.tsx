@@ -12,6 +12,7 @@ import { updateUserData } from "@workspace/api/db/users"
 import { Month } from "./Month"
 import { useAuth } from "@/hooks/useAuth"
 import { useMutation, useQuery } from "@tanstack/react-query"
+import { saveTransaction } from "@workspace/api/db/transactions"
 
 export function CashFlow() {
   const startDate = dayjs().startOf("month").toDate()
@@ -23,34 +24,42 @@ export function CashFlow() {
     queryKey: ["cash-flow"],
     queryFn: getCashFlow(user.uid).bind(null, { startDate, endDate }),
   })
-  const { mutate } = useMutation({
-    mutationKey: ["opening-balance-update"],
+  const { mutate: updateUserDataForUser } = useMutation({
+    mutationKey: ["opening-balance-update", cashFlow],
     mutationFn: updateUserData(user.uid).bind(null),
-    onSuccess: console.log,
+    onSuccess: () => toast.success("Successfully updated opening balance"),
     onError: () => toast.error("Failed to update opening balance"),
+  })
+  const { mutate: saveTransactionForUser } = useMutation({
+    mutationKey: ["opening-balance-transaction"],
+    mutationFn: saveTransaction(user.uid).bind(null),
+    onError: () => toast.error("Failed to save transaction"),
   })
 
   useEffect(() => {
     if (data) {
       setCashFlow(data)
     }
-  }, [data])
+  }, [data?.openingBalance])
 
   if (loading) return <Spinner className="m-auto" />
 
   if (!cashFlow) return null
 
   const updateOpeningBalance = async (openingBalance: number) => {
-    try {
-      mutate({ openingBalance })
-      setCashFlow({
-        ...cashFlow,
-        openingBalance,
-        closingBalance: getClosingBalance(openingBalance, cashFlow.netCashFlow),
-      })
-    } catch (e) {
-      console.error(e)
-    }
+    updateUserDataForUser({ openingBalance })
+    setCashFlow({
+      ...cashFlow,
+      openingBalance,
+      closingBalance: getClosingBalance(openingBalance, cashFlow.netCashFlow),
+    })
+    saveTransactionForUser({
+      amount: openingBalance,
+      name: "Opening balance adjustment",
+      type: "BALANCE_ADJUSTMENT",
+      date: new Date(),
+      icon: "banknote",
+    })
   }
 
   return (

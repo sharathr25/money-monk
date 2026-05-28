@@ -6,7 +6,7 @@ export type TransactionQuery = {
   type?: string
 }
 
-export type TransactionType = Type | "SAVINGS"
+export type TransactionType = Type | "BALANCE_ADJUSTMENT" | "SAVINGS"
 
 export type SaveTransationSpec = {
   name: string
@@ -31,7 +31,7 @@ export type Transaction = SaveTransationSpec & {
   id: string
   createdAt: Date
   updatedAt: Date
-  goal: {
+  goal?: {
     id: string
     name: string
   }

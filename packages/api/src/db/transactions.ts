@@ -11,7 +11,6 @@ import {
   query,
   QueryCompositeFilterConstraint,
   setDoc,
-  Timestamp,
   where,
 } from "firebase/firestore"
 import { db } from "../firebase"
@@ -78,7 +77,7 @@ export const getTransaction =
 
 export const saveTransaction =
   (uid: string) => async (transaction: SaveTransationSpec) => {
-    const date = Timestamp.fromDate(new Date())
+    const date = new Date()
 
     const docData: DocumentData = {
       ...transaction,
@@ -109,7 +108,7 @@ export const updateTransaction =
 
     const docData: DocumentData = {
       ...transaction,
-      updatedAt: Timestamp.fromDate(date),
+      updatedAt: date,
     }
 
     if (transaction.goal) {

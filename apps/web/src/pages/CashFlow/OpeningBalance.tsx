@@ -9,7 +9,7 @@ import { Pen, Save, Wallet, X } from "lucide-react"
 
 import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { Input } from "@workspace/ui/components/input"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,13 @@ export function OpeningBalance({
   openingBalance: number
   updateOpeningBalance: (openingBalance: number) => void
 }) {
-  const [balance, setBalance] = useState(`${openingBalance}`)
+  const [balance, setBalance] = useState(
+    formatAmount(openingBalance, { withCurrency: true })
+  )
+
+  useEffect(() => {
+    setBalance(formatAmount(openingBalance, { withCurrency: true }))
+  }, [openingBalance])
 
   return (
     <Card className="w-full">
@@ -42,7 +48,7 @@ export function OpeningBalance({
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <div>{formatAmount(balance, { withCurrency: true })}</div>
+          <div>{balance}</div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="link">
@@ -53,19 +59,18 @@ export function OpeningBalance({
               <AlertDialogHeader className="flex flex-col items-start">
                 <AlertDialogTitle>Change Opening Balance</AlertDialogTitle>
               </AlertDialogHeader>
-              <AlertDialogDescription>
-                <Field className="basis-3/4">
-                  <FieldLabel htmlFor="opening-balance">
-                    Opening Balance
-                  </FieldLabel>
-                  <Input
-                    id="opening-balance"
-                    className="h-11"
-                    value={balance}
-                    onChange={(e) => setBalance(formatAmount(e.target.value))}
-                  />
-                </Field>
-              </AlertDialogDescription>
+              <AlertDialogDescription></AlertDialogDescription>
+              <Field className="basis-3/4">
+                <FieldLabel htmlFor="opening-balance">
+                  Opening Balance
+                </FieldLabel>
+                <Input
+                  id="opening-balance"
+                  className="h-11"
+                  value={balance}
+                  onChange={(e) => setBalance(formatAmount(e.target.value))}
+                />
+              </Field>
               <AlertDialogFooter className="border-0">
                 <AlertDialogCancel>
                   Cancel
