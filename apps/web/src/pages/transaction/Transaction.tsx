@@ -34,6 +34,7 @@ import {
   RefreshCcw,
   Target,
   Trash,
+  User,
   X,
 } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
@@ -82,6 +83,9 @@ export function Transaction() {
     mutate()
   }
 
+  const itemContainerClass = "basis-1/2 py-1 odd:pr-1 even:pl-1"
+  const itemClass = "bg-(--accent) p-3"
+
   if (getGoalPending) return <FullScreenLoader />
 
   if (getGoalError) return <FullScreenError msg="Something went wrong" />
@@ -116,9 +120,9 @@ export function Transaction() {
         </div>
         <div className="p-0">{transaction.description}</div>
       </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
+      <div className="flex flex-wrap">
+        <div className={itemContainerClass}>
+          <Item className={itemClass}>
             <ItemMedia variant="icon">
               <Info />
             </ItemMedia>
@@ -131,7 +135,9 @@ export function Transaction() {
               </ItemTitle>
             </ItemContent>
           </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
+        </div>
+        <div className={itemContainerClass}>
+          <Item className={itemClass}>
             <ItemMedia variant="icon">
               <Banknote />
             </ItemMedia>
@@ -143,8 +149,8 @@ export function Transaction() {
             </ItemContent>
           </Item>
         </div>
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
+        <div className={itemContainerClass}>
+          <Item className={itemClass}>
             <ItemMedia variant="icon">
               <Calendar />
             </ItemMedia>
@@ -153,7 +159,9 @@ export function Transaction() {
               <ItemTitle>{formatDate(transaction.createdAt)}</ItemTitle>
             </ItemContent>
           </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
+        </div>
+        <div className={itemContainerClass}>
+          <Item className={itemClass}>
             <ItemMedia variant="icon">
               <Calendar />
             </ItemMedia>
@@ -163,9 +171,9 @@ export function Transaction() {
             </ItemContent>
           </Item>
         </div>
-        <div className="flex gap-2">
+        <div className={itemContainerClass}>
           {transaction.goal && (
-            <Item className="flex-1 bg-(--accent) p-3">
+            <Item className={itemClass}>
               <ItemMedia variant="icon">
                 <Target />
               </ItemMedia>
@@ -177,8 +185,10 @@ export function Transaction() {
               </ItemContent>
             </Item>
           )}
+        </div>
+        <div className={itemContainerClass}>
           {transaction.category && (
-            <Item className="flex-1 bg-(--accent) p-3">
+            <Item className={itemClass}>
               <ItemMedia variant="icon">
                 <Boxes />
               </ItemMedia>
@@ -186,6 +196,21 @@ export function Transaction() {
                 <ItemDescription>Category</ItemDescription>
                 <ItemTitle className="font-bold capitalize">
                   {transaction.category.name}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          )}
+        </div>
+        <div className={itemContainerClass}>
+          {transaction.paidTo && (
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <User />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Paid To</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  {transaction.paidTo}
                 </ItemTitle>
               </ItemContent>
             </Item>

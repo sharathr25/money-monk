@@ -70,7 +70,6 @@ export function Goals() {
   const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
   const onSubmit = (filters: { status: GoalStatus | "ALL" }) => {
-    console.log(filters)
     setFilters(filters)
     setFiltersDialogOpen(false)
   }
@@ -130,18 +129,14 @@ export function Goals() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-extrabold">Commitments</h1>
-        <p>Your financial journeys and milestones.</p>
-      </div>
       <div className="flex items-center justify-between">
-        <h2>Filters</h2>
         <AlertDialog
           open={filtersDialogOpen}
           onOpenChange={setFiltersDialogOpen}
         >
           <AlertDialogTrigger asChild>
             <Button variant="outline" size="sm">
+              Filters
               <Filter />
             </Button>
           </AlertDialogTrigger>

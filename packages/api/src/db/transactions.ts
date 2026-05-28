@@ -12,6 +12,7 @@ import {
   QueryCompositeFilterConstraint,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore"
 import { db } from "../firebase"
 import { TRANSACTIONS, USERS } from "./collections"
@@ -19,6 +20,7 @@ import type {
   Transaction,
   SaveTransationSpec,
   UpdateTransactionSpec,
+  TransactionQuery,
 } from "@workspace/core/type/transactions"
 import { toDate } from "./mapper"
 
@@ -42,8 +44,17 @@ const toTransaction = (docSnap: DocumentSnapshot) => {
 }
 
 export const queryTransactions =
-  (uid: string) => async (): Promise<Transaction[]> => {
+  (uid: string) =>
+  async (transactionQuery: TransactionQuery): Promise<Transaction[]> => {
     const contraints: QueryCompositeFilterConstraint[] = []
+
+    if (transactionQuery?.goalId) {
+      contraints.push(and(where("goal.id", "==", transactionQuery.goalId)))
+    }
+
+    if (transactionQuery?.type) {
+      contraints.push(and(where("type", "==", transactionQuery.type)))
+    }
 
     const q = query(
       collection(db, USERS, uid, TRANSACTIONS),

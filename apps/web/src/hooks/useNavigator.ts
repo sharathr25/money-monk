@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router"
+import { useNavigate, type NavigateOptions } from "react-router"
 import { type RouteName } from "@/routes"
 
 export const useNavigator = () => {
@@ -6,9 +6,10 @@ export const useNavigator = () => {
 
   const navigate = (
     routeName: RouteName,
-    pathParams: Record<string, string> = {}
+    pathParams: Record<string, string> = {},
+    options: NavigateOptions = {}
   ) => {
-    _navigate(getTo(routeName, pathParams))
+    _navigate(getTo(routeName, pathParams), options)
   }
 
   const goBack = () => {

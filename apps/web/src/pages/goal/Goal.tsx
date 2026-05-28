@@ -42,6 +42,8 @@ import { useAuth } from "@/hooks/useAuth"
 import { deleteGoal, getGoal } from "@workspace/api/db/goals"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { Badge } from "@workspace/ui/components/badge"
+import { GoalTransactions } from "./GoalTransactions"
+import { GoalAllocation } from "./GoalAllocation"
 
 export function Goal() {
   const { goalId = "" } = useParams()
@@ -77,6 +79,9 @@ export function Goal() {
     mutate()
   }
 
+  const itemContainerClass = "basis-1/2 py-1 odd:pr-1 even:pl-1"
+  const itemClass = "bg-(--accent) p-3"
+
   if (getGoalPending) return <FullScreenLoader />
 
   if (getGoalError) return <FullScreenError msg="Something went wrong" />
@@ -98,7 +103,7 @@ export function Goal() {
     )
 
   return (
-    <div className="flex flex-1 flex-col gap-2">
+    <div className="flex flex-1 flex-col gap-2 pb-15">
       <NavBack />
       <div className="gap-3 border-0 p-0">
         <div className="flex items-center justify-between">
@@ -112,72 +117,82 @@ export function Goal() {
         <div className="p-0">{goal.description}</div>
       </div>
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Info />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Status</ItemDescription>
-              <ItemTitle className="font-bold capitalize">
-                <Badge variant="secondary">
-                  {goal.status.toLowerCase().replace("_", " ")}
-                </Badge>
-              </ItemTitle>
-            </ItemContent>
-          </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Banknote />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Estimated</ItemDescription>
-              <ItemTitle>
-                {formatAmount(goal.estimatedAmount, { withCurrency: true })}
-              </ItemTitle>
-            </ItemContent>
-          </Item>
+        <div className="flex flex-wrap">
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Info />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Status</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  <Badge variant="secondary">
+                    {goal.status.toLowerCase().replace("_", " ")}
+                  </Badge>
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Banknote />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Estimated</ItemDescription>
+                <ItemTitle>
+                  {formatAmount(goal.estimatedAmount, { withCurrency: true })}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Banknote />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Saved</ItemDescription>
+                <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Banknote />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Actual</ItemDescription>
+                <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Calendar />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Created At</ItemDescription>
+                <ItemTitle>{formatDate(goal.createdAt)}</ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Calendar />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Updated At</ItemDescription>
+                <ItemTitle>{formatDate(goal.updatedAt)}</ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Banknote />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Saved</ItemDescription>
-              <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
-            </ItemContent>
-          </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Banknote />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Actual</ItemDescription>
-              <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
-            </ItemContent>
-          </Item>
-        </div>
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Created At</ItemDescription>
-              <ItemTitle>{formatDate(goal.createdAt)}</ItemTitle>
-            </ItemContent>
-          </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Updated At</ItemDescription>
-              <ItemTitle>{formatDate(goal.updatedAt)}</ItemTitle>
-            </ItemContent>
-          </Item>
-        </div>
+        <GoalAllocation breakdown={goal.breakdown} />
+        <GoalTransactions goalId={goalId} />
       </div>
       <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">
         <AlertDialog>

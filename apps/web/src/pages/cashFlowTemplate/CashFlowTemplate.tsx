@@ -99,6 +99,9 @@ export function CashFlowTemplate() {
     })
   }
 
+  const itemContainerClass = "basis-1/2 py-1 odd:pr-1 even:pl-1"
+  const itemClass = "bg-(--accent) p-3"
+
   return (
     <div className="flex flex-1 flex-col gap-2">
       <NavBack />
@@ -114,51 +117,57 @@ export function CashFlowTemplate() {
         <div className="p-0">{template.description}</div>
       </div>
       <div className="flex flex-col gap-2">
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Info />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Frquency</ItemDescription>
-              <ItemTitle className="font-bold capitalize">
-                <Badge variant="secondary">
-                  {template.frequency.toLowerCase().replace("_", " ")}
-                </Badge>
-              </ItemTitle>
-            </ItemContent>
-          </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Banknote />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Amount</ItemDescription>
-              <ItemTitle>
-                {formatAmount(template.amount, { withCurrency: true })}
-              </ItemTitle>
-            </ItemContent>
-          </Item>
-        </div>
-        <div className="flex gap-2">
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Created At</ItemDescription>
-              <ItemTitle>{formatDate(template.createdAt)}</ItemTitle>
-            </ItemContent>
-          </Item>
-          <Item className="flex-1 bg-(--accent) p-3">
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Updated At</ItemDescription>
-              <ItemTitle>{formatDate(template.updatedAt)}</ItemTitle>
-            </ItemContent>
-          </Item>
+        <div className="flex flex-wrap">
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Info />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Frquency</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  <Badge variant="secondary">
+                    {template.frequency.toLowerCase().replace("_", " ")}
+                  </Badge>
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Banknote />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Amount</ItemDescription>
+                <ItemTitle>
+                  {formatAmount(template.amount, { withCurrency: true })}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Calendar />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Created At</ItemDescription>
+                <ItemTitle>{formatDate(template.createdAt)}</ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
+          <div className={itemContainerClass}>
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Calendar />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Updated At</ItemDescription>
+                <ItemTitle>{formatDate(template.updatedAt)}</ItemTitle>
+              </ItemContent>
+            </Item>
+          </div>
         </div>
       </div>
       <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">

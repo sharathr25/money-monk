@@ -5,11 +5,10 @@ import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { queryTransactions } from "@workspace/api/db/transactions"
-import type { Transaction } from "@workspace/core/types/transactions"
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
-import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
-import { Card } from "@workspace/ui/components/card"
+import { TransactionItem } from "@/components/TransactionItem"
+import { CirclePlus, Filter, FolderCode, Plus, Save, X } from "lucide-react"
+import { useLocation } from "react-router"
 import {
   Empty,
   EmptyDescription,
@@ -18,76 +17,72 @@ import {
   EmptyTitle,
 } from "@workspace/ui/components/empty"
 import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@workspace/ui/components/item"
-import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
-import { CirclePlus, FolderCode, Plus } from "lucide-react"
-import { DynamicIcon, type IconName } from "lucide-react/dynamic"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@workspace/ui/components/alert-dialog"
+import { useForm } from "react-hook-form"
+import type {
+  TransactionQuery,
+  TransactionType,
+} from "@workspace/core/types/transactions"
+import { useState } from "react"
+import { Field, FieldLabel } from "@workspace/ui/components/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import { TRANSACTION_TYPES } from "@workspace/ui/constants/transactions"
+
+type Query = { type?: string; goalId?: string }
 
 export function Transactions() {
   const user = useAuth()
-  const qqueryTransactionsForUser = queryTransactions(user.uid)
+  const { state = {} } = useLocation()
+  const defaultValues = { ...state, type: "ALL" }
+  const { handleSubmit, setValue, watch } = useForm<Query>({
+    defaultValues,
+  })
+  const [filters, setFilters] = useState(defaultValues)
+  const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
+
+  const onSubmit = (filters: Query) => {
+    setFilters(filters)
+    setFiltersDialogOpen(false)
+  }
+
+  const type = watch("type")
+
+  const toQueryFilters = (filters: Query): TransactionQuery => {
+    const query: TransactionQuery = { ...filters }
+    if (filters.type === "ALL") {
+      query.type = undefined
+    }
+    return query
+  }
+
+  const queryTransactionsForUser = queryTransactions(user.uid)
   const {
     isPending,
     error,
     data: transactions,
   } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: qqueryTransactionsForUser,
+    queryKey: ["transactions", filters],
+    queryFn: queryTransactionsForUser.bind(null, toQueryFilters(filters)),
   })
 
   const { navigate } = useNavigator()
 
-  if (isPending) return <FullScreenLoader />
-
-  if (error) return <FullScreenError msg="Failed to get goals" />
-
-  const renderCard = (t: Transaction) => (
-    <Card className="p-0" key={t.id}>
-      <Item
-        onClick={() =>
-          navigate(ROUTE_NAMES.TRANSACTION, { transactionId: t.id })
-        }
-      >
-        <ItemMedia>
-          <Avatar
-            size="lg"
-            className="bg-(--secondary) after:border-transparent"
-          >
-            <AvatarFallback>
-              <DynamicIcon name={t.icon as IconName} />
-            </AvatarFallback>
-          </Avatar>
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle className="line-clamp-1 flex capitalize">
-            {t.name}
-          </ItemTitle>
-          <ItemDescription className="flex gap-1">
-            For <span className="font-extrabold">{t.goal.name}</span>
-            {t.category && <Badge variant="outline">{t.category.name}</Badge>}
-          </ItemDescription>
-        </ItemContent>
-        <ItemContent className="flex items-end">
-          <ItemTitle className="line-clamp-1 flex">
-            {formatAmount(t.type === "EXPENSE" ? -1 : 1 * t.amount, {
-              withCurrency: true,
-              withSign: t.type === "EXPENSE" || t.type === "INCOME",
-            })}
-          </ItemTitle>
-          <ItemDescription className="text-xs">
-            {formatDate(t.updatedAt)}
-          </ItemDescription>
-        </ItemContent>
-      </Item>
-    </Card>
-  )
-
-  const NoGoals = () => (
+  const NoTransactions = () => (
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
@@ -102,14 +97,71 @@ export function Transactions() {
     </Empty>
   )
 
+  if (isPending) return <FullScreenLoader />
+
+  if (error) return <FullScreenError msg="Failed to get transactions" />
+
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-extrabold">Transactions</h1>
-        <p>Your financial transactions.</p>
+      <div className="flex items-center justify-between">
+        <AlertDialog
+          open={filtersDialogOpen}
+          onOpenChange={setFiltersDialogOpen}
+        >
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              Filters
+              <Filter />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent size="sm">
+            <AlertDialogHeader className="flex flex-col items-start">
+              <AlertDialogTitle>Change Filters</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription>
+              Apply filters to limit result
+            </AlertDialogDescription>
+            <Field>
+              <FieldLabel htmlFor="type">Type</FieldLabel>
+              <Select
+                defaultValue={type}
+                onValueChange={(v: TransactionType | "ALL") =>
+                  setValue("type", v)
+                }
+              >
+                <SelectTrigger id="type" className="!h-11 capitalize">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All</SelectItem>
+                  {TRANSACTION_TYPES.map((s) => (
+                    <SelectItem value={s} key={s} className="capitalize">
+                      {s.toLowerCase().replace("_", " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <AlertDialogFooter>
+              <AlertDialogCancel>
+                <X />
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={handleSubmit(onSubmit)}>
+                <Save /> Apply
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <div className="flex flex-col gap-4">
-        {transactions.length ? transactions.map(renderCard) : <NoGoals />}
+        {transactions.length ? (
+          transactions.map((t) => (
+            <TransactionItem transaction={t} key={t.id} />
+          ))
+        ) : (
+          <NoTransactions />
+        )}
       </div>
       <Button
         className="fixed right-6 bottom-20 h-12 w-12 rounded-full"

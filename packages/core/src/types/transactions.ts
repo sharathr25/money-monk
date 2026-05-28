@@ -1,5 +1,11 @@
 import type { Type } from "./cashFlowTemplates"
 
+export type TransactionQuery = {
+  goalId?: string
+  limit?: number
+  type?: string
+}
+
 export type TransactionType = Type | "SAVINGS"
 
 export type SaveTransationSpec = {
