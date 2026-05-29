@@ -43,7 +43,7 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
           </Avatar>
         </ItemMedia>
         <ItemContent>
-          <ItemTitle className="line-clamp-1 flex capitalize">
+          <ItemTitle className="line-clamp-1 flex font-bold capitalize">
             {transaction.name}
             {transaction.goal?.name && `- For ${transaction.goal?.name}`}
           </ItemTitle>

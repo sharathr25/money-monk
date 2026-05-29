@@ -20,7 +20,7 @@ import { Badge } from "@workspace/ui/components/badge"
 import React from "react"
 import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
-import { cn, formatAmount } from "@workspace/ui/lib/utils"
+import { cn, formatAmount, formatDuration } from "@workspace/ui/lib/utils"
 import dayjs from "dayjs"
 import { ItemDescription, ItemTitle } from "@workspace/ui/components/item"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
@@ -36,10 +36,17 @@ import {
 } from "@workspace/ui/components/select"
 import { useForm } from "react-hook-form"
 
-const MONTH_OPTIONS = [3, 6, 9, 12].map((m) => ({
-  label: `${m} Months`,
-  value: `${m}`,
-}))
+const MONTHS_STEP_SIZE = 3
+const MONTHS_STEPS = 4
+
+const MONTH_OPTIONS = Array.from({ length: MONTHS_STEPS }, (_, i) => {
+  const months = (i + 1) * MONTHS_STEP_SIZE
+
+  return {
+    label: formatDuration(months),
+    value: `${months}`,
+  }
+})
 
 export function CashFlowProjection() {
   const user = useAuth()
@@ -76,21 +83,30 @@ export function CashFlowProjection() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Field>
-        <FieldLabel htmlFor="months">Insights For</FieldLabel>
-        <Select value={months} onValueChange={(v) => setValue("months", v)}>
-          <SelectTrigger id="months" className="!h-12">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {MONTH_OPTIONS.map((m) => (
-              <SelectItem value={m.value} key={m.value}>
-                {m.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Field>
+      <div className="flex flex-col gap-2">
+        <div>
+          <h1 className="text-xl font-bold">Insights</h1>
+          <p className="text-sm">
+            Projection and Insights to have clear future view of your money
+          </p>
+        </div>
+        <Field>
+          <FieldLabel>Insights For</FieldLabel>
+          <Select value={months} onValueChange={(v) => setValue("months", v)}>
+            <SelectTrigger id="months" className="!h-12">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {MONTH_OPTIONS.map((m) => (
+                <SelectItem value={m.value} key={m.value}>
+                  {m.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Field>
+      </div>
+
       <div className="flex flex-col gap-2">
         <h1 className="font-extrabold">
           {months}-Months Closing Balance Trend

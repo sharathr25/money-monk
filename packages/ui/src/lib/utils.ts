@@ -3,11 +3,13 @@ import { twMerge } from "tailwind-merge"
 import dayjs from "dayjs"
 import type { Type } from "@workspace/core/type/cashFlowTemplates"
 
-const numberFormatOptions = {
+const NUMBER_FORMAT_OPTIONS = {
   currency: "INR",
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
 }
+
+const MONTHS_PER_YEAR = 12
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -23,7 +25,7 @@ export function formatAmount(
     withSign: false,
   }
 ) {
-  const opts: Intl.NumberFormatOptions = { ...numberFormatOptions }
+  const opts: Intl.NumberFormatOptions = { ...NUMBER_FORMAT_OPTIONS }
   if (withCurrency) {
     opts.style = "currency"
   }
@@ -99,4 +101,30 @@ export function getMonthRanges(months: number, monthFormat: string = "MMMM") {
 
 export function isNumber(str: string) {
   return !Number.isNaN(parseInt(str))
+}
+
+export function pluralise({
+  n,
+  str,
+  customPluralStr,
+}: {
+  n: number
+  str: string
+  customPluralStr?: string
+}) {
+  if (n === 1) return str
+  if (customPluralStr) return customPluralStr
+  return str + "s"
+}
+
+export const formatDuration = (totalMonths: number) => {
+  const years = Math.floor(totalMonths / MONTHS_PER_YEAR)
+  const months = totalMonths % MONTHS_PER_YEAR
+
+  return [
+    years > 0 && `${years} ${pluralise({ n: years, str: "Year" })}`,
+    months > 0 && `${months} ${pluralise({ n: months, str: "Month" })}`,
+  ]
+    .filter(Boolean)
+    .join(" ")
 }

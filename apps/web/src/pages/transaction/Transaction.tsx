@@ -236,14 +236,14 @@ export function Transaction() {
             <AlertDialogFooter className="flex">
               <AlertDialogCancel>
                 <X />
-                Cancel
+                Don't Delete
               </AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
                 onClick={onDeleteContinue}
               >
                 <Trash />
-                Continue
+                Yes, Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

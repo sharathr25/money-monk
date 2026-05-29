@@ -189,11 +189,11 @@ export function CashFlowTemplate() {
             <AlertDialogFooter className="flex">
               <AlertDialogCancel>
                 <X />
-                Cancel
+                Don't Delete
               </AlertDialogCancel>
               <AlertDialogAction variant="destructive" onClick={deleteTemplate}>
                 <Trash />
-                Continue
+                Yes, Delete
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

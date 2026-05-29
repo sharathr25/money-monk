@@ -129,55 +129,64 @@ export function Goals() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <AlertDialog
-          open={filtersDialogOpen}
-          onOpenChange={setFiltersDialogOpen}
-        >
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              Filters
-              <Filter />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent size="sm">
-            <AlertDialogHeader className="flex flex-col items-start">
-              <AlertDialogTitle>Change Filters</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogDescription>
-              Apply filters to limit result
-            </AlertDialogDescription>
-            <Field>
-              <FieldLabel htmlFor="type">Status</FieldLabel>
-              <Select
-                defaultValue={status}
-                onValueChange={(v: GoalStatus | "ALL") => setValue("status", v)}
-              >
-                <SelectTrigger id="type" className="!h-11 capitalize">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All</SelectItem>
-                  {GOAL_STATUSES.map((s) => (
-                    <SelectItem value={s} key={s} className="capitalize">
-                      {s.toLowerCase().replace("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <AlertDialogFooter>
-              <AlertDialogCancel>
-                <X />
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={handleSubmit(onSubmit)}>
-                <Save /> Apply
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold">Goals</h1>
+          <p className="text-sm">Your financial goals</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <AlertDialog
+            open={filtersDialogOpen}
+            onOpenChange={setFiltersDialogOpen}
+          >
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                Filters
+                <Filter />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader className="flex flex-col items-start">
+                <AlertDialogTitle>Change Filters</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogDescription>
+                Apply filters to limit result
+              </AlertDialogDescription>
+              <Field>
+                <FieldLabel htmlFor="type">Status</FieldLabel>
+                <Select
+                  defaultValue={status}
+                  onValueChange={(v: GoalStatus | "ALL") =>
+                    setValue("status", v)
+                  }
+                >
+                  <SelectTrigger id="type" className="!h-11 capitalize">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All</SelectItem>
+                    {GOAL_STATUSES.map((s) => (
+                      <SelectItem value={s} key={s} className="capitalize">
+                        {s.toLowerCase().replace("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <AlertDialogFooter>
+                <AlertDialogCancel>
+                  <X />
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit(onSubmit)}>
+                  <Save /> Apply
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
+
       <div className="flex flex-col gap-4">
         {goals.length ? goals.map(renderCard) : <NoGoals />}
       </div>

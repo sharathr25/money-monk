@@ -56,7 +56,7 @@ export function CashFlow() {
     saveTransactionForUser({
       amount: openingBalance,
       name: "Opening balance adjustment",
-      type: "BALANCE_ADJUSTMENT",
+      type: "ADJUSTMENT",
       date: new Date(),
       icon: "banknote",
     })

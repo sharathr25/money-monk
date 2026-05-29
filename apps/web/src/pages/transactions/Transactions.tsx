@@ -103,56 +103,64 @@ export function Transactions() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <AlertDialog
-          open={filtersDialogOpen}
-          onOpenChange={setFiltersDialogOpen}
-        >
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              Filters
-              <Filter />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent size="sm">
-            <AlertDialogHeader className="flex flex-col items-start">
-              <AlertDialogTitle>Change Filters</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogDescription>
-              Apply filters to limit result
-            </AlertDialogDescription>
-            <Field>
-              <FieldLabel htmlFor="type">Type</FieldLabel>
-              <Select
-                defaultValue={type}
-                onValueChange={(v: TransactionType | "ALL") =>
-                  setValue("type", v)
-                }
-              >
-                <SelectTrigger id="type" className="!h-11 capitalize">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All</SelectItem>
-                  {TRANSACTION_TYPES.map((s) => (
-                    <SelectItem value={s} key={s} className="capitalize">
-                      {s.toLowerCase().replace("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <AlertDialogFooter>
-              <AlertDialogCancel>
-                <X />
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={handleSubmit(onSubmit)}>
-                <Save /> Apply
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold">Transactions</h1>
+          <p className="text-sm">
+            Your transactions related to goals or adjustments
+          </p>
+        </div>
+        <div className="flex items-center justify-between">
+          <AlertDialog
+            open={filtersDialogOpen}
+            onOpenChange={setFiltersDialogOpen}
+          >
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                Filters
+                <Filter />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader className="flex flex-col items-start">
+                <AlertDialogTitle>Change Filters</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogDescription>
+                Apply filters to limit result
+              </AlertDialogDescription>
+              <Field>
+                <FieldLabel htmlFor="type">Type</FieldLabel>
+                <Select
+                  defaultValue={type}
+                  onValueChange={(v: TransactionType | "ALL") =>
+                    setValue("type", v)
+                  }
+                >
+                  <SelectTrigger id="type" className="!h-11 capitalize">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All</SelectItem>
+                    {TRANSACTION_TYPES.map((s) => (
+                      <SelectItem value={s} key={s} className="capitalize">
+                        {s.toLowerCase().replace("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <AlertDialogFooter>
+                <AlertDialogCancel>
+                  <X />
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit(onSubmit)}>
+                  <Save /> Apply
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         {transactions.length ? (

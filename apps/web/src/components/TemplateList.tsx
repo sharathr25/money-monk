@@ -66,7 +66,7 @@ export const TemplateList = ({
           </Avatar>
         </ItemMedia>
         <ItemContent>
-          <ItemTitle className="line-clamp-1">{t.name}</ItemTitle>
+          <ItemTitle className="line-clamp-1 font-bold">{t.name}</ItemTitle>
           <ItemDescription>{t.description}</ItemDescription>
         </ItemContent>
         <ItemContent className="flex-none text-center">

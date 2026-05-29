@@ -123,76 +123,78 @@ export function CashFlowTemplates() {
 
   return (
     <div className="flex flex-1 flex-col gap-2">
-      <div>
-        <h1 className="text-xl font-bold">Cash Flow Templates</h1>
-        <p className="text-sm">Your recurring/one time income and expenses</p>
-      </div>
-      <div className="flex items-center justify-between">
-        <h2>Filters</h2>
-        <AlertDialog
-          open={filtersDialogOpen}
-          onOpenChange={setFiltersDialogOpen}
-        >
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Filter />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent size="sm">
-            <AlertDialogHeader className="flex flex-col items-start">
-              <AlertDialogTitle>Change Filters</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogDescription></AlertDialogDescription>
-            <Field>
-              <FieldLabel htmlFor="type">Type</FieldLabel>
-              <Select
-                defaultValue={DEFAULT_QUERY.type}
-                value={type}
-                onValueChange={(v: Type) => setValue("type", v)}
-              >
-                <SelectTrigger id="type" className="!h-11">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">
-                    <ArrowDownUp />
-                    All
-                  </SelectItem>
-                  <SelectItem value="INCOME">
-                    <MoveDown />
-                    Income
-                  </SelectItem>
-                  <SelectItem value="EXPENSE">
-                    <MoveUp />
-                    Expense
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field orientation="horizontal" className="max-w-sm">
-              <FieldLabel htmlFor="switch-focus-mode">
-                Show past templates
-              </FieldLabel>
-              <Switch
-                className="data-[state=unchecked]:bg-gray-300"
-                id="switch-focus-mode"
-                checked={showPastTemplates}
-                onCheckedChange={(showPastTemplates) =>
-                  setValue("showPastTemplates", showPastTemplates)
-                }
-              />
-            </Field>
-            <AlertDialogFooter>
-              <AlertDialogCancel>
-                <X />
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={handleSubmit(onSubmit)}>
-                <Save /> Apply
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold">Cash Flow Templates</h1>
+          <p className="text-sm">Your recurring/one time income and expenses</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <AlertDialog
+            open={filtersDialogOpen}
+            onOpenChange={setFiltersDialogOpen}
+          >
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                Filters
+                <Filter />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader className="flex flex-col items-start">
+                <AlertDialogTitle>Change Filters</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogDescription></AlertDialogDescription>
+              <Field>
+                <FieldLabel htmlFor="type">Type</FieldLabel>
+                <Select
+                  defaultValue={DEFAULT_QUERY.type}
+                  value={type}
+                  onValueChange={(v: Type) => setValue("type", v)}
+                >
+                  <SelectTrigger id="type" className="!h-11">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">
+                      <ArrowDownUp />
+                      All
+                    </SelectItem>
+                    <SelectItem value="INCOME">
+                      <MoveDown />
+                      Income
+                    </SelectItem>
+                    <SelectItem value="EXPENSE">
+                      <MoveUp />
+                      Expense
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field orientation="horizontal" className="max-w-sm">
+                <FieldLabel htmlFor="switch-focus-mode">
+                  Show past templates
+                </FieldLabel>
+                <Switch
+                  className="data-[state=unchecked]:bg-gray-300"
+                  id="switch-focus-mode"
+                  checked={showPastTemplates}
+                  onCheckedChange={(showPastTemplates) =>
+                    setValue("showPastTemplates", showPastTemplates)
+                  }
+                />
+              </Field>
+              <AlertDialogFooter>
+                <AlertDialogCancel>
+                  <X />
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit(onSubmit)}>
+                  <Save /> Apply
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
       <Templates templates={templates} />
       <Button

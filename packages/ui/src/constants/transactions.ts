@@ -4,5 +4,5 @@ export const TRANSACTION_TYPES: TransactionType[] = [
   "EXPENSE",
   "INCOME",
   "SAVINGS",
-  "BALANCE_ADJUSTMENT",
+  "ADJUSTMENT",
 ]

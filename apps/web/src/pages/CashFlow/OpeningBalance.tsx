@@ -51,7 +51,7 @@ export function OpeningBalance({
           <div>{balance}</div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="link">
+              <Button variant="link" size="sm">
                 <Pen />
               </Button>
             </AlertDialogTrigger>
