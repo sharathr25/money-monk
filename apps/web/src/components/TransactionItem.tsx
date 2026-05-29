@@ -6,19 +6,22 @@ import { Badge } from "@workspace/ui/components/badge"
 import { Card } from "@workspace/ui/components/card"
 import {
   Item,
+  ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemMedia,
   ItemTitle,
 } from "@workspace/ui/components/item"
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
+import { Boxes, MoveUpRight, Target } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 
 export function TransactionItem({ transaction }: { transaction: Transaction }) {
   const { navigate } = useNavigator()
 
   const amount = formatAmount(
-    transaction.type === "EXPENSE" ? -1 : 1 * transaction.amount,
+    (transaction.type === "EXPENSE" ? -1 : 1) * transaction.amount,
     {
       withCurrency: true,
       withSign: transaction.type === "EXPENSE" || transaction.type === "INCOME",
@@ -45,23 +48,37 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
         <ItemContent>
           <ItemTitle className="line-clamp-1 flex font-bold capitalize">
             {transaction.name}
-            {transaction.goal?.name && `- For ${transaction.goal?.name}`}
           </ItemTitle>
-          <ItemDescription className="flex gap-1">
-            {transaction.category?.name && (
-              <Badge variant="outline">{transaction.category.name}</Badge>
-            )}
-            {transaction.paidTo && (
-              <Badge variant="outline">{transaction.paidTo}</Badge>
-            )}
+          <ItemDescription className="text-xs">
+            {transaction.description}
           </ItemDescription>
         </ItemContent>
-        <ItemContent className="flex items-end">
+        <ItemActions className="mb-auto flex flex-col items-end">
           <ItemTitle className="line-clamp-1 flex">{amount}</ItemTitle>
           <ItemDescription className="text-xs">
-            {formatDate(transaction.updatedAt)}
+            {formatDate(transaction.date)}
           </ItemDescription>
-        </ItemContent>
+        </ItemActions>
+        <ItemFooter className="justify-start">
+          {transaction.goal?.name && (
+            <Badge variant="outline">
+              <Target />
+              {transaction.goal?.name}
+            </Badge>
+          )}
+          {transaction.category?.name && (
+            <Badge variant="outline">
+              <Boxes />
+              {transaction.category.name}
+            </Badge>
+          )}
+          {transaction.paidTo && (
+            <Badge variant="outline">
+              <MoveUpRight />
+              {transaction.paidTo}
+            </Badge>
+          )}
+        </ItemFooter>
       </Item>
     </Card>
   )

@@ -8,8 +8,12 @@ import {
   DocumentSnapshot,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   QueryCompositeFilterConstraint,
+  QueryLimitConstraint,
+  QueryOrderByConstraint,
   setDoc,
   where,
 } from "firebase/firestore"
@@ -46,6 +50,8 @@ export const queryTransactions =
   (uid: string) =>
   async (transactionQuery: TransactionQuery): Promise<Transaction[]> => {
     const contraints: QueryCompositeFilterConstraint[] = []
+    const orderByConstraints: QueryOrderByConstraint[] = []
+    const limitContraints: QueryLimitConstraint[] = []
 
     if (transactionQuery?.goalId) {
       contraints.push(and(where("goal.id", "==", transactionQuery.goalId)))
@@ -55,9 +61,19 @@ export const queryTransactions =
       contraints.push(and(where("type", "==", transactionQuery.type)))
     }
 
+    if (transactionQuery?.limit) {
+      limitContraints.push(limit(transactionQuery.limit))
+    }
+
+    if (transactionQuery?.orderBy) {
+      orderByConstraints.push(orderBy(transactionQuery.orderBy))
+    }
+
     const q = query(
       collection(db, USERS, uid, TRANSACTIONS),
-      and(...contraints)
+      and(...contraints),
+      ...orderByConstraints,
+      ...limitContraints
     )
 
     const querySnapshot = await getDocs(q)

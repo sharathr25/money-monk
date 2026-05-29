@@ -1,14 +1,22 @@
 import { AuthContext } from "@/contexts/AuthContext"
 import { ROUTE_NAMES } from "@/routes"
 import { getLoggedInUser } from "@workspace/api/auth/index"
-import { Outlet, redirect } from "react-router"
+import { useEffect } from "react"
+import { Outlet } from "react-router"
+import { FullScreenLoader } from "./FullScreenLoader"
+import { useNavigator } from "@/hooks/useNavigator"
 
 export const AuthProvider = () => {
+  const { replace } = useNavigator()
   const user = getLoggedInUser()
 
-  if (!user) {
-    throw redirect(ROUTE_NAMES.SIGN_IN)
-  }
+  useEffect(() => {
+    if (!user) {
+      replace(ROUTE_NAMES.SIGN_IN)
+    }
+  }, [user])
+
+  if (!user) return <FullScreenLoader />
 
   return (
     <AuthContext.Provider value={user}>

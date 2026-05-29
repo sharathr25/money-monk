@@ -44,6 +44,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { Badge } from "@workspace/ui/components/badge"
 import { GoalTransactions } from "./GoalTransactions"
 import { GoalAllocation } from "./GoalAllocation"
+import { queryTransactions } from "@workspace/api/db/transactions"
 
 export function Goal() {
   const { goalId = "" } = useParams()
@@ -51,6 +52,7 @@ export function Goal() {
   const user = useAuth()
   const getGoalForUser = getGoal(user.uid)
   const deleteGoalForUser = deleteGoal(user.uid)
+  const queryTransactionsForUser = queryTransactions(user.uid)
 
   const {
     isPending: getGoalPending,
@@ -61,6 +63,13 @@ export function Goal() {
     queryKey: ["goal-" + goalId],
     queryFn: async () => getGoalForUser(goalId),
   })
+
+  const transactionsApi = useQuery({
+    queryKey: ["transactions-" + goalId],
+    queryFn: async () => queryTransactionsForUser({ goalId, orderBy: "date" }),
+  })
+
+  const { data: transactions = [] } = transactionsApi
 
   const { mutate, isPending: deleteGoalPending } = useMutation({
     mutationFn: async () => deleteGoalForUser(goalId),
@@ -78,6 +87,10 @@ export function Goal() {
   const onDeleteContinue = () => {
     mutate()
   }
+
+  const actualAmount = transactions
+    .filter((t) => t.type === "EXPENSE")
+    .reduce((total, t) => total + t.amount, 0)
 
   const itemContainerClass = "basis-1/2 py-1 odd:pr-1 even:pl-1"
   const itemClass = "bg-(--accent) p-3"
@@ -164,7 +177,9 @@ export function Goal() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Actual</ItemDescription>
-                <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
+                <ItemTitle>
+                  {formatAmount(actualAmount, { withCurrency: true })}
+                </ItemTitle>
               </ItemContent>
             </Item>
           </div>
@@ -191,8 +206,11 @@ export function Goal() {
             </Item>
           </div>
         </div>
-        <GoalAllocation breakdown={goal.breakdown} />
-        <GoalTransactions goalId={goalId} />
+        <GoalAllocation
+          breakdown={goal.breakdown}
+          transactionsApi={transactionsApi}
+        />
+        <GoalTransactions goalId={goalId} transactionsApi={transactionsApi} />
       </div>
       <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">
         <AlertDialog>

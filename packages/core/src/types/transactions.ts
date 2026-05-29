@@ -4,6 +4,7 @@ export type TransactionQuery = {
   goalId?: string
   limit?: number
   type?: string
+  orderBy?: string
 }
 
 export type TransactionType = Type | "ADJUSTMENT" | "SAVINGS"

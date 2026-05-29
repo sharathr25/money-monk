@@ -10,6 +10,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      workbox: {
+        cleanupOutdatedCaches: false,
+      },
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,

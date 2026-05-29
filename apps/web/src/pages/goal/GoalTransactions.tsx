@@ -4,26 +4,26 @@ import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { Button } from "@workspace/ui/components/button"
 import { BookText, MoveRight } from "lucide-react"
-import { useAuth } from "@/hooks/useAuth"
-import { useQuery } from "@tanstack/react-query"
+import { type UseQueryResult } from "@tanstack/react-query"
 import { Label } from "@workspace/ui/components/label"
-import { queryTransactions } from "@workspace/api/db/transactions"
 import { TransactionItem } from "@/components/TransactionItem"
 import { InlineEmpty } from "@/components/InlineEmpty"
+import type { Transaction } from "@workspace/core/types/transactions"
 
-export function GoalTransactions({ goalId }: { goalId: string }) {
+export function GoalTransactions({
+  goalId,
+  transactionsApi,
+}: {
+  goalId: string
+  transactionsApi: UseQueryResult<Transaction[], Error>
+}) {
   const { navigate } = useNavigator()
-  const user = useAuth()
-  const queryTransactionsForUser = queryTransactions(user.uid)
 
   const {
     isPending: getTransactionsPending,
     error: getTransactionsError,
     data: transactions = [],
-  } = useQuery({
-    queryKey: ["transactions-" + goalId],
-    queryFn: async () => queryTransactionsForUser({ goalId, limit: 3 }),
-  })
+  } = transactionsApi
 
   const onViewAllClick = () => {
     navigate(
@@ -37,9 +37,9 @@ export function GoalTransactions({ goalId }: { goalId: string }) {
 
   const ListOrEmpty = () => {
     if (transactions.length)
-      return transactions.map((t) => (
-        <TransactionItem transaction={t} key={t.id} />
-      ))
+      return transactions
+        .slice(3)
+        .map((t) => <TransactionItem transaction={t} key={t.id} />)
 
     return <InlineEmpty title="No Transactions" />
   }
