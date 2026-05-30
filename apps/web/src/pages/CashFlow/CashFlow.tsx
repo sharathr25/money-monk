@@ -64,6 +64,10 @@ export function CashFlow() {
 
   return (
     <div className="flex flex-col gap-4">
+      <div>
+        <h1 className="text-xl font-bold">Cash Flow</h1>
+        <p className="text-sm">This month's money story.</p>
+      </div>
       <div className="flex gap-4">
         <Month />
         <OpeningBalance

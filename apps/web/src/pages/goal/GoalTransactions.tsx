@@ -37,9 +37,13 @@ export function GoalTransactions({
 
   const ListOrEmpty = () => {
     if (transactions.length)
-      return transactions
-        .slice(3)
-        .map((t) => <TransactionItem transaction={t} key={t.id} />)
+      return (
+        <div className="flex flex-col gap-2">
+          {transactions.slice(3).map((t) => (
+            <TransactionItem transaction={t} key={t.id} />
+          ))}
+        </div>
+      )
 
     return <InlineEmpty title="No Transactions" />
   }
@@ -54,12 +58,14 @@ export function GoalTransactions({
       <div className="flex items-center gap-2">
         <BookText className="size-5" />
         <Label className="flex items-center text-base font-bold">
-          Transactions
+          Recent Transactions
         </Label>
-        <Button variant="link" onClick={onViewAllClick} size="sm">
-          View All
-          <MoveRight />
-        </Button>
+        {!!transactions.length && (
+          <Button variant="link" onClick={onViewAllClick} size="sm">
+            View All
+            <MoveRight />
+          </Button>
+        )}
       </div>
       <ListOrEmpty />
     </div>

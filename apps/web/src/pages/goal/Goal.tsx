@@ -45,6 +45,7 @@ import { Badge } from "@workspace/ui/components/badge"
 import { GoalTransactions } from "./GoalTransactions"
 import { GoalAllocation } from "./GoalAllocation"
 import { queryTransactions } from "@workspace/api/db/transactions"
+import { GoalEstimatedVsActual } from "./GoalEstimatedVsActual"
 
 export function Goal() {
   const { goalId = "" } = useParams()
@@ -88,8 +89,8 @@ export function Goal() {
     mutate()
   }
 
-  const actualAmount = transactions
-    .filter((t) => t.type === "EXPENSE")
+  const savedAmount = transactions
+    .filter((t) => t.type === "SAVINGS")
     .reduce((total, t) => total + t.amount, 0)
 
   const itemContainerClass = "basis-1/2 py-1 odd:pr-1 even:pl-1"
@@ -152,33 +153,9 @@ export function Goal() {
                 <Banknote />
               </ItemMedia>
               <ItemContent>
-                <ItemDescription>Estimated</ItemDescription>
-                <ItemTitle>
-                  {formatAmount(goal.estimatedAmount, { withCurrency: true })}
-                </ItemTitle>
-              </ItemContent>
-            </Item>
-          </div>
-          <div className={itemContainerClass}>
-            <Item className={itemClass}>
-              <ItemMedia variant="icon">
-                <Banknote />
-              </ItemMedia>
-              <ItemContent>
                 <ItemDescription>Saved</ItemDescription>
-                <ItemTitle>{formatAmount(0, { withCurrency: true })}</ItemTitle>
-              </ItemContent>
-            </Item>
-          </div>
-          <div className={itemContainerClass}>
-            <Item className={itemClass}>
-              <ItemMedia variant="icon">
-                <Banknote />
-              </ItemMedia>
-              <ItemContent>
-                <ItemDescription>Actual</ItemDescription>
                 <ItemTitle>
-                  {formatAmount(actualAmount, { withCurrency: true })}
+                  {formatAmount(savedAmount, { withCurrency: true })}
                 </ItemTitle>
               </ItemContent>
             </Item>
@@ -206,6 +183,7 @@ export function Goal() {
             </Item>
           </div>
         </div>
+        <GoalEstimatedVsActual goal={goal} transactionsApi={transactionsApi} />
         <GoalAllocation
           breakdown={goal.breakdown}
           transactionsApi={transactionsApi}

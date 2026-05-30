@@ -26,7 +26,7 @@ import { ItemDescription, ItemTitle } from "@workspace/ui/components/item"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
-import { Field, FieldLabel } from "@workspace/ui/components/field"
+import { Field } from "@workspace/ui/components/field"
 import {
   Select,
   SelectContent,
@@ -83,15 +83,12 @@ export function CashFlowProjection() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <div>
+      <div className="flex gap-2">
+        <div className="basis-2/3">
           <h1 className="text-xl font-bold">Insights</h1>
-          <p className="text-sm">
-            Projection and Insights to have clear future view of your money
-          </p>
+          <p className="text-sm">Your financial insights, at a glance.</p>
         </div>
-        <Field>
-          <FieldLabel>Insights For</FieldLabel>
+        <Field className="basis-1/3">
           <Select value={months} onValueChange={(v) => setValue("months", v)}>
             <SelectTrigger id="months" className="!h-12">
               <SelectValue />

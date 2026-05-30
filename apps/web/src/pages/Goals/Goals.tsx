@@ -132,7 +132,7 @@ export function Goals() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold">Goals</h1>
-          <p className="text-sm">Your financial goals</p>
+          <p className="text-sm">Track progress, stay motivated.</p>
         </div>
         <div className="flex items-center justify-between">
           <AlertDialog

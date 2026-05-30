@@ -126,7 +126,9 @@ export function CashFlowTemplates() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold">Cash Flow Templates</h1>
-          <p className="text-sm">Your recurring/one time income and expenses</p>
+          <p className="text-sm">
+            Your recurring and one-time income and expenses.
+          </p>
         </div>
         <div className="flex items-center justify-between">
           <AlertDialog
