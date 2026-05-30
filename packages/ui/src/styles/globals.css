@@ -11,8 +11,6 @@
 @theme inline {
     --font-heading: var(--font-sans);
 
-    --color-input: var(--input);
-
     --color-destructive: var(--destructive);
     --color-success-foreground: var(--destructive-foreground);
 
