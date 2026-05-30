@@ -40,7 +40,7 @@ import {
   SquareX,
   X,
 } from "lucide-react"
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "@/contexts/theme-provider"
 
 export function Profile() {
   const { theme, setTheme } = useTheme()

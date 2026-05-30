@@ -11,7 +11,7 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 import {
-  formatCashFlowAmount,
+  formatAmount,
   formatDate,
   formatDayOfMonth,
 } from "@workspace/ui/lib/utils"
@@ -71,7 +71,12 @@ export const TemplateList = ({
         </ItemContent>
         <ItemContent className="flex-none text-center">
           <ItemDescription className="flex flex-col items-end">
-            <span>{formatCashFlowAmount(t.type, t.amount)}</span>
+            <span>
+              {formatAmount((t.type === "EXPENSE" ? -1 : 1) * t.amount, {
+                withCurrency: true,
+                withSign: true,
+              })}
+            </span>
             {!!t.date && t.frequency === "ONE_TIME" && (
               <span className="flex items-center gap-1 text-xs">
                 {formatDate(t.date)}

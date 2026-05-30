@@ -106,9 +106,7 @@ export function Transactions() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold">Transactions</h1>
-          <p className="text-sm">
-            Your transactions related to goals or adjustments
-          </p>
+          <p className="text-sm">All your transactions, at a glance.</p>
         </div>
         <div className="flex items-center justify-between">
           <AlertDialog

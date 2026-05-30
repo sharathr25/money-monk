@@ -1,7 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import dayjs from "dayjs"
-import type { Type } from "@workspace/core/type/cashFlowTemplates"
 
 const NUMBER_FORMAT_OPTIONS = {
   currency: "INR",
@@ -40,12 +39,6 @@ export function formatAmount(
     new Intl.NumberFormat("en-IN", opts).format(parseFloat(amountWithoutCommas))
   )
 }
-
-export const formatCashFlowAmount = (
-  type: Type,
-  amount: string | number,
-  options?: { withCurrency: boolean; withSign: boolean }
-) => `${type === "INCOME" ? "+" : "-"} ${formatAmount(amount, options)}`
 
 export const amountToDouble = (amount: string) =>
   parseFloat(removeCommas(amount))

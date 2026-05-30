@@ -1,5 +1,6 @@
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -10,22 +11,20 @@ import { formatAmount } from "@workspace/ui/lib/utils"
 
 export function ClosingBalance({ closingBalance }: { closingBalance: number }) {
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-(--secondary)">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div className="font-bold capitalize">Closing Balance</div>
-          <Wallet />
+          Closing Balance
         </CardTitle>
+        <CardAction>
+          <Wallet />
+        </CardAction>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div>
-            {formatAmount(closingBalance, {
-              withCurrency: true,
-              withSign: true,
-            })}
-          </div>
-        </div>
+      <CardContent className="text-xl">
+        {formatAmount(closingBalance, {
+          withCurrency: true,
+          withSign: true,
+        })}
       </CardContent>
     </Card>
   )

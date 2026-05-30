@@ -1,5 +1,6 @@
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -14,22 +15,17 @@ export function NetCashFlow({ netCashFlow }: { netCashFlow: number }) {
   return (
     <Card className="w-full bg-(--primary) text-(--primary-foreground)">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="font-bold capitalize">Net Cash Flow</div>
+        <CardTitle>Net Cash Flow</CardTitle>
+        <CardAction>
           {isPositive ? (
             <TrendingUp className="text-(--success)" />
           ) : (
             <TrendingDown className="text-(--destructive)" />
           )}
-        </CardTitle>
+        </CardAction>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        <div className="flex justify-between gap-1">
-          <div>
-            {formatAmount(netCashFlow, { withCurrency: true, withSign: true })}
-          </div>
-          {/* <Badge variant="secondary">+21%</Badge> */}
-        </div>
+      <CardContent className="text-xl">
+        {formatAmount(netCashFlow, { withCurrency: true, withSign: true })}
       </CardContent>
     </Card>
   )

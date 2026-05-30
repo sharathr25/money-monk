@@ -15,7 +15,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { Lightbulb, TriangleAlert } from "lucide-react"
+import {
+  Binoculars,
+  ChartColumn,
+  Info,
+  Lightbulb,
+  TriangleAlert,
+} from "lucide-react"
 import { Badge } from "@workspace/ui/components/badge"
 import React from "react"
 import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
@@ -105,8 +111,9 @@ export function CashFlowProjection() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h1 className="font-extrabold">
-          {months}-Months Closing Balance Trend
+        <h1 className="flex items-center gap-1 font-extrabold">
+          <ChartColumn className="size-5" />
+          Balance Trend
         </h1>
         <Card>
           <CardContent>
@@ -131,7 +138,10 @@ export function CashFlowProjection() {
         </Card>
       </div>
       <div className="flex flex-col gap-2">
-        <h1 className="font-extrabold">Liquidity Insights</h1>
+        <h1 className="flex items-center gap-1 font-extrabold">
+          <Info className="size-5" />
+          Liquidity Insights
+        </h1>
         <div className="flex flex-col gap-3">
           {shortFallProjection && (
             <Alert variant="destructive" className="bg-(--destructive)/10">
@@ -163,7 +173,10 @@ export function CashFlowProjection() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <h1 className="font-extrabold">Projected Months</h1>
+        <h1 className="flex items-center gap-1 font-extrabold">
+          <Binoculars className="size-5" />
+          Projected Months
+        </h1>
         <div className="flex flex-col gap-3">
           {cashFlowProjections.map((cp) => (
             <Card

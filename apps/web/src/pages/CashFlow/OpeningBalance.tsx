@@ -1,11 +1,12 @@
 import { Button } from "@workspace/ui/components/button"
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { Pen, Save, Wallet, X } from "lucide-react"
+import { Pen, Save, X } from "lucide-react"
 
 import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { Input } from "@workspace/ui/components/input"
@@ -42,13 +43,9 @@ export function OpeningBalance({
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <div className="font-bold capitalize">Opening Balance</div>
-          <Wallet />
+          Opening Balance
         </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div>{balance}</div>
+        <CardAction>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="link" size="sm">
@@ -86,8 +83,9 @@ export function OpeningBalance({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
-      </CardContent>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="text-xl">{balance}</CardContent>
     </Card>
   )
 }

@@ -1,6 +1,5 @@
 import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
-import { GoalBadge } from "@/components/GoalBadge"
 import { useAuth } from "@/hooks/useAuth"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
@@ -48,6 +47,7 @@ import { CirclePlus, Filter, FolderCode, Plus, Save, X } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { GoalBadge } from "../goal/GoalBadge"
 
 const DEFAULT_QUERY = { status: "ALL" as GoalStatus | "ALL" }
 
