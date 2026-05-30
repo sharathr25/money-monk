@@ -183,7 +183,7 @@ export function CashFlowTemplate() {
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete your
-                goal from our servers.
+                template from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex">

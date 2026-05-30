@@ -26,7 +26,6 @@ import {
   ArrowDownUp,
 } from "lucide-react"
 import { useState } from "react"
-import { Spinner } from "@workspace/ui/components/spinner"
 import { TemplateList } from "@/components/TemplateList"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import {
@@ -51,6 +50,8 @@ import {
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
 import { Switch } from "@workspace/ui/components/switch"
+import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { FullScreenError } from "@/components/FullScreenError"
 
 type Query = { type: string; showPastTemplates: boolean }
 
@@ -84,6 +85,7 @@ export function CashFlowTemplates() {
   const {
     isPending,
     data: templates = [],
+    error,
     refetch,
   } = useQuery({
     queryKey: ["cashflow-templates", filters],
@@ -101,7 +103,9 @@ export function CashFlowTemplates() {
   }
 
   const Templates = ({ templates }: { templates: CashFlowTemplate[] }) => {
-    if (isPending) return <Spinner className="m-auto" />
+    if (isPending) return <FullScreenLoader />
+
+    if (!!error) return <FullScreenError msg="Something went wrong!" />
 
     if (templates.length === 0)
       return (
