@@ -85,7 +85,7 @@ export function OpeningBalance({
           </AlertDialog>
         </CardAction>
       </CardHeader>
-      <CardContent className="text-xl">{balance}</CardContent>
+      <CardContent className="mt-auto text-xl">{balance}</CardContent>
     </Card>
   )
 }

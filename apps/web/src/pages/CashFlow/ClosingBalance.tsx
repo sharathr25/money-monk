@@ -20,7 +20,7 @@ export function ClosingBalance({ closingBalance }: { closingBalance: number }) {
           <Wallet />
         </CardAction>
       </CardHeader>
-      <CardContent className="text-xl">
+      <CardContent className="mt-auto text-xl">
         {formatAmount(closingBalance, {
           withCurrency: true,
           withSign: true,

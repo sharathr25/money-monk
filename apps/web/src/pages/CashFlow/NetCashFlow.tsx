@@ -24,7 +24,7 @@ export function NetCashFlow({ netCashFlow }: { netCashFlow: number }) {
           )}
         </CardAction>
       </CardHeader>
-      <CardContent className="text-xl">
+      <CardContent className="mt-auto text-xl">
         {formatAmount(netCashFlow, { withCurrency: true, withSign: true })}
       </CardContent>
     </Card>

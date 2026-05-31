@@ -8,7 +8,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@workspace/ui/components/alert"
-import { Bar, BarChart, XAxis } from "recharts"
+import { Bar, BarChart, XAxis, YAxis } from "recharts"
 import {
   Card,
   CardContent,
@@ -54,6 +54,16 @@ const MONTH_OPTIONS = Array.from({ length: MONTHS_STEPS }, (_, i) => {
   }
 })
 
+const getAmountInPercentage = (c: CashFlowProjection) => {
+  const sum = c.totalExpenses + c.totalIncome
+  return {
+    ...c,
+    expenses: Math.round((c.totalExpenses / sum) * 100),
+    income: Math.round((c.totalIncome / sum) * 100),
+    total: 100,
+  }
+}
+
 export function CashFlowProjection() {
   const user = useAuth()
   const { setValue, watch } = useForm<{
@@ -79,9 +89,9 @@ export function CashFlowProjection() {
     title: string,
     description: string | React.ReactElement
   ) => (
-    <div className="flex justify-between">
-      <ItemDescription>{title}</ItemDescription>
-      <ItemTitle>{description}</ItemTitle>
+    <div className="flex items-center justify-between">
+      <ItemDescription className="flex-1">{title}</ItemDescription>
+      <ItemTitle className="flex-1 justify-end">{description}</ItemTitle>
     </div>
   )
 
@@ -200,46 +210,69 @@ export function CashFlowProjection() {
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col gap-2">
-                <div className="flex flex-col">
-                  {renderItem(
-                    "Opening Balance",
-                    formatAmount(cp.openingBalance, {
-                      withCurrency: true,
-                    })
-                  )}
-                  {renderItem(
-                    "Closing Balance",
-                    formatAmount(cp.closingBalance, {
-                      withCurrency: true,
-                    })
-                  )}
-                  {renderItem(
-                    "Income",
-                    <span className="text-(--success)">
-                      {formatAmount(cp.totalIncome, {
-                        withCurrency: true,
-                        withSign: true,
-                      })}
-                    </span>
-                  )}
-                  {renderItem(
-                    "Expenses",
-                    <span className="text-(--destructive)">
-                      {formatAmount(-1 * cp.totalExpenses, {
-                        withCurrency: true,
-                        withSign: true,
-                      })}
-                    </span>
-                  )}
-                  {renderItem(
-                    "Net Cash",
-                    formatAmount(cp.netCashFlow, {
+              <CardContent className="flex flex-col">
+                {renderItem(
+                  "Opening Balance",
+                  formatAmount(cp.openingBalance, {
+                    withCurrency: true,
+                  })
+                )}
+                {renderItem(
+                  "Closing Balance",
+                  formatAmount(cp.closingBalance, {
+                    withCurrency: true,
+                  })
+                )}
+                {renderItem(
+                  "Income",
+                  <span className="text-(--success)">
+                    {formatAmount(cp.totalIncome, {
                       withCurrency: true,
                       withSign: true,
-                    })
-                  )}
-                </div>
+                    })}
+                  </span>
+                )}
+                {renderItem(
+                  "Expenses",
+                  <span className="text-(--destructive)">
+                    {formatAmount(-1 * cp.totalExpenses, {
+                      withCurrency: true,
+                      withSign: true,
+                    })}
+                  </span>
+                )}
+                {renderItem(
+                  "Net Cash",
+                  formatAmount(cp.netCashFlow, {
+                    withCurrency: true,
+                    withSign: true,
+                  })
+                )}
+                {renderItem(
+                  "Income Vs Expenses",
+                  <ChartContainer config={{}} className="h-[20px] w-full">
+                    <BarChart
+                      accessibilityLayer
+                      data={[cp].map(getAmountInPercentage)}
+                      layout="vertical"
+                    >
+                      <XAxis dataKey="total" type="number" hide />
+                      <YAxis dataKey="month" type="category" hide />
+                      <Bar
+                        dataKey="expenses"
+                        stackId="a"
+                        fill="var(--destructive)"
+                        radius={4}
+                      />
+                      <Bar
+                        dataKey="income"
+                        stackId="a"
+                        fill="var(--success)"
+                        radius={4}
+                      />
+                    </BarChart>
+                  </ChartContainer>
+                )}
               </CardContent>
             </Card>
           ))}
