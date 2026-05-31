@@ -9,12 +9,7 @@ import {
   AlertTitle,
 } from "@workspace/ui/components/alert"
 import { Bar, BarChart, XAxis } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
+import { Card, CardContent } from "@workspace/ui/components/card"
 import {
   Binoculars,
   ChartColumn,
@@ -22,13 +17,9 @@ import {
   Lightbulb,
   TriangleAlert,
 } from "lucide-react"
-import { Badge } from "@workspace/ui/components/badge"
-import React from "react"
 import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
-import { cn, formatAmount, formatDuration } from "@workspace/ui/lib/utils"
-import dayjs from "dayjs"
-import { ItemDescription, ItemTitle } from "@workspace/ui/components/item"
+import { formatAmount, formatDuration } from "@workspace/ui/lib/utils"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
@@ -41,7 +32,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { useForm } from "react-hook-form"
-import { IncomeVsExpensesBarChart } from "@/components/IncomeVsExpensesBarChart"
+import { CashFlowProjectionItem } from "./CashFlowProjectionItem"
 
 const MONTHS_STEP_SIZE = 3
 const MONTHS_STEPS = 4
@@ -74,16 +65,6 @@ export function CashFlowProjection() {
   )
   const surplusProjection = cashFlowProjections.find(
     (cp) => cp.closingBalance > 250000
-  )
-
-  const renderItem = (
-    title: string,
-    description: string | React.ReactElement
-  ) => (
-    <div className="flex items-center justify-between">
-      <ItemDescription className="flex-1">{title}</ItemDescription>
-      <ItemTitle className="flex-1 justify-end">{description}</ItemTitle>
-    </div>
   )
 
   if (loading) return <FullScreenLoader />
@@ -180,76 +161,7 @@ export function CashFlowProjection() {
         </h1>
         <div className="flex flex-col gap-3">
           {cashFlowProjections.map((cp) => (
-            <Card
-              key={cp.month}
-              className={cn(
-                cp.closingBalance < 0 && "border-2 border-(--destructive)"
-              )}
-            >
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <h1 className="text-lg font-bold capitalize">
-                    {cp.month} {cp.year}
-                  </h1>
-                  <div className="flex gap-1">
-                    {dayjs().format("MMMM") === cp.month && (
-                      <Badge variant="secondary">In Progress</Badge>
-                    )}
-                    {cp.closingBalance < 0 && (
-                      <Badge variant="destructive">Shorfall Risk</Badge>
-                    )}
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col">
-                {renderItem(
-                  "Opening Balance",
-                  formatAmount(cp.openingBalance, {
-                    withCurrency: true,
-                  })
-                )}
-                {renderItem(
-                  "Closing Balance",
-                  formatAmount(cp.closingBalance, {
-                    withCurrency: true,
-                  })
-                )}
-                {renderItem(
-                  "Income",
-                  <span className="text-(--success)">
-                    {formatAmount(cp.totalIncome, {
-                      withCurrency: true,
-                      withSign: true,
-                    })}
-                  </span>
-                )}
-                {renderItem(
-                  "Expenses",
-                  <span className="text-(--destructive)">
-                    {formatAmount(-1 * cp.totalExpenses, {
-                      withCurrency: true,
-                      withSign: true,
-                    })}
-                  </span>
-                )}
-                {renderItem(
-                  "Net Cash",
-                  formatAmount(cp.netCashFlow, {
-                    withCurrency: true,
-                    withSign: true,
-                  })
-                )}
-                {renderItem(
-                  "Income Vs Expenses",
-                  <IncomeVsExpensesBarChart
-                    expenses={cp.totalExpenses}
-                    income={cp.totalIncome}
-                    month={cp.month}
-                    size="s"
-                  />
-                )}
-              </CardContent>
-            </Card>
+            <CashFlowProjectionItem cashFlowProjection={cp} key={cp.month} />
           ))}
         </div>
       </div>

@@ -5,7 +5,7 @@ import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { queryGoals } from "@workspace/api/db/goals"
-import type { Goal, GoalStatus } from "@workspace/core/types/goals"
+import type { GoalStatus } from "@workspace/core/types/goals"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,14 +18,6 @@ import {
   AlertDialogTrigger,
 } from "@workspace/ui/components/alert-dialog"
 import { Button } from "@workspace/ui/components/button"
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card"
 import {
   Empty,
   EmptyDescription,
@@ -42,12 +34,10 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
-import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import { CirclePlus, Filter, FolderCode, Plus, Save, X } from "lucide-react"
-import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { GoalBadge } from "../goal/GoalBadge"
+import { GoalItem } from "./GoalItem"
 
 const DEFAULT_QUERY = { status: "ALL" as GoalStatus | "ALL" }
 
@@ -81,36 +71,6 @@ export function Goals() {
   if (isPending) return <FullScreenLoader />
 
   if (error) return <FullScreenError msg="Failed to get goals" />
-
-  const renderCard = (g: Goal) => {
-    const lastStage = g.stages[g.stages.length - 1]
-    return (
-      <Card
-        key={g.id}
-        onClick={() => navigate(ROUTE_NAMES.GOAL, { goalId: g.id })}
-      >
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {g.name}
-            <GoalBadge type={g.status} />
-          </CardTitle>
-          <CardDescription>{g.description}</CardDescription>
-          <CardAction>
-            <DynamicIcon name={g.icon as IconName} />
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-1">
-          <CardTitle>Estimated Amount</CardTitle>
-          <CardDescription className="flex justify-between">
-            <div>{formatAmount(g.estimatedAmount, { withCurrency: true })}</div>
-            <div className="text-xs capitalize">
-              {`${g.status.toLowerCase().replace("_", " ")} On ${formatDate(lastStage.startDate)}`}
-            </div>
-          </CardDescription>
-        </CardContent>
-      </Card>
-    )
-  }
 
   const NoGoals = () => (
     <Empty className="border border-dashed">
@@ -188,7 +148,11 @@ export function Goals() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {goals.length ? goals.map(renderCard) : <NoGoals />}
+        {goals.length ? (
+          goals.map((g) => <GoalItem goal={g} key={g.id} />)
+        ) : (
+          <NoGoals />
+        )}
       </div>
       <Button
         className="fixed right-6 bottom-20 h-12 w-12 rounded-full"
