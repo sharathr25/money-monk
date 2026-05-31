@@ -8,7 +8,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@workspace/ui/components/alert"
-import { Bar, BarChart, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, XAxis } from "recharts"
 import {
   Card,
   CardContent,
@@ -41,6 +41,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { useForm } from "react-hook-form"
+import { IncomeVsExpensesBarChart } from "@/components/IncomeVsExpensesBarChart"
 
 const MONTHS_STEP_SIZE = 3
 const MONTHS_STEPS = 4
@@ -53,16 +54,6 @@ const MONTH_OPTIONS = Array.from({ length: MONTHS_STEPS }, (_, i) => {
     value: `${months}`,
   }
 })
-
-const getAmountInPercentage = (c: CashFlowProjection) => {
-  const sum = c.totalExpenses + c.totalIncome
-  return {
-    ...c,
-    expenses: Math.round((c.totalExpenses / sum) * 100),
-    income: Math.round((c.totalIncome / sum) * 100),
-    total: 100,
-  }
-}
 
 export function CashFlowProjection() {
   const user = useAuth()
@@ -250,28 +241,12 @@ export function CashFlowProjection() {
                 )}
                 {renderItem(
                   "Income Vs Expenses",
-                  <ChartContainer config={{}} className="h-[20px] w-full">
-                    <BarChart
-                      accessibilityLayer
-                      data={[cp].map(getAmountInPercentage)}
-                      layout="vertical"
-                    >
-                      <XAxis dataKey="total" type="number" hide />
-                      <YAxis dataKey="month" type="category" hide />
-                      <Bar
-                        dataKey="expenses"
-                        stackId="a"
-                        fill="var(--destructive)"
-                        radius={4}
-                      />
-                      <Bar
-                        dataKey="income"
-                        stackId="a"
-                        fill="var(--success)"
-                        radius={4}
-                      />
-                    </BarChart>
-                  </ChartContainer>
+                  <IncomeVsExpensesBarChart
+                    expenses={cp.totalExpenses}
+                    income={cp.totalIncome}
+                    month={cp.month}
+                    height={10}
+                  />
                 )}
               </CardContent>
             </Card>

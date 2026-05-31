@@ -38,10 +38,7 @@ export function GoalAllocation({
     const percentage = Math.round((actualAmount / estimatedAmount) * 100)
 
     return (
-      <Card
-        className="min-w-40 flex-1 justify-between bg-(--accent)"
-        key={breakdown.id}
-      >
+      <Card className="min-w-40 flex-1 justify-between bg-(--accent)">
         <CardHeader>
           <CardTitle>{breakdown.category}</CardTitle>
         </CardHeader>
@@ -80,7 +77,7 @@ export function GoalAllocation({
     return (
       <div className="flex gap-2 overflow-x-scroll">
         {breakdown.map((b) => (
-          <Breakdown breakdown={b} />
+          <Breakdown breakdown={b} key={b.id} />
         ))}
       </div>
     )

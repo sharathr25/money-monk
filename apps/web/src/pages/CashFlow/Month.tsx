@@ -5,20 +5,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { Calendar } from "lucide-react"
+import { Scale } from "lucide-react"
 import dayjs from "dayjs"
+import { IncomeVsExpensesBarChart } from "@/components/IncomeVsExpensesBarChart"
 
-export function Month() {
+export function Month(props: { expenses: number; income: number }) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{dayjs().format("YYYY")}</CardTitle>
+        <CardTitle>Income Vs Expenses</CardTitle>
         <CardAction>
-          <Calendar />
+          <Scale />
         </CardAction>
       </CardHeader>
       <CardContent className="mt-auto text-xl">
-        {dayjs().format("MMMM")}
+        <IncomeVsExpensesBarChart {...props} month={dayjs().format("MMM")} />
       </CardContent>
     </Card>
   )

@@ -65,19 +65,24 @@ export function CashFlow() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-xl font-bold">Cash Flow</h1>
+        <h1 className="text-xl font-bold">
+          {dayjs().format("MMM")} {dayjs().format("YYYY")}, Cash Flow.
+        </h1>
         <p className="text-sm">This month's money story.</p>
       </div>
       <div className="flex gap-4">
-        <Month />
         <OpeningBalance
           openingBalance={cashFlow.openingBalance}
           updateOpeningBalance={updateOpeningBalance}
         />
+        <Month
+          expenses={cashFlow.totalExpenses}
+          income={cashFlow.totalIncome}
+        />
       </div>
       <div className="flex gap-4">
-        <NetCashFlow netCashFlow={cashFlow.netCashFlow} />
         <ClosingBalance closingBalance={cashFlow.closingBalance} />
+        <NetCashFlow netCashFlow={cashFlow.netCashFlow} />
       </div>
       <Templates cashFlow={cashFlow} />
     </div>
