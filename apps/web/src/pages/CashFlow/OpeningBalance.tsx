@@ -48,8 +48,8 @@ export function OpeningBalance({
         <CardAction>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="link" size="sm">
-                <Pen />
+              <Button variant="link" className="p-0">
+                <Pen className="size-5" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent size="sm">

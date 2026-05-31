@@ -38,7 +38,6 @@ export function AddTransaction() {
     : {}
 
   const onSubmit: SubmitHandler<TransactionFormInputs> = async ({
-    iconNameFilter,
     amount,
     date,
     goalId,

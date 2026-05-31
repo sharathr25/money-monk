@@ -1,16 +1,17 @@
 import { ChartContainer } from "@workspace/ui/components/chart"
+import { cn } from "@workspace/ui/lib/utils"
 import { Bar, BarChart, XAxis, YAxis } from "recharts"
 
 export function IncomeVsExpensesBarChart({
   expenses,
   income,
   month,
-  height = 25,
+  size = "m",
 }: {
   expenses: number
   income: number
   month: string
-  height?: number
+  size?: "s" | "m"
 }) {
   const sum = expenses + income
   const data = [
@@ -22,8 +23,13 @@ export function IncomeVsExpensesBarChart({
     },
   ]
 
+  const sizeToClass = {
+    s: "h-[10px]",
+    m: "h-[25px]",
+  }
+
   return (
-    <ChartContainer config={{}} className={`h-[${height}px] w-full`}>
+    <ChartContainer config={{}} className={cn(sizeToClass[size], "w-full")}>
       <BarChart
         accessibilityLayer
         data={data}

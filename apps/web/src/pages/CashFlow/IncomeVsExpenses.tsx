@@ -9,7 +9,7 @@ import { Scale } from "lucide-react"
 import dayjs from "dayjs"
 import { IncomeVsExpensesBarChart } from "@/components/IncomeVsExpensesBarChart"
 
-export function Month(props: { expenses: number; income: number }) {
+export function IncomeVsExpenses(props: { expenses: number; income: number }) {
   return (
     <Card className="w-full">
       <CardHeader>

@@ -2,17 +2,18 @@ import dayjs from "dayjs"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import type { CashFlow } from "@workspace/core/types/cashFlow"
-import { Spinner } from "@workspace/ui/components/spinner"
 import { getCashFlow, getClosingBalance } from "@workspace/api/db/cashFlow"
 import { OpeningBalance } from "./OpeningBalance"
 import { ClosingBalance } from "./ClosingBalance"
 import { NetCashFlow } from "./NetCashFlow"
 import { Templates } from "./Templates"
 import { updateUserData } from "@workspace/api/db/users"
-import { Month } from "./Month"
+import { IncomeVsExpenses } from "./IncomeVsExpenses"
 import { useAuth } from "@/hooks/useAuth"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { saveTransaction } from "@workspace/api/db/transactions"
+import { FullScreenLoader } from "@/components/FullScreenLoader"
+import { FullScreenError } from "@/components/FullScreenError"
 
 export function CashFlow() {
   const startDate = dayjs().startOf("month").toDate()
@@ -20,7 +21,11 @@ export function CashFlow() {
 
   const [cashFlow, setCashFlow] = useState<CashFlow>()
   const user = useAuth()
-  const { isPending: loading, data } = useQuery({
+  const {
+    isPending: loading,
+    data,
+    error,
+  } = useQuery({
     queryKey: ["cash-flow"],
     queryFn: getCashFlow(user.uid).bind(null, { startDate, endDate }),
   })
@@ -42,7 +47,9 @@ export function CashFlow() {
     }
   }, [data?.openingBalance])
 
-  if (loading) return <Spinner className="m-auto" />
+  if (loading) return <FullScreenLoader />
+
+  if (error) return <FullScreenError />
 
   if (!cashFlow) return null
 
@@ -75,7 +82,7 @@ export function CashFlow() {
           openingBalance={cashFlow.openingBalance}
           updateOpeningBalance={updateOpeningBalance}
         />
-        <Month
+        <IncomeVsExpenses
           expenses={cashFlow.totalExpenses}
           income={cashFlow.totalIncome}
         />

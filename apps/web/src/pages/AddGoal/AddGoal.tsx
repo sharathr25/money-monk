@@ -21,7 +21,6 @@ export function AddGoal() {
   })
 
   const onSubmit: SubmitHandler<GoalFormInputs> = async ({
-    iconNameFilter,
     estimatedAmount,
     breakdown,
     ...data

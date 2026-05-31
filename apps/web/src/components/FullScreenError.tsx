@@ -4,7 +4,7 @@ export const FullScreenError = ({
   msg = "Something went wrong",
   children,
 }: {
-  msg: string
+  msg?: string
   children?: React.ReactNode
 }) => (
   <div className="flex min-h-svh flex-1 flex-col items-center justify-center gap-2">

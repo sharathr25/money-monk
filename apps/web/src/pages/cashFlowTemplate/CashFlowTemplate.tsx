@@ -170,10 +170,10 @@ export function CashFlowTemplate() {
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 flex w-full gap-2 p-6">
+      <div className="fixed bottom-0 left-0 flex w-full gap-2 bg-background px-6 py-3">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="outline" className="flex flex-1">
+            <Button variant="destructive" className="flex flex-1">
               {deleteApiLoading ? <Spinner /> : <Trash />}
               Delete
             </Button>

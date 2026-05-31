@@ -245,7 +245,7 @@ export function CashFlowProjection() {
                     expenses={cp.totalExpenses}
                     income={cp.totalIncome}
                     month={cp.month}
-                    height={10}
+                    size="s"
                   />
                 )}
               </CardContent>

@@ -11,7 +11,6 @@ import { useMutation } from "@tanstack/react-query"
 
 type AddCashFlowFormInputs = {
   name: string
-  iconNameFilter?: string
   icon: string
   description?: string
   amount: string
@@ -35,10 +34,9 @@ export function AddCashFlowTemplate() {
   })
 
   const onSubmit: SubmitHandler<AddCashFlowFormInputs> = async (data) => {
-    const { iconNameFilter, ...rest } = data
     mutate({
-      ...rest,
-      amount: amountToDouble(rest.amount),
+      ...data,
+      amount: amountToDouble(data.amount),
     })
   }
 

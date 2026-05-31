@@ -44,7 +44,7 @@ export function EditCashFlowTemplate() {
   })
 
   const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async (data) => {
-    const { iconNameFilter, amount, day, ...rest } = data
+    const { amount, day, ...rest } = data
     mutate({
       ...rest,
       amount: amountToDouble(amount),

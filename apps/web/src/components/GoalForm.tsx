@@ -1,18 +1,7 @@
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-  DialogDescription,
-  DialogClose,
-} from "@workspace/ui/components/dialog"
 import { Save, IndianRupee, Plus, Minus } from "lucide-react"
-import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
 import {
   Field,
   FieldDescription,
@@ -40,20 +29,17 @@ import {
 } from "@workspace/ui/components/select"
 import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
 import type { GoalStatus } from "@workspace/core/types/goals"
-
-const ICONS_PAGE_SIZE = 10
+import { IconSelector } from "./IconSelector"
 
 const DEFAULT_GOAL = {
   name: "",
   estimatedAmount: "",
-  iconNameFilter: "bank",
   icon: "banknote",
   status: "PLANNED" as GoalStatus,
 }
 
 export type GoalFormInputs = {
   name: string
-  iconNameFilter?: string
   icon: string
   description?: string
   estimatedAmount: string
@@ -81,18 +67,11 @@ export const GoalForm = ({
     name: "breakdown",
   })
 
-  const iconNameFilter = watch("iconNameFilter")
   const icon = watch("icon")
   const totalBreakdownAmount = watch("breakdown")?.reduce(
     (acc, cur) => acc + amountToDouble(cur.amount),
     0
   )
-
-  const filteredIcons: IconName[] = iconNameFilter
-    ? iconNames
-        .filter((name) => name.includes(iconNameFilter.toLowerCase()))
-        .slice(0, ICONS_PAGE_SIZE)
-    : []
 
   const renderBreakdownFields = (
     field: FieldArrayWithId<GoalFormInputs, "breakdown", "id">,
@@ -150,45 +129,11 @@ export const GoalForm = ({
               </FieldLabel>
               <Input id="name" {...register("name", { required: true })} />
             </Field>
-            <Field className="basis-1/4">
-              <FieldLabel htmlFor="name">Icon</FieldLabel>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="border-(--foreground) text-(--foreground)"
-                  >
-                    <DynamicIcon name={icon as IconName} className="size-6" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader className="flex items-start">
-                    <DialogTitle>Icon</DialogTitle>
-                    <DialogDescription>Select an icon.</DialogDescription>
-                    <Input
-                      id="icon"
-                      placeholder="Search icons..."
-                      {...register("iconNameFilter")}
-                    />
-                  </DialogHeader>
-                  <DialogFooter>
-                    <div className="flex h-12 flex-wrap gap-8">
-                      {filteredIcons.map((name) => (
-                        <DialogClose asChild key={name}>
-                          <Button
-                            variant="ghost"
-                            size="icon-lg"
-                            onClick={() => setValue("icon", name)}
-                          >
-                            <DynamicIcon name={name} />
-                          </Button>
-                        </DialogClose>
-                      ))}
-                    </div>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </Field>
+            <IconSelector
+              icon={icon}
+              setIcon={setValue.bind(null, "icon")}
+              className="basis-1/4"
+            />
           </div>
           <Field>
             <FieldLabel htmlFor="desc">Description</FieldLabel>
