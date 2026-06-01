@@ -42,28 +42,25 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { TRANSACTION_TYPES } from "@workspace/ui/constants/transactions"
+import { queryGoals } from "@workspace/api/db/goals"
+import type { Goal } from "@workspace/core/types/goals"
 
-type Query = { type?: string; goalId?: string }
+type Query = { type?: string; goalId?: string; categoryId?: string }
 
 export function Transactions() {
+  const { navigate } = useNavigator()
   const user = useAuth()
   const { state = {} } = useLocation()
   const defaultValues = { ...state, type: "ALL" }
   const { handleSubmit, setValue, watch } = useForm<Query>({
     defaultValues,
   })
+
   const [filters, setFilters] = useState(defaultValues)
   const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
-  const onSubmit = (filters: Query) => {
-    setFilters(filters)
-    setFiltersDialogOpen(false)
-  }
-
-  const type = watch("type")
-
   const toQueryFilters = (filters: Query): TransactionQuery => {
-    const query: TransactionQuery = { ...filters }
+    const query: TransactionQuery = { ...filters, orderBy: "date" }
     if (filters.type === "ALL") {
       query.type = undefined
     }
@@ -71,6 +68,13 @@ export function Transactions() {
   }
 
   const queryTransactionsForUser = queryTransactions(user.uid)
+  const queryGoalsForUser = queryGoals(user.uid)
+  const { data: goals } = useQuery({
+    queryKey: ["goals"],
+    queryFn: queryGoalsForUser.bind(null, {
+      status: "STARTED_SAVING,ACTIVE",
+    }),
+  })
   const {
     isPending,
     error,
@@ -80,7 +84,18 @@ export function Transactions() {
     queryFn: queryTransactionsForUser.bind(null, toQueryFilters(filters)),
   })
 
-  const { navigate } = useNavigator()
+  const showGoalTransactions = Boolean(state?.goalId)
+  const type = watch("type")
+  const goalId = watch("goalId")
+  const categoryId = watch("categoryId")
+  const goalsMap: Record<string, Goal> = goals
+    ? goals.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {})
+    : {}
+
+  const onSubmit = (filters: Query) => {
+    setFilters(filters)
+    setFiltersDialogOpen(false)
+  }
 
   const NoTransactions = () => (
     <Empty className="border border-dashed">
@@ -105,7 +120,10 @@ export function Transactions() {
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-bold">Transactions</h1>
+          <h1 className="text-xl font-bold">
+            Transactions
+            {Boolean(transactions.length) && ` (${transactions.length})`}
+          </h1>
           <p className="text-sm">All your transactions, at a glance.</p>
         </div>
         <div className="flex items-center justify-between">
@@ -147,6 +165,56 @@ export function Transactions() {
                   </SelectContent>
                 </Select>
               </Field>
+              <div className="flex gap-2">
+                <Field>
+                  <FieldLabel htmlFor="goal">
+                    Goal<span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <Select
+                    defaultValue={goalId}
+                    disabled={showGoalTransactions}
+                    required
+                    onValueChange={(v) => setValue("goalId", v)}
+                  >
+                    <SelectTrigger id="goal" className="!h-12 capitalize">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(goalsMap).map((g) => (
+                        <SelectItem
+                          value={g.id}
+                          key={g.id}
+                          className="capitalize"
+                        >
+                          {g.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="goal">Category</FieldLabel>
+                  <Select
+                    defaultValue={categoryId}
+                    onValueChange={(v) => setValue("categoryId", v)}
+                  >
+                    <SelectTrigger id="goal" className="!h-12 capitalize">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {goalsMap[goalId || ""]?.breakdown?.map((c) => (
+                        <SelectItem
+                          value={c.id}
+                          key={c.id}
+                          className="capitalize"
+                        >
+                          {c.category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
               <AlertDialogFooter>
                 <AlertDialogCancel>
                   <X />

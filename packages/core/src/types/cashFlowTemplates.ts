@@ -4,6 +4,7 @@ export type Type = "INCOME" | "EXPENSE"
 
 export type CashFlowTemplateQuery = {
   type?: string
+  frequency?: string
   startDate?: Date
   endDate?: Date
 }

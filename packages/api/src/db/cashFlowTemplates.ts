@@ -43,6 +43,7 @@ export const queryCashFlowTemplates =
   (uid: string) =>
   async ({
     type,
+    frequency,
     startDate,
     endDate,
   }: CashFlowTemplateQuery): Promise<CashFlowTemplate[]> => {
@@ -50,6 +51,10 @@ export const queryCashFlowTemplates =
 
     if (type) {
       contraints.push(and(where("type", "==", type)))
+    }
+
+    if (frequency) {
+      contraints.push(and(where("frequency", "==", frequency)))
     }
 
     if (startDate) {

@@ -75,6 +75,7 @@ export function OpeningBalance({
                 </AlertDialogCancel>
 
                 <AlertDialogAction
+                  disabled={openingBalance === amountToDouble(balance)}
                   onClick={() => updateOpeningBalance(amountToDouble(balance))}
                 >
                   Save
@@ -85,7 +86,9 @@ export function OpeningBalance({
           </AlertDialog>
         </CardAction>
       </CardHeader>
-      <CardContent className="mt-auto text-xl">{balance}</CardContent>
+      <CardContent className="mt-auto text-xl">
+        {formatAmount(openingBalance, { withCurrency: true })}
+      </CardContent>
     </Card>
   )
 }

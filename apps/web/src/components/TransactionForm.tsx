@@ -1,37 +1,23 @@
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@workspace/ui/components/dialog"
-import { Save, IndianRupee, Calendar as CalendarIcon } from "lucide-react"
+import { Save } from "lucide-react"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { useForm, type SubmitHandler } from "react-hook-form"
-import { formatAmount, isNumber } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
 import {
   InputGroup,
-  InputGroupAddon,
   InputGroupInput,
 } from "@workspace/ui/components/input-group"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
 import type { Goal, GoalStage } from "@workspace/core/types/goals"
 import type { TransactionType } from "@workspace/core/types/transactions"
-import { useState } from "react"
-import { Calendar } from "@workspace/ui/components/calendar"
 import { TRANSACTION_TYPES } from "@workspace/ui/constants/transactions"
 import { IconSelector } from "./IconSelector"
+import { AmountTypeSelector } from "./AmountTypeSelector"
+import { GoalSelector } from "./GoalSelector"
+import { CategorySelector } from "./CategorySelector"
+import { DateSelector } from "./DateSelector"
+import { AmountInput } from "./AmountInput"
 
 const DEFAULT_TRANSACTION = {
   name: "",
@@ -72,8 +58,6 @@ export const TransactionForm = ({
       defaultValues,
     })
 
-  const [calendarOpen, setCalenderOpen] = useState(false)
-
   const icon = watch("icon")
   const date = watch("date")
   const goalId = watch("goalId")
@@ -110,129 +94,32 @@ export const TransactionForm = ({
             </Field>
           </div>
           <div className="flex gap-2">
-            <Field>
-              <FieldLabel htmlFor="amount">
-                Amount<span className="text-destructive">*</span>
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  id="amount"
-                  inputMode="numeric"
-                  {...register("amount", { required: true })}
-                  onChange={(e) =>
-                    setValue(
-                      "amount",
-                      isNumber(e.target.value)
-                        ? formatAmount(e.target.value)
-                        : ""
-                    )
-                  }
-                />
-                <InputGroupAddon>
-                  <IndianRupee />
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="goal">
-                Type<span className="text-destructive">*</span>
-              </FieldLabel>
-              <Select
-                required
-                defaultValue={type}
-                onValueChange={(v: TransactionType) => setValue("type", v)}
-              >
-                <SelectTrigger id="goal" className="!h-12 capitalize">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRANSACTION_TYPES.map((t) => (
-                    <SelectItem value={t} key={t} className="capitalize">
-                      {t.toLowerCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            <AmountInput
+              {...register("amount", { required: true })}
+              setAmount={setValue.bind(null, "amount")}
+            />
+            <AmountTypeSelector
+              type={type}
+              setType={setValue.bind(null, "type")}
+              types={TRANSACTION_TYPES}
+            />
           </div>
           <div className="flex gap-2">
-            <Field>
-              <FieldLabel htmlFor="goal">
-                Goal<span className="text-destructive">*</span>
-              </FieldLabel>
-              <Select
-                defaultValue={goalId}
-                required
-                onValueChange={(v) => setValue("goalId", v)}
-              >
-                <SelectTrigger id="goal" className="!h-12 capitalize">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(goalsMap).map((g) => (
-                    <SelectItem value={g.id} key={g.id} className="capitalize">
-                      {g.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="goal">Category</FieldLabel>
-              <Select
-                defaultValue={categoryId}
-                onValueChange={(v) => setValue("categoryId", v)}
-              >
-                <SelectTrigger id="goal" className="!h-12 capitalize">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {goalsMap[goalId || ""]?.breakdown?.map((c) => (
-                    <SelectItem value={c.id} key={c.id} className="capitalize">
-                      {c.category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+            <GoalSelector
+              required
+              goalId={goalId}
+              setGoalId={setValue.bind(null, "goalId")}
+              goals={Object.values(goalsMap)}
+            />
+            <CategorySelector
+              disabled={!goalId}
+              breakdown={goalsMap[goalId || ""]?.breakdown || []}
+              categoryId={categoryId}
+              setCategoryId={setValue.bind(null, "categoryId")}
+            />
           </div>
           <div>
-            <Field>
-              <FieldLabel htmlFor="date-picker-simple">Date</FieldLabel>
-              <Dialog open={calendarOpen} onOpenChange={setCalenderOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    id="date-picker-simple"
-                    className="justify-start border-(--foreground) font-normal text-(--foreground)"
-                  >
-                    <CalendarIcon />
-                    {date?.toLocaleDateString()}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader className="flex items-start">
-                    <DialogTitle className="capitalize">
-                      Date of the transaction
-                    </DialogTitle>
-                    <DialogDescription>
-                      By default today's date will be selected
-                    </DialogDescription>
-                  </DialogHeader>
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={(d: Date | undefined) => {
-                      setValue("date", d)
-                      setCalenderOpen(false)
-                    }}
-                    defaultMonth={date}
-                    captionLayout="dropdown"
-                    className="mx-auto"
-                  />
-                </DialogContent>
-              </Dialog>
-            </Field>
+            <DateSelector date={date} setDate={setValue.bind(null, "date")} />
           </div>
           <Button type="submit" className="w-full">
             {loading ? <Spinner /> : <Save />}

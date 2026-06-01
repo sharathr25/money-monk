@@ -2,6 +2,7 @@ import type { Type } from "./cashFlowTemplates"
 
 export type TransactionQuery = {
   goalId?: string
+  categoryId?: string
   limit?: number
   type?: string
   orderBy?: string

@@ -30,6 +30,7 @@ import {
 import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
 import type { GoalStatus } from "@workspace/core/types/goals"
 import { IconSelector } from "./IconSelector"
+import { AmountInput } from "./AmountInput"
 
 const DEFAULT_GOAL = {
   name: "",
@@ -90,27 +91,10 @@ export const GoalForm = ({
             })}
           />
         </Field>
-        <Field>
-          <FieldLabel htmlFor="estimatedAmount">
-            Amount<span className="text-destructive">*</span>
-          </FieldLabel>
-          <InputGroup>
-            <InputGroupInput
-              id="amount"
-              inputMode="numeric"
-              {...register(`breakdown.${index}.amount`, { required: true })}
-              onChange={(e) =>
-                setValue(
-                  `breakdown.${index}.amount`,
-                  formatAmount(isNumber(e.target.value) ? e.target.value : "")
-                )
-              }
-            />
-            <InputGroupAddon>
-              <IndianRupee />
-            </InputGroupAddon>
-          </InputGroup>
-        </Field>
+        <AmountInput
+          {...register(`breakdown.${index}.amount`, { required: true })}
+          setAmount={setValue.bind(null, `breakdown.${index}.amount`)}
+        />
         <Button variant="outline" onClick={() => remove(index)}>
           <Minus />
         </Button>
@@ -160,6 +144,10 @@ export const GoalForm = ({
             </Field>
           </div>
           <div className="flex gap-2">
+            <AmountInput
+              {...register("estimatedAmount", { required: true })}
+              setAmount={setValue.bind(null, "estimatedAmount")}
+            />
             <Field>
               <FieldLabel htmlFor="amount">
                 Estimated Amount

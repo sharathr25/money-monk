@@ -57,6 +57,12 @@ export const queryTransactions =
       contraints.push(and(where("goal.id", "==", transactionQuery.goalId)))
     }
 
+    if (transactionQuery?.categoryId) {
+      contraints.push(
+        and(where("category.id", "==", transactionQuery.categoryId))
+      )
+    }
+
     if (transactionQuery?.type) {
       contraints.push(and(where("type", "==", transactionQuery.type)))
     }

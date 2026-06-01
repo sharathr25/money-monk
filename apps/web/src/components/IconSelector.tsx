@@ -14,7 +14,7 @@ import { DynamicIcon, iconNames, type IconName } from "lucide-react/dynamic"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { useState } from "react"
 
-const ICONS_PAGE_SIZE = 10
+const ICONS_PAGE_SIZE = 20
 
 export const IconSelector = ({
   icon,
@@ -56,8 +56,8 @@ export const IconSelector = ({
               onChange={(e) => setIconName(e.target.value)}
             />
           </DialogHeader>
-          <DialogFooter>
-            <div className="flex h-12 flex-wrap gap-8">
+          <DialogFooter className="border-0">
+            <div className="flex h-12 min-h-[200px] flex-wrap gap-8 overflow-x-scroll">
               {filteredIcons.map((name) => (
                 <DialogClose asChild key={name}>
                   <Button

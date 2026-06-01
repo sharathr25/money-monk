@@ -21,6 +21,7 @@ export const ROUTE_PATHS = {
   TRANSACTION: "transactions/:transactionId",
   ADD_TRANSACTION: "transactions/add",
   EDIT_TRANSACTION: "transactions/:transactionId/edit",
+  CLONE_TRANSACTION: "transactions/:transactionId/clone",
   SETTINGS: "settings",
   SIGN_IN: "sign-in",
   PROFILE: "profile",
@@ -43,6 +44,7 @@ const {
   TRANSACTION,
   ADD_TRANSACTION,
   EDIT_TRANSACTION,
+  CLONE_TRANSACTION,
   SETTINGS,
   SIGN_IN,
   PROFILE,
@@ -71,6 +73,7 @@ export const ROUTE_NAMES = {
   TRANSACTION: authPath(TRANSACTION),
   ADD_TRANSACTION: authPath(ADD_TRANSACTION),
   EDIT_TRANSACTION: authPath(EDIT_TRANSACTION),
+  CLONE_TRANSACTION: authPath(CLONE_TRANSACTION),
 
   SETTINGS: authPath(SETTINGS),
 
@@ -110,6 +113,7 @@ const Transactions = lazy(() => import("@/pages/transactions"))
 const Transaction = lazy(() => import("@/pages/transaction"))
 const AddTransaction = lazy(() => import("@/pages/addTransaction"))
 const EditTransaction = lazy(() => import("@/pages/editTransaction"))
+const CloneTransaction = lazy(() => import("@/pages/cloneTransaction"))
 
 const Profile = lazy(() => import("@/pages/profile"))
 
@@ -193,6 +197,10 @@ const routes: RouteObject[] = [
           {
             path: ROUTE_PATHS.EDIT_TRANSACTION,
             Component: EditTransaction,
+          },
+          {
+            path: ROUTE_PATHS.CLONE_TRANSACTION,
+            Component: CloneTransaction,
           },
           {
             path: ROUTE_PATHS.ADD_TRANSACTION,

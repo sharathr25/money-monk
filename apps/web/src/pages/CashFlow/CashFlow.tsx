@@ -14,6 +14,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { saveTransaction } from "@workspace/api/db/transactions"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { FullScreenError } from "@/components/FullScreenError"
+import { formatAmount } from "@workspace/ui/lib/utils"
 
 export function CashFlow() {
   const startDate = dayjs().startOf("month").toDate()
@@ -66,6 +67,7 @@ export function CashFlow() {
       type: "ADJUSTMENT",
       date: new Date(),
       icon: "banknote",
+      description: `${formatAmount(cashFlow.openingBalance, { withCurrency: true })} ➡️ ${formatAmount(openingBalance, { withCurrency: true })}`,
     })
   }
 

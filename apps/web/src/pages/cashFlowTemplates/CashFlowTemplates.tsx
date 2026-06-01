@@ -1,11 +1,7 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { queryCashFlowTemplates } from "@workspace/api/db/index"
-import type {
-  CashFlowTemplate,
-  CashFlowTemplateQuery,
-  Type,
-} from "@workspace/core/types"
+import type { CashFlowTemplateQuery } from "@workspace/core/types"
 import { Button } from "@workspace/ui/components/button"
 import {
   Empty,
@@ -14,27 +10,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@workspace/ui/components/empty"
-import {
-  Plus,
-  FolderCode,
-  CirclePlus,
-  Filter,
-  MoveDown,
-  MoveUp,
-  X,
-  Save,
-  ArrowDownUp,
-} from "lucide-react"
+import { Plus, FolderCode, CirclePlus, Filter, X, Save } from "lucide-react"
 import { useState } from "react"
 import { TemplateList } from "@/components/TemplateList"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
 import { useForm } from "react-hook-form"
 import {
   AlertDialog,
@@ -52,11 +31,14 @@ import { useQuery } from "@tanstack/react-query"
 import { Switch } from "@workspace/ui/components/switch"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { FullScreenError } from "@/components/FullScreenError"
+import { AmountTypeSelector } from "@/components/AmountTypeSelector"
+import { FrequencySelector } from "@/components/FrequencySelector"
 
-type Query = { type: string; showPastTemplates: boolean }
+type Query = { type: string; showPastTemplates: boolean; frequency: string }
 
 const DEFAULT_QUERY: Query = {
   type: "ALL",
+  frequency: "ALL",
   showPastTemplates: false,
 }
 
@@ -70,11 +52,15 @@ export function CashFlowTemplates() {
 
   const showPastTemplates = watch("showPastTemplates")
   const type = watch("type")
+  const frequency = watch("frequency")
 
   const toQueryFilters = (filters: Query): CashFlowTemplateQuery => {
     const query: CashFlowTemplateQuery = { ...filters }
     if (filters.type === "ALL") {
       query.type = undefined
+    }
+    if (filters.frequency === "ALL") {
+      query.frequency = undefined
     }
     if (!filters.showPastTemplates) {
       query.startDate = new Date()
@@ -102,7 +88,7 @@ export function CashFlowTemplates() {
     refetch()
   }
 
-  const Templates = ({ templates }: { templates: CashFlowTemplate[] }) => {
+  const Templates = () => {
     if (isPending) return <FullScreenLoader />
 
     if (!!error) return <FullScreenError msg="Something went wrong!" />
@@ -150,32 +136,16 @@ export function CashFlowTemplates() {
                 <AlertDialogTitle>Change Filters</AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogDescription></AlertDialogDescription>
-              <Field>
-                <FieldLabel htmlFor="type">Type</FieldLabel>
-                <Select
-                  defaultValue={DEFAULT_QUERY.type}
-                  value={type}
-                  onValueChange={(v: Type) => setValue("type", v)}
-                >
-                  <SelectTrigger id="type" className="!h-11">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALL">
-                      <ArrowDownUp />
-                      All
-                    </SelectItem>
-                    <SelectItem value="INCOME">
-                      <MoveDown />
-                      Income
-                    </SelectItem>
-                    <SelectItem value="EXPENSE">
-                      <MoveUp />
-                      Expense
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </Field>
+              <AmountTypeSelector
+                types={["INCOME", "EXPENSE", "ALL"]}
+                type={type}
+                setType={setValue.bind(null, "type")}
+              />
+              <FrequencySelector
+                frequencies={["ALL", "MONTHLY", "ONE_TIME"]}
+                frequency={frequency}
+                setFrequency={setValue.bind(null, "frequency")}
+              />
               <Field orientation="horizontal" className="max-w-sm">
                 <FieldLabel htmlFor="switch-focus-mode">
                   Show past templates
@@ -202,7 +172,7 @@ export function CashFlowTemplates() {
           </AlertDialog>
         </div>
       </div>
-      <Templates templates={templates} />
+      <Templates />
       <Button
         className="fixed right-6 bottom-20 h-12 w-12 rounded-full"
         onClick={() => navigate(ROUTE_NAMES.ADD_CASH_FLOW_TEMPLATE)}

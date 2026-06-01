@@ -85,8 +85,11 @@ export function EditGoal() {
         formInputs={{
           ...goal,
           breakdown:
-            goal.breakdown?.map((b) => ({ ...b, amount: `${b.amount}` })) || [],
-          estimatedAmount: formatAmount(`${goal.estimatedAmount}`),
+            goal.breakdown?.map((b) => ({
+              ...b,
+              amount: formatAmount(b.amount),
+            })) || [],
+          estimatedAmount: formatAmount(goal.estimatedAmount),
           status: goal.status,
         }}
         onSubmit={onSubmit}

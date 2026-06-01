@@ -99,7 +99,10 @@ export function CashFlowProjection() {
         </h1>
         <Card>
           <CardContent>
-            <ChartContainer config={{}} className="min-h-[200px] w-full">
+            <ChartContainer
+              config={{ closingBalance: { label: "Balance: " } }}
+              className="min-h-[200px] w-full"
+            >
               <BarChart accessibilityLayer data={cashFlowProjections}>
                 <XAxis
                   dataKey="month"

@@ -57,8 +57,8 @@ export function Transaction() {
   const deleteTransactionForUser = deleteTransaction(user.uid)
 
   const {
-    isPending: getGoalPending,
-    error: getGoalError,
+    isPending: getTransactionPending,
+    error: getTransactionError,
     data: transaction,
     refetch,
   } = useQuery({
@@ -79,6 +79,16 @@ export function Transaction() {
     })
   }
 
+  const onClone = () => {
+    navigate(
+      ROUTE_NAMES.CLONE_TRANSACTION,
+      {
+        transactionId,
+      },
+      { state: { transaction } }
+    )
+  }
+
   const onDeleteContinue = () => {
     mutate()
   }
@@ -86,9 +96,9 @@ export function Transaction() {
   const itemContainerClass = "basis-1/2 py-1 odd:pr-1 even:pl-1"
   const itemClass = "bg-(--accent) p-3"
 
-  if (getGoalPending) return <FullScreenLoader />
+  if (getTransactionPending) return <FullScreenLoader />
 
-  if (getGoalError) return <FullScreenError msg="Something went wrong" />
+  if (getTransactionError) return <FullScreenError msg="Something went wrong" />
 
   if (!transaction)
     return (
@@ -217,42 +227,48 @@ export function Transaction() {
           )}
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 flex w-full gap-2 bg-background px-6 py-3">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="flex flex-1">
-              {deleteTransactionPending ? <Spinner /> : <Trash />}
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent size="sm">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                transaction from our servers.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="flex">
-              <AlertDialogCancel>
-                <X />
-                Don't Delete
-              </AlertDialogCancel>
-              <AlertDialogAction
-                variant="destructive"
-                onClick={onDeleteContinue}
-              >
-                <Trash />
-                Yes, Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        <Button className="flex-1" onClick={onEdit}>
-          <Pen />
-          Edit
-        </Button>
-      </div>
+      {transaction.type !== "ADJUSTMENT" && (
+        <div className="fixed bottom-0 left-0 flex w-full gap-2 bg-background px-6 py-3">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="flex flex-1">
+                {deleteTransactionPending ? <Spinner /> : <Trash />}
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your transaction from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex">
+                <AlertDialogCancel>
+                  <X />
+                  Don't Delete
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={onDeleteContinue}
+                >
+                  <Trash />
+                  Yes, Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <Button className="flex-1" variant="outline" onClick={onClone}>
+            <Pen />
+            Clone
+          </Button>
+          <Button className="flex-1" onClick={onEdit}>
+            <Pen />
+            Edit
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
