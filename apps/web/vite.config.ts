@@ -14,9 +14,6 @@ export default defineConfig({
         cleanupOutdatedCaches: false,
       },
       registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
     }),
   ],
   resolve: {

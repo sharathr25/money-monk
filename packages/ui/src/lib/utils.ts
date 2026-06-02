@@ -10,7 +10,10 @@ const NUMBER_FORMAT_OPTIONS = {
 
 const MONTHS_PER_YEAR = 12
 
-export function cn(...inputs: ClassValue[]) {
+const COLOR_GOLDEN_ANGLE = 137.508
+const COLOR_TOTAL_ANGLE = 360
+
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
 }
 
@@ -79,7 +82,10 @@ export const formatDayOfMonth = (day: number): string => {
   }
 }
 
-export function getMonthRanges(months: number, monthFormat: string = "MMMM") {
+export const getMonthRanges = (
+  months: number,
+  monthFormat: string = "MMMM"
+) => {
   return Array.from({ length: months }, (_, index) => {
     const date = dayjs().add(index, "month")
 
@@ -92,11 +98,11 @@ export function getMonthRanges(months: number, monthFormat: string = "MMMM") {
   })
 }
 
-export function isNumber(str: string) {
+export const isNumber = (str: string) => {
   return !Number.isNaN(parseInt(str))
 }
 
-export function pluralise({
+export const pluralise = ({
   n,
   str,
   customPluralStr,
@@ -104,7 +110,7 @@ export function pluralise({
   n: number
   str: string
   customPluralStr?: string
-}) {
+}) => {
   if (n === 1) return str
   if (customPluralStr) return customPluralStr
   return str + "s"
@@ -120,4 +126,27 @@ export const formatDuration = (totalMonths: number) => {
   ]
     .filter(Boolean)
     .join(" ")
+}
+
+export const getRandomColor = (index: number): string => {
+  const hue = (index * COLOR_GOLDEN_ANGLE) % COLOR_TOTAL_ANGLE
+  return `hsl(${hue}, 55%, 68%)`
+}
+
+export const formatCompactAmount = (amount: number): string => {
+  const abs = Math.abs(amount)
+
+  if (abs >= 1_00_00_000) {
+    return `${(amount / 1_00_00_000).toFixed(2).replace(/\.?0+$/, "")}Cr`
+  }
+
+  if (abs >= 1_00_000) {
+    return `${(amount / 1_00_000).toFixed(2).replace(/\.?0+$/, "")}L`
+  }
+
+  if (abs >= 1_000) {
+    return `${(amount / 1_000).toFixed(2).replace(/\.?0+$/, "")}K`
+  }
+
+  return `${amount}`
 }

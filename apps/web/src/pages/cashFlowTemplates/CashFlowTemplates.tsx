@@ -136,16 +136,18 @@ export function CashFlowTemplates() {
                 <AlertDialogTitle>Change Filters</AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogDescription></AlertDialogDescription>
-              <AmountTypeSelector
-                types={["INCOME", "EXPENSE", "ALL"]}
-                type={type}
-                setType={setValue.bind(null, "type")}
-              />
-              <FrequencySelector
-                frequencies={["ALL", "MONTHLY", "ONE_TIME"]}
-                frequency={frequency}
-                setFrequency={setValue.bind(null, "frequency")}
-              />
+              <div className="flex gap-2">
+                <AmountTypeSelector
+                  types={["INCOME", "EXPENSE", "ALL"]}
+                  type={type}
+                  setType={setValue.bind(null, "type")}
+                />
+                <FrequencySelector
+                  frequencies={["ALL", "MONTHLY", "ONE_TIME"]}
+                  frequency={frequency}
+                  setFrequency={setValue.bind(null, "frequency")}
+                />
+              </div>
               <Field orientation="horizontal" className="max-w-sm">
                 <FieldLabel htmlFor="switch-focus-mode">
                   Show past templates

@@ -12,7 +12,16 @@
         ]
       },
       {
-        "source": "(sw|registerSW).js",
+        "source": "**/*.@(js|css|png|jpg|jpeg|svg|woff|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600, immutable"
+          }
+        ]
+      },
+      {
+        "source": "/registerSW.js",
         "headers": [
           {
             "key": "Cache-Control",
@@ -21,11 +30,11 @@
         ]
       },
       {
-        "source": "**/*.@(js|css|png|jpg|jpeg|svg|woff|woff2)",
+        "source": "/sw.js",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=3600, immutable"
+            "value": "no-cache, no-store, must-revalidate"
           }
         ]
       }
