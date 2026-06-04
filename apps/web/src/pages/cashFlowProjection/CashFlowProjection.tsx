@@ -20,6 +20,7 @@ import {
 import { getCashFlowProjection } from "@workspace/api/db/cashFlow"
 import type { CashFlowProjection } from "@workspace/core/types/cashFlow"
 import { formatAmount, formatDuration } from "@workspace/ui/lib/utils"
+import { BAR_CHART_RADIUS } from "@workspace/ui/constants/index"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
@@ -107,7 +108,6 @@ export function CashFlowProjection() {
                 <XAxis
                   dataKey="month"
                   tickLine={false}
-                  tickMargin={10}
                   axisLine={false}
                   tickFormatter={(value) => value.slice(0, 3)}
                 />
@@ -115,7 +115,7 @@ export function CashFlowProjection() {
                 <Bar
                   dataKey="closingBalance"
                   fill="var(--primary)"
-                  radius={4}
+                  radius={BAR_CHART_RADIUS}
                 />
               </BarChart>
             </ChartContainer>

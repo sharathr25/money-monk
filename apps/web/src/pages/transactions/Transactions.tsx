@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 import { queryTransactions } from "@workspace/api/db/transactions"
 import { Button } from "@workspace/ui/components/button"
 import { TransactionItem } from "@/components/TransactionItem"
-import { CirclePlus, Filter, FolderCode, Plus, Save, X } from "lucide-react"
+import { CirclePlus, FolderCode, Plus } from "lucide-react"
 import { useLocation } from "react-router"
 import {
   Empty,
@@ -16,17 +16,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@workspace/ui/components/empty"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
 import { useForm } from "react-hook-form"
 import type {
   TransactionQuery,
@@ -44,6 +33,7 @@ import {
 import { TRANSACTION_TYPES } from "@workspace/ui/constants/transactions"
 import { queryGoals } from "@workspace/api/db/goals"
 import type { Goal } from "@workspace/core/types/goals"
+import { FiltersDrawer } from "@/components/FiltersDrawer"
 
 type Query = { type?: string; goalId?: string; categoryId?: string }
 
@@ -57,7 +47,6 @@ export function Transactions() {
   })
 
   const [filters, setFilters] = useState(defaultValues)
-  const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
   const toQueryFilters = (filters: Query): TransactionQuery => {
     const query: TransactionQuery = { ...filters, orderBy: "date" }
@@ -94,7 +83,6 @@ export function Transactions() {
 
   const onSubmit = (filters: Query) => {
     setFilters(filters)
-    setFiltersDialogOpen(false)
   }
 
   const NoTransactions = () => (
@@ -106,7 +94,7 @@ export function Transactions() {
         <EmptyTitle className="capitalize">No Transactions Yet</EmptyTitle>
         <EmptyDescription>
           Start by clicking on <CirclePlus className="inline size-5" /> to add
-          your first transaction
+          transaction
         </EmptyDescription>
       </EmptyHeader>
     </Empty>
@@ -127,23 +115,8 @@ export function Transactions() {
           <p className="text-sm">All your transactions, at a glance.</p>
         </div>
         <div className="flex items-center justify-between">
-          <AlertDialog
-            open={filtersDialogOpen}
-            onOpenChange={setFiltersDialogOpen}
-          >
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                Filters
-                <Filter />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent size="sm">
-              <AlertDialogHeader className="flex flex-col items-start">
-                <AlertDialogTitle>Change Filters</AlertDialogTitle>
-              </AlertDialogHeader>
-              <AlertDialogDescription>
-                Apply filters to limit result
-              </AlertDialogDescription>
+          <FiltersDrawer onApply={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-4">
               <Field>
                 <FieldLabel htmlFor="type">Type</FieldLabel>
                 <Select
@@ -215,17 +188,8 @@ export function Transactions() {
                   </Select>
                 </Field>
               </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel>
-                  <X />
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction onClick={handleSubmit(onSubmit)}>
-                  <Save /> Apply
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            </div>
+          </FiltersDrawer>
         </div>
       </div>
       <div className="flex flex-col gap-4">

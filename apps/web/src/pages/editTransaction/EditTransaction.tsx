@@ -115,6 +115,7 @@ export function EditTransaction() {
           goalId: transaction.goal?.id,
           amount: formatAmount(transaction.amount),
         }}
+        action="UPDATE"
         goalsMap={goalsMap}
         onSubmit={onSubmit}
         loading={updateGoalPending}

@@ -6,17 +6,6 @@ import { ROUTE_NAMES } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { queryGoals } from "@workspace/api/db/goals"
 import type { GoalStatus } from "@workspace/core/types/goals"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
 import { Button } from "@workspace/ui/components/button"
 import {
   Empty,
@@ -34,10 +23,11 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
-import { CirclePlus, Filter, FolderCode, Plus, Save, X } from "lucide-react"
+import { CirclePlus, FolderCode, Plus } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { GoalItem } from "./GoalItem"
+import { FiltersDrawer } from "@/components/FiltersDrawer"
 
 const DEFAULT_QUERY = { status: "ALL" as GoalStatus | "ALL" }
 
@@ -57,11 +47,9 @@ export function Goals() {
     queryKey: ["cashflow-templates", filters],
     queryFn: queryGoals(user.uid).bind(null, filters),
   })
-  const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
   const onSubmit = (filters: { status: GoalStatus | "ALL" }) => {
     setFilters(filters)
-    setFiltersDialogOpen(false)
   }
 
   const { navigate } = useNavigator()
@@ -81,7 +69,7 @@ export function Goals() {
         <EmptyTitle className="capitalize">No Goals Yet</EmptyTitle>
         <EmptyDescription>
           Start by clicking on <CirclePlus className="inline size-5" /> to add
-          your first goal
+          goal
         </EmptyDescription>
       </EmptyHeader>
     </Empty>
@@ -89,29 +77,16 @@ export function Goals() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between">
+      <div className="sticky flex w-full items-start justify-between">
         <div>
-          <h1 className="text-xl font-bold">Goals</h1>
+          <h1 className="text-xl font-bold">
+            Goals {goals.length ? ` (${goals.length})` : ""}
+          </h1>
           <p className="text-sm">Track progress, stay motivated.</p>
         </div>
         <div className="flex items-center justify-between">
-          <AlertDialog
-            open={filtersDialogOpen}
-            onOpenChange={setFiltersDialogOpen}
-          >
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                Filters
-                <Filter />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent size="sm">
-              <AlertDialogHeader className="flex flex-col items-start">
-                <AlertDialogTitle>Change Filters</AlertDialogTitle>
-              </AlertDialogHeader>
-              <AlertDialogDescription>
-                Apply filters to limit result
-              </AlertDialogDescription>
+          <FiltersDrawer onApply={handleSubmit(onSubmit)}>
+            <div>
               <Field>
                 <FieldLabel htmlFor="type">Status</FieldLabel>
                 <Select
@@ -133,17 +108,8 @@ export function Goals() {
                   </SelectContent>
                 </Select>
               </Field>
-              <AlertDialogFooter>
-                <AlertDialogCancel>
-                  <X />
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction onClick={handleSubmit(onSubmit)}>
-                  <Save /> Apply
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            </div>
+          </FiltersDrawer>
         </div>
       </div>
 

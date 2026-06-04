@@ -10,22 +10,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@workspace/ui/components/empty"
-import { Plus, FolderCode, CirclePlus, Filter, X, Save } from "lucide-react"
+import { Plus, FolderCode, CirclePlus } from "lucide-react"
 import { useState } from "react"
 import { TemplateList } from "@/components/TemplateList"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { useForm } from "react-hook-form"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@workspace/ui/components/alert-dialog"
 import { useAuth } from "@/hooks/useAuth"
 import { useQuery } from "@tanstack/react-query"
 import { Switch } from "@workspace/ui/components/switch"
@@ -33,6 +22,7 @@ import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { FullScreenError } from "@/components/FullScreenError"
 import { AmountTypeSelector } from "@/components/AmountTypeSelector"
 import { FrequencySelector } from "@/components/FrequencySelector"
+import { FiltersDrawer } from "@/components/FiltersDrawer"
 
 type Query = { type: string; showPastTemplates: boolean; frequency: string }
 
@@ -80,11 +70,9 @@ export function CashFlowTemplates() {
       toQueryFilters(filters)
     ),
   })
-  const [filtersDialogOpen, setFiltersDialogOpen] = useState(false)
 
   const onSubmit = (filters: Query) => {
     setFilters(filters)
-    setFiltersDialogOpen(false)
     refetch()
   }
 
@@ -102,7 +90,7 @@ export function CashFlowTemplates() {
             </EmptyMedia>
             <EmptyTitle className="capitalize">No Templates Yet</EmptyTitle>
             <EmptyDescription>
-              Start by by clicking on <CirclePlus /> to add your first template.
+              Start by by clicking on <CirclePlus /> to add template.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -113,29 +101,19 @@ export function CashFlowTemplates() {
 
   return (
     <div className="flex flex-1 flex-col gap-2">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between bg-background">
         <div>
-          <h1 className="text-xl font-bold">Cash Flow Templates</h1>
+          <h1 className="text-xl font-bold">
+            Cash Flow Templates
+            {templates.length ? ` (${templates.length})` : ""}
+          </h1>
           <p className="text-sm">
             Your recurring and one-time income and expenses.
           </p>
         </div>
         <div className="flex items-center justify-between">
-          <AlertDialog
-            open={filtersDialogOpen}
-            onOpenChange={setFiltersDialogOpen}
-          >
-            <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                Filters
-                <Filter />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent size="sm">
-              <AlertDialogHeader className="flex flex-col items-start">
-                <AlertDialogTitle>Change Filters</AlertDialogTitle>
-              </AlertDialogHeader>
-              <AlertDialogDescription></AlertDialogDescription>
+          <FiltersDrawer onApply={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-4 p-4">
               <div className="flex gap-2">
                 <AmountTypeSelector
                   types={["INCOME", "EXPENSE", "ALL"]}
@@ -148,7 +126,7 @@ export function CashFlowTemplates() {
                   setFrequency={setValue.bind(null, "frequency")}
                 />
               </div>
-              <Field orientation="horizontal" className="max-w-sm">
+              <Field orientation="horizontal" className="w-full">
                 <FieldLabel htmlFor="switch-focus-mode">
                   Show past templates
                 </FieldLabel>
@@ -161,17 +139,8 @@ export function CashFlowTemplates() {
                   }
                 />
               </Field>
-              <AlertDialogFooter>
-                <AlertDialogCancel>
-                  <X />
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction onClick={handleSubmit(onSubmit)}>
-                  <Save /> Apply
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            </div>
+          </FiltersDrawer>
         </div>
       </div>
       <Templates />

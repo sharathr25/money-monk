@@ -45,13 +45,14 @@ export const TransactionForm = ({
   onSubmit,
   loading,
   goalsMap,
+  action,
 }: {
   formInputs?: TransactionFormInputs
   goalsMap: Record<string, Goal>
   onSubmit: SubmitHandler<TransactionFormInputs>
   loading: boolean
+  action: "SAVE" | "UPDATE"
 }) => {
-  const isEdit = Boolean(formInputs)
   const defaultValues = formInputs || DEFAULT_TRANSACTION
   const { handleSubmit, register, setValue, watch } =
     useForm<TransactionFormInputs>({
@@ -121,9 +122,9 @@ export const TransactionForm = ({
           <div>
             <DateSelector date={date} setDate={setValue.bind(null, "date")} />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full capitalize">
             {loading ? <Spinner /> : <Save />}
-            {isEdit ? "Update" : "Save"}
+            {action.toLowerCase()}
           </Button>
         </form>
       </CardContent>

@@ -165,19 +165,8 @@ export function Transaction() {
               <Calendar />
             </ItemMedia>
             <ItemContent>
-              <ItemDescription>Created At</ItemDescription>
-              <ItemTitle>{formatDate(transaction.createdAt)}</ItemTitle>
-            </ItemContent>
-          </Item>
-        </div>
-        <div className={itemContainerClass}>
-          <Item className={itemClass}>
-            <ItemMedia variant="icon">
-              <Calendar />
-            </ItemMedia>
-            <ItemContent>
-              <ItemDescription>Updated At</ItemDescription>
-              <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
+              <ItemDescription>Date</ItemDescription>
+              <ItemTitle>{formatDate(transaction.date)}</ItemTitle>
             </ItemContent>
           </Item>
         </div>
@@ -225,6 +214,28 @@ export function Transaction() {
               </ItemContent>
             </Item>
           )}
+        </div>
+        <div className={itemContainerClass}>
+          <Item className={itemClass}>
+            <ItemMedia variant="icon">
+              <Calendar />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Created At</ItemDescription>
+              <ItemTitle>{formatDate(transaction.createdAt)}</ItemTitle>
+            </ItemContent>
+          </Item>
+        </div>
+        <div className={itemContainerClass}>
+          <Item className={itemClass}>
+            <ItemMedia variant="icon">
+              <Calendar />
+            </ItemMedia>
+            <ItemContent>
+              <ItemDescription>Updated At</ItemDescription>
+              <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
+            </ItemContent>
+          </Item>
         </div>
       </div>
       {transaction.type !== "ADJUSTMENT" && (

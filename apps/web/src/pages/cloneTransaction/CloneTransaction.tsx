@@ -79,6 +79,7 @@ export function CloneTransaction() {
           categoryId: transaction.category?.id,
           amount: formatAmount(transaction.amount),
         }}
+        action="SAVE"
         goalsMap={goalsMap}
         onSubmit={onSubmit}
         loading={updateGoalPending}

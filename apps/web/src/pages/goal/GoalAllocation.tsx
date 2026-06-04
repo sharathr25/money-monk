@@ -1,5 +1,6 @@
 import { cn, formatAmount, getRandomColor } from "@workspace/ui/lib/utils"
-import { BarChart2 } from "lucide-react"
+import { BAR_CHART_RADIUS } from "@workspace/ui/constants/index"
+import { Boxes } from "lucide-react"
 import { Label } from "@workspace/ui/components/label"
 import {
   Card,
@@ -25,7 +26,7 @@ import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts"
 const BAR_HEIGHT = 20
 
 export function GoalAllocation({
-  breakdown,
+  breakdown = [],
   transactionsApi,
 }: {
   breakdown: GoalBreakdown[]
@@ -93,7 +94,7 @@ export function GoalAllocation({
     )
   }
 
-  const AllocationOrEmpty = () => {
+  const Allocation = ({ breakdown = [] }: { breakdown: GoalBreakdown[] }) => {
     const breakdownEnhanced = breakdown.map((b, i) => {
       const estimatedAmount = b.amount
       const actualAmount = amountPerCategory[b.id] || 0
@@ -121,13 +122,21 @@ export function GoalAllocation({
 
     return (
       <div className="flex flex-col gap-2">
+        <div className="flex gap-2 overflow-x-scroll">
+          {breakdownEnhanced.map((b) => (
+            <Breakdown key={b.id} color={b.fill} {...b} />
+          ))}
+        </div>
         <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle>Actual Amount Comparison</CardTitle>
+          </CardHeader>
           <CardContent className="flex flex-1 pb-0">
             <ChartContainer
               config={chartConfig}
               className="w-full"
               style={{
-                height: breakdownSortedByAmount.length * BAR_HEIGHT * 2,
+                height: breakdownSortedByAmount.length * BAR_HEIGHT,
               }}
             >
               <BarChart
@@ -139,13 +148,13 @@ export function GoalAllocation({
                 <ChartTooltip content={<ChartTooltipContent labelKey="id" />} />
                 <YAxis dataKey="category" type="category" hide />
                 <XAxis dataKey="estimatedAmount" type="number" hide />
-                <Bar dataKey="estimatedAmount" radius={4}>
+                <Bar dataKey="actualAmount" radius={BAR_CHART_RADIUS}>
                   <LabelList
-                    dataKey="estimatedAmount"
+                    dataKey="actualAmount"
                     position="right"
                     className="fill-foreground"
                     formatter={(v) =>
-                      formatAmount(v?.toString() || "", { withCurrency: true })
+                      formatAmount(String(v), { withCurrency: true })
                     }
                   />
                   <LabelList
@@ -154,25 +163,10 @@ export function GoalAllocation({
                     className="fill-foreground"
                   />
                 </Bar>
-                <Bar dataKey="actualAmount" radius={4}>
-                  <LabelList
-                    dataKey="actualAmount"
-                    position="right"
-                    className="ml-auto fill-foreground"
-                    formatter={(v) =>
-                      formatAmount(v?.toString() || "", { withCurrency: true })
-                    }
-                  />
-                </Bar>
               </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
-        <div className="flex gap-2 overflow-x-scroll">
-          {breakdownEnhanced.map((b) => (
-            <Breakdown key={b.id} color={b.fill} {...b} />
-          ))}
-        </div>
       </div>
     )
   }
@@ -180,11 +174,11 @@ export function GoalAllocation({
   return (
     <div className="flex flex-col gap-1">
       <Label className="text-base font-bold">
-        <BarChart2 className="size-5" />
+        <Boxes className="size-5" />
         Allocation
       </Label>
       {breakdown?.length ? (
-        <AllocationOrEmpty />
+        <Allocation breakdown={breakdown} />
       ) : (
         <InlineEmpty title="No Allocation" />
       )}

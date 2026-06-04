@@ -67,6 +67,7 @@ export function AddTransaction() {
         <p className="text-sm">Add your transaction for goal or template</p>
       </div>
       <TransactionForm
+        action="SAVE"
         onSubmit={onSubmit}
         goalsMap={goalsMap}
         loading={isUpdatingTransaction}
