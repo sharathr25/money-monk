@@ -1,25 +1,16 @@
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
-import { Save, IndianRupee, Plus, Minus } from "lucide-react"
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-} from "@workspace/ui/components/field"
+import { Save, Plus, Minus } from "lucide-react"
+import { Field, FieldLabel } from "@workspace/ui/components/field"
 import {
   useFieldArray,
   useForm,
   type FieldArrayWithId,
   type SubmitHandler,
 } from "react-hook-form"
-import { amountToDouble, formatAmount, isNumber } from "@workspace/ui/lib/utils"
+import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@workspace/ui/components/input-group"
 import {
   Select,
   SelectContent,
@@ -38,6 +29,8 @@ const DEFAULT_GOAL = {
   icon: "banknote",
   status: "PLANNED" as GoalStatus,
 }
+
+const DEFAULT_BREAKDOWN = { category: "", amount: "", id: "" }
 
 export type GoalFormInputs = {
   name: string
@@ -145,44 +138,18 @@ export const GoalForm = ({
           </div>
           <div className="flex gap-2">
             <AmountInput
+              label="Estimated Amount"
               {...register("estimatedAmount", { required: true })}
               setAmount={setValue.bind(null, "estimatedAmount")}
+              description={
+                totalBreakdownAmount
+                  ? `Total breakdown amount is ${formatAmount(totalBreakdownAmount)}`
+                  : ""
+              }
             />
-            <Field>
-              <FieldLabel htmlFor="amount">
-                Estimated Amount
-                <span className="text-destructive">*</span>
-              </FieldLabel>
-              {!!totalBreakdownAmount && (
-                <FieldDescription>
-                  Total breakdown amount is {formatAmount(totalBreakdownAmount)}
-                </FieldDescription>
-              )}
-              <InputGroup>
-                <InputGroupInput
-                  id="amount"
-                  inputMode="numeric"
-                  {...register("estimatedAmount", { required: true })}
-                  onChange={(e) =>
-                    setValue(
-                      "estimatedAmount",
-                      formatAmount(
-                        isNumber(e.target.value) ? e.target.value : ""
-                      )
-                    )
-                  }
-                />
-                <InputGroupAddon>
-                  <IndianRupee />
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
           </div>
           {fields.map(renderBreakdownFields)}
-          <Button
-            variant="outline"
-            onClick={() => append({ category: "", amount: "", id: "" })}
-          >
+          <Button variant="outline" onClick={() => append(DEFAULT_BREAKDOWN)}>
             <Plus />
             Add Breakdown
           </Button>

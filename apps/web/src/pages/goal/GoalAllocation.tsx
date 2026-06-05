@@ -143,7 +143,7 @@ export function GoalAllocation({
                 accessibilityLayer
                 data={breakdownSortedByAmount}
                 layout="vertical"
-                margin={{ right: 100, left: 100 }}
+                margin={{ right: 50, left: 100 }}
               >
                 <ChartTooltip content={<ChartTooltipContent labelKey="id" />} />
                 <YAxis dataKey="category" type="category" hide />

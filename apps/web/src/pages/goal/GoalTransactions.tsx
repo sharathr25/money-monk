@@ -35,11 +35,13 @@ export function GoalTransactions({
     )
   }
 
+  const recentTransactions = [...transactions].reverse().slice(0, 3)
+
   const ListOrEmpty = () => {
-    if (transactions.length)
+    if (recentTransactions.length)
       return (
         <div className="flex flex-col gap-2">
-          {transactions.slice(0, 3).map((t) => (
+          {recentTransactions.slice(0, 3).map((t) => (
             <TransactionItem transaction={t} key={t.id} />
           ))}
         </div>
@@ -60,7 +62,7 @@ export function GoalTransactions({
         <Label className="flex items-center text-base font-bold">
           Recent Transactions
         </Label>
-        {!!transactions.length && (
+        {!!recentTransactions.length && (
           <Button variant="link" onClick={onViewAllClick} size="sm">
             View All
             <MoveRight />
