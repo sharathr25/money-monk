@@ -7,6 +7,7 @@ import { queryCashFlowTemplates } from "./cashFlowTemplates"
 import { getUserData } from "./users"
 import dayjs from "dayjs"
 import { type Type } from "@workspace/core/type/cashFlowTemplates"
+import { queryTransactions } from "./transactions"
 
 export const getCashFlow =
   (uid: string) =>
@@ -18,7 +19,10 @@ export const getCashFlow =
     endDate: Date
   }): Promise<CashFlow> => {
     const userData = await getUserData(uid)
-    const templates = await queryCashFlowTemplates(uid)({ startDate, endDate })
+    const templates = await queryTransactions(uid)({
+      plannedDate: { start: startDate, end: endDate },
+      status: "PLANNED",
+    })
 
     const income = templates.filter((t) => t.type === "INCOME")
     const expenses = templates.filter((t) => t.type === "EXPENSE")

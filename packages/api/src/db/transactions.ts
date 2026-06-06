@@ -36,11 +36,14 @@ const toTransaction = (docSnap: DocumentSnapshot) => {
     description: docSnap.get("description"),
     icon: docSnap.get("icon"),
     type: docSnap.get("type"),
-    paidTo: docSnap.get("paidTo"),
+    counterParty: docSnap.get("paidTo") || docSnap.get("counterParty"),
     amount: docSnap.get("amount"),
     goal: docSnap.get("goal"),
     category: docSnap.get("category"),
-    date: toDate(docSnap.get("date")),
+    status: docSnap.get("status"),
+    frequency: docSnap.get("frequency"),
+    plannedDate: toDate(docSnap.get("plannedDate")),
+    completedDate: toDate(docSnap.get("completedDate")),
     createdAt: toDate(docSnap.get("createdAt")),
     updatedAt: toDate(docSnap.get("updatedAt")),
   }
@@ -74,6 +77,8 @@ export const queryTransactions =
     if (transactionQuery?.orderBy) {
       orderByConstraints.push(orderBy(transactionQuery.orderBy))
     }
+
+    contraints.push(and(where("status", "==", transactionQuery.status)))
 
     const q = query(
       collection(db, USERS, uid, TRANSACTIONS),

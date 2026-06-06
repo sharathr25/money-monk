@@ -1,14 +1,11 @@
-import type { CashFlowTemplate } from "@workspace/core/types"
 import { TemplateItem } from "./TemplateItem"
+import type { Transaction } from "@workspace/core/types/transactions"
 
-export const TemplateList = ({
-  templates,
-}: {
-  templates: CashFlowTemplate[]
-}) => {
+export const TemplateList = ({ templates }: { templates: Transaction[] }) => {
   const sortedTemplates = [...templates].sort(
     (a, b) =>
-      (a.day || a.date?.getTime() || 0) - (b.day || b.date?.getTime() || 0)
+      (a.plannedDay || a.plannedDate?.getTime() || 0) -
+      (b.plannedDay || b.plannedDate?.getTime() || 0)
   )
 
   return (

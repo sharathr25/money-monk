@@ -65,7 +65,9 @@ export function CashFlow() {
       amount: openingBalance,
       name: "Opening balance adjustment",
       type: "ADJUSTMENT",
-      date: new Date(),
+      status: "COMPLETED",
+      frequency: "ONE_TIME",
+      completedDate: new Date(),
       icon: "banknote",
       description: `${formatAmount(cashFlow.openingBalance, { withCurrency: true })} ➡️ ${formatAmount(openingBalance, { withCurrency: true })}`,
     })

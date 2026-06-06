@@ -1,5 +1,7 @@
 export type Frequency = "MONTHLY" | "ONE_TIME"
 
+export type STATUS = "PLANNED" | "COMPLETED"
+
 export type Type = "INCOME" | "EXPENSE"
 
 export type CashFlowTemplateQuery = {

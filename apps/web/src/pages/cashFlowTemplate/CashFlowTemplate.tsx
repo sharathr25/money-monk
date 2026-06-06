@@ -2,10 +2,6 @@ import { FullScreenError } from "@/components/FullScreenError"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import {
-  deleteCashFlowTemplate,
-  getCashFlowTemplate,
-} from "@workspace/api/db/index"
 import type { CashFlowTemplate } from "@workspace/core/types"
 import { toast } from "sonner"
 import { Badge } from "@workspace/ui/components/badge"
@@ -32,11 +28,13 @@ import {
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import {
   Banknote,
+  Boxes,
   Calendar,
   Info,
   MoveLeft,
   Pen,
   RefreshCcw,
+  Target,
   Trash,
   X,
 } from "lucide-react"
@@ -46,6 +44,10 @@ import { Spinner } from "@workspace/ui/components/spinner"
 import { NavBack } from "@/components/NavBack"
 import { useAuth } from "@/hooks/useAuth"
 import { useMutation, useQuery } from "@tanstack/react-query"
+import {
+  deleteTransaction,
+  getTransaction,
+} from "@workspace/api/db/transactions"
 
 export function CashFlowTemplate() {
   const user = useAuth()
@@ -58,12 +60,12 @@ export function CashFlowTemplate() {
     refetch,
   } = useQuery({
     queryKey: ["add-goal", templateId],
-    queryFn: getCashFlowTemplate(user.uid).bind(null, { id: templateId }),
+    queryFn: getTransaction(user.uid).bind(null, templateId),
   })
 
   const { mutate, isPending: deleteApiLoading } = useMutation({
     mutationKey: [templateId],
-    mutationFn: deleteCashFlowTemplate(user.uid).bind(null, templateId),
+    mutationFn: deleteTransaction(user.uid).bind(null, templateId),
     onSuccess: () =>
       toast.success("Delete successful.", {
         onAutoClose: goBack,
@@ -146,6 +148,34 @@ export function CashFlowTemplate() {
               </ItemContent>
             </Item>
           </div>
+          {template.goal?.name && (
+            <div className={itemContainerClass}>
+              <Item className={itemClass}>
+                <ItemMedia variant="icon">
+                  <Target />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemDescription>Goal</ItemDescription>
+                  <ItemTitle>{template.goal?.name}</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
+          {template.counterParty && (
+            <div className={itemContainerClass}>
+              <Item className={itemClass}>
+                <ItemMedia variant="icon">
+                  <Boxes />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemDescription>
+                    {template.type === "EXPENSE" ? "Pay To" : "Receive From"}
+                  </ItemDescription>
+                  <ItemTitle>{template.counterParty}</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
           <div className={itemContainerClass}>
             <Item className={itemClass}>
               <ItemMedia variant="icon">
@@ -168,6 +198,19 @@ export function CashFlowTemplate() {
               </ItemContent>
             </Item>
           </div>
+          {template.category?.name && (
+            <div className={itemContainerClass}>
+              <Item className={itemClass}>
+                <ItemMedia variant="icon">
+                  <Boxes />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemDescription>Category</ItemDescription>
+                  <ItemTitle>{template.category?.name}</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
         </div>
       </div>
       <div className="fixed bottom-0 left-0 flex w-full gap-2 bg-background px-6 py-3">
@@ -198,6 +241,10 @@ export function CashFlowTemplate() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        <Button variant="outline" className="flex-1" onClick={onEdit}>
+          <Pen />
+          Transact
+        </Button>
         <Button className="flex-1" onClick={onEdit}>
           <Pen />
           Edit

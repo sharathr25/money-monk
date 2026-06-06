@@ -1,4 +1,4 @@
-import type { Goal } from "@workspace/core/types/goals"
+import type { CashFlowTemplate } from "@workspace/core/types"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import {
   Select,
@@ -8,33 +8,35 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 
-export const GoalSelector = ({
-  goalId,
-  setGoalId,
-  goals,
+export const TemplateSelector = ({
+  templateId,
+  setTemplateId,
+  templates,
+  disabled = false,
   required = false,
 }: {
-  goalId?: string
-  setGoalId: (value: string) => void
-  goals: Goal[]
+  templateId?: string
+  setTemplateId: (value: string) => void
+  templates: CashFlowTemplate[]
   required?: boolean
   disabled?: boolean
 }) => {
   return (
     <Field>
       <FieldLabel htmlFor="goal">
-        Goal{required && <span className="text-destructive">*</span>}
+        Template{required && <span className="text-destructive">*</span>}
       </FieldLabel>
       <Select
-        defaultValue={goalId}
+        disabled={disabled}
+        defaultValue={templateId}
         required={required}
-        onValueChange={setGoalId}
+        onValueChange={setTemplateId}
       >
         <SelectTrigger id="goal" className="!h-12 capitalize">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {goals.map((g) => (
+          {templates.map((g) => (
             <SelectItem value={g.id} key={g.id} className="capitalize">
               {g.name}
             </SelectItem>

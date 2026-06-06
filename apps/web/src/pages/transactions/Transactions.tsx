@@ -49,7 +49,11 @@ export function Transactions() {
   const [filters, setFilters] = useState(defaultValues)
 
   const toQueryFilters = (filters: Query): TransactionQuery => {
-    const query: TransactionQuery = { ...filters, orderBy: "date" }
+    const query: TransactionQuery = {
+      ...filters,
+      orderBy: "date",
+      status: "COMPLETED",
+    }
     if (filters.type === "ALL") {
       query.type = undefined
     }

@@ -55,9 +55,11 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
         </ItemContent>
         <ItemActions className="mb-auto flex flex-col items-end">
           <ItemTitle className="line-clamp-1 flex">{amount}</ItemTitle>
-          <ItemDescription className="text-xs">
-            {formatDate(transaction.date)}
-          </ItemDescription>
+          {transaction.completedDate && (
+            <ItemDescription className="text-xs">
+              {formatDate(transaction.completedDate)}
+            </ItemDescription>
+          )}
         </ItemActions>
         <ItemFooter className="justify-start">
           {transaction.goal?.name && (
@@ -72,10 +74,10 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
               {transaction.category.name}
             </Badge>
           )}
-          {transaction.paidTo && (
+          {transaction.counterParty && (
             <Badge variant="outline">
               <MoveUpRight />
-              {transaction.paidTo}
+              {transaction.counterParty}
             </Badge>
           )}
         </ItemFooter>

@@ -36,7 +36,7 @@ export type TransactionFormInputs = {
   goalId?: string
   categoryId?: string
   goalStage?: GoalStage
-  paidTo?: string
+  counterParty?: string
   templateId?: string
 }
 
@@ -88,9 +88,12 @@ export const TransactionForm = ({
               <Input id="desc" {...register("description")} />
             </Field>
             <Field>
-              <FieldLabel htmlFor="paidTo">Paid To</FieldLabel>
+              <FieldLabel htmlFor="counterParty">Paid To</FieldLabel>
               <InputGroup>
-                <InputGroupInput id="paidTo" {...register("paidTo")} />
+                <InputGroupInput
+                  id="counterParty"
+                  {...register("counterParty")}
+                />
               </InputGroup>
             </Field>
           </div>
@@ -119,7 +122,7 @@ export const TransactionForm = ({
               setCategoryId={setValue.bind(null, "categoryId")}
             />
           </div>
-          <div>
+          <div className="flex gap-2">
             <DateSelector date={date} setDate={setValue.bind(null, "date")} />
           </div>
           <Button type="submit" className="w-full capitalize">

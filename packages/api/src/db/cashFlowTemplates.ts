@@ -27,6 +27,10 @@ import { toDate } from "./mapper"
 
 const toCashFlowTemplate = (docSnap: DocumentSnapshot) => ({
   description: docSnap.get("description"),
+  goal: docSnap.get("goal"),
+  category: docSnap.get("category"),
+  counterParty: docSnap.get("counterParty"),
+  done: docSnap.get("done"),
   frequency: docSnap.get("frequency"),
   name: docSnap.get("name"),
   type: docSnap.get("type"),

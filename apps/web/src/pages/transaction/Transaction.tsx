@@ -26,6 +26,7 @@ import {
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import {
   Banknote,
+  BookCopy,
   Boxes,
   Calendar,
   Info,
@@ -166,7 +167,9 @@ export function Transaction() {
             </ItemMedia>
             <ItemContent>
               <ItemDescription>Date</ItemDescription>
-              <ItemTitle>{formatDate(transaction.date)}</ItemTitle>
+              <ItemTitle>
+                {formatDate(transaction.completedDate || new Date())}
+              </ItemTitle>
             </ItemContent>
           </Item>
         </div>
@@ -185,23 +188,8 @@ export function Transaction() {
             </Item>
           )}
         </div>
-        <div className={itemContainerClass}>
-          {transaction.category && (
-            <Item className={itemClass}>
-              <ItemMedia variant="icon">
-                <Boxes />
-              </ItemMedia>
-              <ItemContent>
-                <ItemDescription>Category</ItemDescription>
-                <ItemTitle className="font-bold capitalize">
-                  {transaction.category.name}
-                </ItemTitle>
-              </ItemContent>
-            </Item>
-          )}
-        </div>
-        <div className={itemContainerClass}>
-          {transaction.paidTo && (
+        {transaction.counterParty && (
+          <div className={itemContainerClass}>
             <Item className={itemClass}>
               <ItemMedia variant="icon">
                 <User />
@@ -209,12 +197,12 @@ export function Transaction() {
               <ItemContent>
                 <ItemDescription>Paid To</ItemDescription>
                 <ItemTitle className="font-bold capitalize">
-                  {transaction.paidTo}
+                  {transaction.counterParty}
                 </ItemTitle>
               </ItemContent>
             </Item>
-          )}
-        </div>
+          </div>
+        )}
         <div className={itemContainerClass}>
           <Item className={itemClass}>
             <ItemMedia variant="icon">
@@ -236,6 +224,21 @@ export function Transaction() {
               <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
             </ItemContent>
           </Item>
+        </div>
+        <div className={itemContainerClass}>
+          {transaction.category && (
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Boxes />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Category</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  {transaction.category.name}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+          )}
         </div>
       </div>
       {transaction.type !== "ADJUSTMENT" && (
@@ -271,7 +274,7 @@ export function Transaction() {
             </AlertDialogContent>
           </AlertDialog>
           <Button className="flex-1" variant="outline" onClick={onClone}>
-            <Pen />
+            <BookCopy />
             Clone
           </Button>
           <Button className="flex-1" onClick={onEdit}>

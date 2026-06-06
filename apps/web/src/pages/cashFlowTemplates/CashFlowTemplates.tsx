@@ -1,7 +1,5 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import { queryCashFlowTemplates } from "@workspace/api/db/index"
-import type { CashFlowTemplateQuery } from "@workspace/core/types"
 import { Button } from "@workspace/ui/components/button"
 import {
   Empty,
@@ -23,6 +21,8 @@ import { FullScreenError } from "@/components/FullScreenError"
 import { AmountTypeSelector } from "@/components/AmountTypeSelector"
 import { FrequencySelector } from "@/components/FrequencySelector"
 import { FiltersDrawer } from "@/components/FiltersDrawer"
+import { queryTransactions } from "@workspace/api/db/transactions"
+import type { TransactionQuery } from "@workspace/core/types/transactions"
 
 type Query = { type: string; showPastTemplates: boolean; frequency: string }
 
@@ -44,8 +44,8 @@ export function CashFlowTemplates() {
   const type = watch("type")
   const frequency = watch("frequency")
 
-  const toQueryFilters = (filters: Query): CashFlowTemplateQuery => {
-    const query: CashFlowTemplateQuery = { ...filters }
+  const toQueryFilters = (filters: Query): TransactionQuery => {
+    const query: TransactionQuery = { ...filters, status: "PLANNED" }
     if (filters.type === "ALL") {
       query.type = undefined
     }
@@ -53,7 +53,7 @@ export function CashFlowTemplates() {
       query.frequency = undefined
     }
     if (!filters.showPastTemplates) {
-      query.startDate = new Date()
+      query.plannedDate = { start: new Date() }
     }
     return query
   }
@@ -65,10 +65,7 @@ export function CashFlowTemplates() {
     refetch,
   } = useQuery({
     queryKey: ["cashflow-templates", filters],
-    queryFn: queryCashFlowTemplates(user.uid).bind(
-      null,
-      toQueryFilters(filters)
-    ),
+    queryFn: queryTransactions(user.uid).bind(null, toQueryFilters(filters)),
   })
 
   const onSubmit = (filters: Query) => {

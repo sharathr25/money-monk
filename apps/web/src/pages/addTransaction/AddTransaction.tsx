@@ -4,28 +4,19 @@ import { amountToDouble } from "@workspace/ui/lib/utils"
 import { useNavigator } from "@/hooks/useNavigator"
 import { NavBack } from "@/components/NavBack"
 import { useAuth } from "@/hooks/useAuth"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import {
   TransactionForm,
   type TransactionFormInputs,
 } from "@/components/TransactionForm"
 import { saveTransaction } from "@workspace/api/db/transactions"
-import { queryGoals } from "@workspace/api/db/goals"
-import type { Goal } from "@workspace/core/types/goals"
+import { useGoals } from "@/hooks/useGoals"
 
 export function AddTransaction() {
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid).bind(null, {
-    status: "STARTED_SAVING,ACTIVE",
-  })
   const saveTransactionForUser = saveTransaction(user.uid)
 
   const { goBack } = useNavigator()
-
-  const { data: goals } = useQuery({
-    queryKey: ["goals"],
-    queryFn: queryGoalsForUser,
-  })
 
   const { mutate, isPending: isUpdatingTransaction } = useMutation({
     mutationFn: saveTransactionForUser,
@@ -33,9 +24,7 @@ export function AddTransaction() {
     onError: () => toast.error("Save failed, Try again."),
   })
 
-  const goalsMap: Record<string, Goal> = goals
-    ? goals.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {})
-    : {}
+  const { goalsMap, getGoalAndCategory } = useGoals()
 
   const onSubmit: SubmitHandler<TransactionFormInputs> = async ({
     amount,
@@ -46,15 +35,10 @@ export function AddTransaction() {
   }) => {
     mutate({
       ...data,
-      date: date || new Date(),
-      goal: goalId ? goalsMap[goalId] : undefined,
-      category:
-        (categoryId &&
-          goalId &&
-          goalsMap[goalId].breakdown
-            .filter((b) => b.id === categoryId)
-            .map((b) => ({ id: b.id, name: b.category }))[0]) ||
-        undefined,
+      ...getGoalAndCategory({ categoryId, goalId }),
+      status: "COMPLETED",
+      frequency: "ONE_TIME",
+      completedDate: date || new Date(),
       amount: amountToDouble(amount),
     })
   }

@@ -6,14 +6,13 @@ import {
   type TransactionFormInputs,
 } from "@/components/TransactionForm"
 import { useAuth } from "@/hooks/useAuth"
+import { useGoals } from "@/hooks/useGoals"
 import { useNavigator } from "@/hooks/useNavigator"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { queryGoals } from "@workspace/api/db/goals"
 import {
   getTransaction,
   updateTransaction,
 } from "@workspace/api/db/transactions"
-import type { Goal } from "@workspace/core/types/goals"
 import { Button } from "@workspace/ui/components/button"
 import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import { MoveLeft, RefreshCcw } from "lucide-react"
@@ -25,19 +24,12 @@ export function EditTransaction() {
   const { transactionId = "" } = useParams()
   const { goBack } = useNavigator()
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid).bind(null, {
-    status: "STARTED_SAVING,ACTIVE",
-  })
   const getTransactionForUser = getTransaction(user.uid)
   const updateTransactionForUser = updateTransaction(user.uid).bind(
     null,
     transactionId
   )
 
-  const { data: goals } = useQuery({
-    queryKey: ["goals"],
-    queryFn: queryGoalsForUser,
-  })
   const {
     isPending: getTransactionPending,
     error: getTransactionError,
@@ -55,9 +47,7 @@ export function EditTransaction() {
     onError: () => toast.error("Update failed, Try again."),
   })
 
-  const goalsMap: Record<string, Goal> = goals
-    ? goals.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {})
-    : {}
+  const { goalsMap, getGoalAndCategory } = useGoals()
 
   if (getTransactionPending) return <FullScreenLoader />
 
@@ -84,19 +74,15 @@ export function EditTransaction() {
     date,
     goalId,
     categoryId,
+    templateId,
     ...data
   }) => {
     mutate({
       ...data,
-      goal: goalId ? goalsMap[goalId] : undefined,
-      category:
-        (categoryId &&
-          goalId &&
-          goalsMap[goalId].breakdown
-            .filter((b) => b.id === categoryId)
-            .map((b) => ({ id: b.id, name: b.category }))[0]) ||
-        undefined,
-      date: date || new Date(),
+      ...getGoalAndCategory({ goalId, categoryId }),
+      frequency: "ONE_TIME",
+      status: "COMPLETED",
+      completedDate: date || new Date(),
       amount: amountToDouble(amount),
     })
   }

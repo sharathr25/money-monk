@@ -1,8 +1,8 @@
-import type { CashFlowTemplate } from "./cashFlowTemplates"
+import type { Transaction } from "./transactions"
 
 export type CashFlow = {
-  income: CashFlowTemplate[]
-  expenses: CashFlowTemplate[]
+  income: Transaction[]
+  expenses: Transaction[]
   totalIncome: number
   totalExpenses: number
   openingBalance: number

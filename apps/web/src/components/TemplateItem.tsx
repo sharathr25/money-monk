@@ -1,6 +1,6 @@
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
-import type { CashFlowTemplate } from "@workspace/core/types"
+import type { Transaction } from "@workspace/core/types/transactions"
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import { Card } from "@workspace/ui/components/card"
 import {
@@ -20,10 +20,10 @@ import dayjs from "dayjs"
 import { Badge, Calendar, Repeat } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 
-export const TemplateItem = ({ template }: { template: CashFlowTemplate }) => {
+export const TemplateItem = ({ template }: { template: Transaction }) => {
   const { navigate } = useNavigator()
 
-  const old = template.date && dayjs(template.date).isBefore()
+  const old = template.plannedDate && dayjs(template.plannedDate).isBefore()
 
   const onClick = () => {
     navigate(ROUTE_NAMES.CASH_FLOW_TEMPLATE, { templateId: template.id })
@@ -60,15 +60,16 @@ export const TemplateItem = ({ template }: { template: CashFlowTemplate }) => {
                 }
               )}
             </span>
-            {!!template.date && template.frequency === "ONE_TIME" && (
+            {!!template.plannedDate && template.frequency === "ONE_TIME" && (
               <span className="flex items-center gap-1 text-xs">
-                {formatDate(template.date)}
+                {formatDate(template.plannedDate)}
                 <Calendar className="size-3.5 text-(--primary)" />
               </span>
             )}
             {template.frequency === "MONTHLY" && (
               <span className="flex items-center gap-1 text-xs">
-                {!!template.day && `On ${formatDayOfMonth(template.day)}`}
+                {!!template.plannedDay &&
+                  `On ${formatDayOfMonth(template.plannedDay)}`}
                 <Repeat className="size-3.5 text-(--primary)" />
               </span>
             )}

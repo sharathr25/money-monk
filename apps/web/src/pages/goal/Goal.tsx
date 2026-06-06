@@ -67,7 +67,12 @@ export function Goal() {
 
   const transactionsApi = useQuery({
     queryKey: ["transactions-" + goalId],
-    queryFn: async () => queryTransactionsForUser({ goalId, orderBy: "date" }),
+    queryFn: async () =>
+      queryTransactionsForUser({
+        goalId,
+        orderBy: "date",
+        status: "COMPLETED",
+      }),
   })
 
   const { data: transactions = [] } = transactionsApi

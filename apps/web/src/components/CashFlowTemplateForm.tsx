@@ -17,7 +17,7 @@ import {
 import { MoveDown, MoveUp, Save } from "lucide-react"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { useForm, type SubmitHandler } from "react-hook-form"
-import type { Frequency, Type } from "@workspace/core/type/index"
+import type { Frequency } from "@workspace/core/type/index"
 import { daysOfMonth } from "@workspace/ui/lib/utils"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { IconSelector } from "./IconSelector"
@@ -25,6 +25,11 @@ import { FrequencySelector } from "./FrequencySelector"
 import { AmountTypeSelector } from "./AmountTypeSelector"
 import { AmountInput } from "./AmountInput"
 import { DateSelector } from "./DateSelector"
+import { GoalSelector } from "./GoalSelector"
+import { CategorySelector } from "./CategorySelector"
+import type { Goal } from "@workspace/core/types/goals"
+import { useEffect } from "react"
+import type { TransactionType } from "@workspace/core/types/transactions"
 
 const DEFAULT_CASH_TEMPLATE = {
   name: "",
@@ -32,7 +37,7 @@ const DEFAULT_CASH_TEMPLATE = {
   date: new Date(),
   frequency: "MONTHLY" as Frequency,
   icon: "banknote",
-  type: "INCOME" as Type,
+  type: "INCOME" as TransactionType,
   day: "1",
 }
 
@@ -42,18 +47,23 @@ export type CashFlowTemplateFormInputs = {
   description?: string
   amount: string
   frequency: Frequency
-  type: Type
+  type: TransactionType
   date?: Date
   day?: string
+  counterParty?: string
+  goalId?: string
+  categoryId?: string
 }
 
 export const CashFlowTemplateForm = ({
   formInputs,
   onSubmit,
   loading,
+  goalsMap,
 }: {
   formInputs?: CashFlowTemplateFormInputs
   onSubmit: SubmitHandler<CashFlowTemplateFormInputs>
+  goalsMap: Record<string, Goal>
   loading: boolean
 }) => {
   const isEdit = Boolean(formInputs)
@@ -67,6 +77,14 @@ export const CashFlowTemplateForm = ({
   const date = watch("date")
   const icon = watch("icon")
   const type = watch("type")
+  const categoryId = watch("categoryId")
+  const goalId = watch("goalId")
+
+  useEffect(() => {
+    if (frequency === "ONE_TIME") {
+      setValue("date", new Date())
+    }
+  }, [frequency])
 
   return (
     <Card className="w-full">
@@ -91,17 +109,26 @@ export const CashFlowTemplateForm = ({
               setIcon={setValue.bind(null, "icon")}
             />
           </div>
-          <Field>
-            <FieldLabel htmlFor="desc">Description</FieldLabel>
-            <Input id="desc" {...register("description")} />
-          </Field>
+          <div className="flex gap-2">
+            <Field>
+              <FieldLabel htmlFor="desc">Description</FieldLabel>
+              <Input id="desc" {...register("description")} />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="counterParty">
+                {type === "EXPENSE" ? "Pay to" : "Receive From"}
+              </FieldLabel>
+              <Input id="counterParty" {...register("counterParty")} />
+            </Field>
+          </div>
           <div className="flex gap-2">
             <AmountInput
+              required
               {...register("amount", { required: true })}
               setAmount={setValue.bind(null, "amount")}
             />
             <AmountTypeSelector
-              types={["INCOME", "EXPENSE"] as Type[]}
+              types={["INCOME", "EXPENSE"] as TransactionType[]}
               type={type}
               setType={setValue.bind(null, "type")}
             />
@@ -136,6 +163,21 @@ export const CashFlowTemplateForm = ({
               </Field>
             )}
           </div>
+          {type === "EXPENSE" && (
+            <div className="flex gap-2">
+              <GoalSelector
+                goalId={goalId}
+                setGoalId={setValue.bind(null, "goalId")}
+                goals={Object.values(goalsMap)}
+              />
+              <CategorySelector
+                disabled={!goalId}
+                breakdown={goalsMap[goalId || ""]?.breakdown || []}
+                categoryId={categoryId}
+                setCategoryId={setValue.bind(null, "categoryId")}
+              />
+            </div>
+          )}
           <Button type="submit" className="w-full">
             {loading ? <Spinner /> : <Save />}
             {isEdit ? "Update" : "Save"}

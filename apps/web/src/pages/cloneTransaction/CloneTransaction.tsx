@@ -5,11 +5,10 @@ import {
   type TransactionFormInputs,
 } from "@/components/TransactionForm"
 import { useAuth } from "@/hooks/useAuth"
+import { useGoals } from "@/hooks/useGoals"
 import { useNavigator } from "@/hooks/useNavigator"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { queryGoals } from "@workspace/api/db/goals"
+import { useMutation } from "@tanstack/react-query"
 import { saveTransaction } from "@workspace/api/db/transactions"
-import type { Goal } from "@workspace/core/types/goals"
 import type { Transaction } from "@workspace/core/types/transactions"
 import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
 import type { SubmitHandler } from "react-hook-form"
@@ -21,15 +20,7 @@ export function CloneTransaction() {
   const { state = {} } = useLocation()
   const { transaction }: { transaction: Transaction } = state
   const user = useAuth()
-  const queryGoalsForUser = queryGoals(user.uid).bind(null, {
-    status: "STARTED_SAVING,ACTIVE",
-  })
   const saveTransactionForUser = saveTransaction(user.uid)
-
-  const { data: goals } = useQuery({
-    queryKey: ["goals"],
-    queryFn: queryGoalsForUser,
-  })
 
   const { mutate, isPending: updateGoalPending } = useMutation({
     mutationFn: saveTransactionForUser,
@@ -37,9 +28,7 @@ export function CloneTransaction() {
     onError: () => toast.error("Save failed, Try again."),
   })
 
-  const goalsMap: Record<string, Goal> = goals
-    ? goals.reduce((acc, cur) => ({ ...acc, [cur.id]: cur }), {})
-    : {}
+  const { goalsMap, getGoalAndCategory } = useGoals()
 
   if (!transaction) return <FullScreenError msg="Transaction not found" />
 
@@ -48,19 +37,16 @@ export function CloneTransaction() {
     date,
     goalId,
     categoryId,
+    templateId,
     ...data
   }) => {
+    const completedDate = date || new Date()
     mutate({
       ...data,
-      goal: goalId ? goalsMap[goalId] : undefined,
-      category:
-        (categoryId &&
-          goalId &&
-          goalsMap[goalId].breakdown
-            .filter((b) => b.id === categoryId)
-            .map((b) => ({ id: b.id, name: b.category }))[0]) ||
-        undefined,
-      date: date || new Date(),
+      ...getGoalAndCategory({ categoryId, goalId }),
+      status: "COMPLETED",
+      frequency: "ONE_TIME",
+      completedDate,
       amount: amountToDouble(amount),
     })
   }

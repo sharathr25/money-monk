@@ -1,31 +1,26 @@
 import { type SubmitHandler } from "react-hook-form"
 import { toast } from "sonner"
-import { saveCashFlowTemplate } from "@workspace/api/db/index"
-import type { Frequency, Type } from "@workspace/core/type/index"
 import { amountToDouble } from "@workspace/ui/lib/utils"
-import { CashFlowTemplateForm } from "@/components/CashFlowTemplateForm"
+import {
+  CashFlowTemplateForm,
+  type CashFlowTemplateFormInputs,
+} from "@/components/CashFlowTemplateForm"
 import { useNavigator } from "@/hooks/useNavigator"
 import { NavBack } from "@/components/NavBack"
 import { useAuth } from "@/hooks/useAuth"
 import { useMutation } from "@tanstack/react-query"
-
-type AddCashFlowFormInputs = {
-  name: string
-  icon: string
-  description?: string
-  amount: string
-  frequency: Frequency
-  type: Type
-  date?: Date
-}
+import { useGoals } from "@/hooks/useGoals"
+import { saveTransaction } from "@workspace/api/db/transactions"
 
 export function AddCashFlowTemplate() {
   const user = useAuth()
   const { goBack } = useNavigator()
 
+  const { goalsMap, getGoalAndCategory } = useGoals()
+
   const { mutate, isPending: saveApiLoading } = useMutation({
     mutationKey: ["add-goal"],
-    mutationFn: saveCashFlowTemplate(user.uid),
+    mutationFn: saveTransaction(user.uid),
     onSuccess: () =>
       toast.success("Save successful.", {
         onAutoClose: goBack,
@@ -33,10 +28,21 @@ export function AddCashFlowTemplate() {
     onError: () => toast.error("Save failed, Try again."),
   })
 
-  const onSubmit: SubmitHandler<AddCashFlowFormInputs> = async (data) => {
+  const onSubmit: SubmitHandler<CashFlowTemplateFormInputs> = async ({
+    amount,
+    date,
+    goalId,
+    day,
+    categoryId,
+    ...data
+  }) => {
     mutate({
       ...data,
-      amount: amountToDouble(data.amount),
+      ...getGoalAndCategory({ categoryId, goalId }),
+      status: "PLANNED",
+      plannedDate: date || new Date(),
+      plannedDay: day ? parseInt(day) : undefined,
+      amount: amountToDouble(amount),
     })
   }
 
@@ -47,7 +53,11 @@ export function AddCashFlowTemplate() {
         <h1 className="text-xl font-bold">Add Cash Flow</h1>
         <p className="text-sm">Add your recurring/one-time income/expense</p>
       </div>
-      <CashFlowTemplateForm onSubmit={onSubmit} loading={saveApiLoading} />
+      <CashFlowTemplateForm
+        onSubmit={onSubmit}
+        loading={saveApiLoading}
+        goalsMap={goalsMap}
+      />
     </div>
   )
 }
