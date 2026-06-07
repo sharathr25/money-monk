@@ -102,7 +102,7 @@ export function CashFlowTemplates() {
       <div className="flex items-start justify-between bg-background">
         <div>
           <h1 className="text-xl font-bold">
-            Cash Flow Templates
+            Planned Transactions
             {templates.length ? ` (${templates.length})` : ""}
           </h1>
           <p className="text-sm">
@@ -126,7 +126,7 @@ export function CashFlowTemplates() {
               </div>
               <Field orientation="horizontal" className="w-full">
                 <FieldLabel htmlFor="switch-focus-mode">
-                  Show past templates
+                  Show past planned transactions
                 </FieldLabel>
                 <Switch
                   className="data-[state=unchecked]:bg-gray-300"

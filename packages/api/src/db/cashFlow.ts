@@ -78,11 +78,11 @@ export const getCashFlowProjection =
     const templates = await queryTransactions(uid)({
       plannedStartDate: monthRanges[0].startDate,
       plannedEndDate: monthRanges[monthRanges.length - 1].endDate,
-      status: "PLANNED",
+      plannedDateExists: true,
     })
 
     templates.forEach((t) => {
-      if (t.plannedDate) {
+      if (t.frequency === "ONE_TIME") {
         const month = dayjs(t.plannedDate).format(monthFormat)
         monthlyAmountsSum[t.type][month] += t.amount
       } else {

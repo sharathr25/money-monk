@@ -7,8 +7,8 @@ import {
   Target,
   ChartNoAxesCombined,
   ArrowDownUp,
-  LayoutDashboard,
   BookText,
+  NotebookPen,
 } from "lucide-react"
 import { Outlet, useLocation } from "react-router"
 
@@ -24,10 +24,10 @@ export function Home() {
       Icon: ArrowDownUp,
     },
     {
-      label: "Templates",
+      label: "Planned",
       to: ROUTE_NAMES.CASH_FLOW_TEMPLATES,
       isActive: pathname.endsWith("/cash-flow-templates"),
-      Icon: LayoutDashboard,
+      Icon: NotebookPen,
     },
     {
       label: "Insights",
