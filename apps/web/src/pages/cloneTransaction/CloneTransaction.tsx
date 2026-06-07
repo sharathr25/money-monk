@@ -63,6 +63,7 @@ export function CloneTransaction() {
           ...transaction,
           goalId: transaction.goal?.id,
           categoryId: transaction.category?.id,
+          date: transaction.completedDate || undefined,
           amount: formatAmount(transaction.amount),
         }}
         action="SAVE"

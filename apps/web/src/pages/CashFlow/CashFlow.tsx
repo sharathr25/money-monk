@@ -30,12 +30,14 @@ export function CashFlow() {
     queryKey: ["cash-flow"],
     queryFn: getCashFlow(user.uid).bind(null, { startDate, endDate }),
   })
+
   const { mutate: updateUserDataForUser } = useMutation({
     mutationKey: ["opening-balance-update", cashFlow],
     mutationFn: updateUserData(user.uid).bind(null),
     onSuccess: () => toast.success("Successfully updated opening balance"),
     onError: () => toast.error("Failed to update opening balance"),
   })
+
   const { mutate: saveTransactionForUser } = useMutation({
     mutationKey: ["opening-balance-transaction"],
     mutationFn: saveTransaction(user.uid).bind(null),

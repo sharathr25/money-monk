@@ -45,7 +45,7 @@ export function CashFlowTemplates() {
   const frequency = watch("frequency")
 
   const toQueryFilters = (filters: Query): TransactionQuery => {
-    const query: TransactionQuery = { ...filters, status: "PLANNED" }
+    const query: TransactionQuery = { ...filters }
     if (filters.type === "ALL") {
       query.type = undefined
     }
@@ -53,8 +53,9 @@ export function CashFlowTemplates() {
       query.frequency = undefined
     }
     if (!filters.showPastTemplates) {
-      query.plannedDate = { start: new Date() }
+      query.plannedStartDate = new Date()
     }
+    query.plannedDateExists = true
     return query
   }
 

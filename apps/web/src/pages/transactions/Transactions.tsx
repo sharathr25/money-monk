@@ -51,7 +51,7 @@ export function Transactions() {
   const toQueryFilters = (filters: Query): TransactionQuery => {
     const query: TransactionQuery = {
       ...filters,
-      orderBy: "date",
+      orderBy: "completedDate",
       status: "COMPLETED",
     }
     if (filters.type === "ALL") {
@@ -172,6 +172,7 @@ export function Transactions() {
                 <Field>
                   <FieldLabel htmlFor="goal">Category</FieldLabel>
                   <Select
+                    disabled={!goalId}
                     defaultValue={categoryId}
                     onValueChange={(v) => setValue("categoryId", v)}
                   >

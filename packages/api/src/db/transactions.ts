@@ -9,6 +9,7 @@ import {
   getDoc,
   getDocs,
   limit,
+  or,
   orderBy,
   query,
   QueryCompositeFilterConstraint,
@@ -30,20 +31,22 @@ import { toDate } from "./mapper"
 const toTransaction = (docSnap: DocumentSnapshot) => {
   return {
     id: docSnap.id,
-    goalId: docSnap.get("goalId"),
-    templateId: docSnap.get("templateId"),
     name: docSnap.get("name"),
     description: docSnap.get("description"),
     icon: docSnap.get("icon"),
     type: docSnap.get("type"),
-    counterParty: docSnap.get("paidTo") || docSnap.get("counterParty"),
+    counterParty: docSnap.get("counterParty"),
     amount: docSnap.get("amount"),
     goal: docSnap.get("goal"),
     category: docSnap.get("category"),
     status: docSnap.get("status"),
     frequency: docSnap.get("frequency"),
-    plannedDate: toDate(docSnap.get("plannedDate")),
-    completedDate: toDate(docSnap.get("completedDate")),
+    plannedDate: docSnap.get("plannedDate")
+      ? toDate(docSnap.get("plannedDate"))
+      : undefined,
+    completedDate: docSnap.get("completedDate")
+      ? toDate(docSnap.get("completedDate"))
+      : undefined,
     createdAt: toDate(docSnap.get("createdAt")),
     updatedAt: toDate(docSnap.get("updatedAt")),
   }
@@ -66,6 +69,10 @@ export const queryTransactions =
       )
     }
 
+    if (transactionQuery?.frequency) {
+      contraints.push(and(where("frequency", "==", transactionQuery.frequency)))
+    }
+
     if (transactionQuery?.type) {
       contraints.push(and(where("type", "==", transactionQuery.type)))
     }
@@ -78,7 +85,37 @@ export const queryTransactions =
       orderByConstraints.push(orderBy(transactionQuery.orderBy))
     }
 
-    contraints.push(and(where("status", "==", transactionQuery.status)))
+    if (transactionQuery?.plannedStartDate) {
+      contraints.push(
+        or(
+          and(
+            where("frequency", "==", "ONE_TIME"),
+            where("plannedDate", ">=", transactionQuery.plannedStartDate)
+          ),
+          where("frequency", "==", "MONTHLY")
+        )
+      )
+    }
+
+    if (transactionQuery?.plannedEndDate) {
+      contraints.push(
+        or(
+          and(
+            where("frequency", "==", "ONE_TIME"),
+            where("plannedDate", "<=", transactionQuery.plannedEndDate)
+          ),
+          where("frequency", "==", "MONTHLY")
+        )
+      )
+    }
+
+    if (transactionQuery?.status) {
+      contraints.push(and(where("status", "==", transactionQuery.status)))
+    }
+
+    if (transactionQuery?.plannedDateExists) {
+      contraints.push(and(where("plannedDate", "!=", null)))
+    }
 
     const q = query(
       collection(db, USERS, uid, TRANSACTIONS),
@@ -112,14 +149,11 @@ export const saveTransaction =
       updatedAt: date,
     }
 
-    if (transaction.goal) {
-      docData.goal = { id: transaction.goal.id, name: transaction.goal.name }
-    }
-
     const keysToDelete = [
       ...Object.keys(docData).filter((k) => docData[k] === undefined),
       "id",
       "goalId",
+      "categoryId",
     ]
 
     keysToDelete.forEach((k) => {
@@ -131,15 +165,9 @@ export const saveTransaction =
 
 export const updateTransaction =
   (uid: string) => async (id: string, transaction: UpdateTransactionSpec) => {
-    const date = new Date()
-
     const docData: DocumentData = {
       ...transaction,
-      updatedAt: date,
-    }
-
-    if (transaction.goal) {
-      docData.goal = { id: transaction.goal.id, name: transaction.goal.name }
+      updatedAt: new Date(),
     }
 
     const keysToDelete = [

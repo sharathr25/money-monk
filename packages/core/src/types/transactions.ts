@@ -8,12 +8,11 @@ export type TransactionQuery = {
   limit?: number
   type?: string
   orderBy?: string
-  status: TransactionStatus
+  status?: TransactionStatus
   frequency?: string
-  plannedDate?: {
-    start: Date
-    end?: Date
-  }
+  plannedStartDate?: Date
+  plannedEndDate?: Date
+  plannedDateExists?: boolean
 }
 
 export type TransactionType = "INCOME" | "EXPENSE" | "ADJUSTMENT" | "SAVINGS"
@@ -26,7 +25,6 @@ export type SaveTransationSpec = {
   amount: number
   type: TransactionType
   plannedDate?: Date | null
-  plannedDay?: number | null
   completedDate?: Date | null
   counterParty?: string
   status: TransactionStatus

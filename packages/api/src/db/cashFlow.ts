@@ -3,11 +3,10 @@ import type {
   CashFlowProjection,
 } from "@workspace/core/type/cashFlow"
 import { getMonthRanges } from "@workspace/ui/lib/utils"
-import { queryCashFlowTemplates } from "./cashFlowTemplates"
 import { getUserData } from "./users"
 import dayjs from "dayjs"
-import { type Type } from "@workspace/core/type/cashFlowTemplates"
 import { queryTransactions } from "./transactions"
+import type { TransactionType } from "@workspace/core/type/transactions"
 
 export const getCashFlow =
   (uid: string) =>
@@ -19,13 +18,14 @@ export const getCashFlow =
     endDate: Date
   }): Promise<CashFlow> => {
     const userData = await getUserData(uid)
-    const templates = await queryTransactions(uid)({
-      plannedDate: { start: startDate, end: endDate },
-      status: "PLANNED",
+    const plannedTransactions = await queryTransactions(uid)({
+      plannedStartDate: startDate,
+      plannedEndDate: endDate,
+      plannedDateExists: true,
     })
 
-    const income = templates.filter((t) => t.type === "INCOME")
-    const expenses = templates.filter((t) => t.type === "EXPENSE")
+    const income = plannedTransactions.filter((t) => t.type === "INCOME")
+    const expenses = plannedTransactions.filter((t) => t.type === "EXPENSE")
 
     const totalIncome = income.reduce((acc, cur) => acc + cur.amount, 0)
     const totalExpenses = expenses.reduce((acc, cur) => acc + cur.amount, 0)
@@ -62,20 +62,28 @@ export const getCashFlowProjection =
       (acc, cur) => ({ ...acc, [cur.month]: 0 }),
       {}
     )
-    const monthlyAmountsSum: Record<Type, Record<string, number>> = {
+    const monthlyAmountsSum: Record<TransactionType, Record<string, number>> = {
       EXPENSE: { ...monthlyAmountsMap },
       INCOME: { ...monthlyAmountsMap },
+      ADJUSTMENT: { ...monthlyAmountsMap },
+      SAVINGS: { ...monthlyAmountsMap },
     }
-    const recurringAmountsSum: Record<Type, number> = { EXPENSE: 0, INCOME: 0 }
+    const recurringAmountsSum: Record<TransactionType, number> = {
+      EXPENSE: 0,
+      INCOME: 0,
+      ADJUSTMENT: 0,
+      SAVINGS: 0,
+    }
 
-    const templates = await queryCashFlowTemplates(uid)({
-      startDate: monthRanges[0].startDate,
-      endDate: monthRanges[monthRanges.length - 1].endDate,
+    const templates = await queryTransactions(uid)({
+      plannedStartDate: monthRanges[0].startDate,
+      plannedEndDate: monthRanges[monthRanges.length - 1].endDate,
+      status: "PLANNED",
     })
 
     templates.forEach((t) => {
-      if (t.date) {
-        const month = dayjs(t.date).format(monthFormat)
+      if (t.plannedDate) {
+        const month = dayjs(t.plannedDate).format(monthFormat)
         monthlyAmountsSum[t.type][month] += t.amount
       } else {
         recurringAmountsSum[t.type] += t.amount

@@ -3,9 +3,7 @@ import type { Transaction } from "@workspace/core/types/transactions"
 
 export const TemplateList = ({ templates }: { templates: Transaction[] }) => {
   const sortedTemplates = [...templates].sort(
-    (a, b) =>
-      (a.plannedDay || a.plannedDate?.getTime() || 0) -
-      (b.plannedDay || b.plannedDate?.getTime() || 0)
+    (a, b) => (a.plannedDate?.getTime() || 0) - (b.plannedDate?.getTime() || 0)
   )
 
   return (

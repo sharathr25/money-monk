@@ -14,7 +14,11 @@ import {
   updateTransaction,
 } from "@workspace/api/db/transactions"
 import { Button } from "@workspace/ui/components/button"
-import { amountToDouble, formatAmount } from "@workspace/ui/lib/utils"
+import {
+  amountToDouble,
+  formatAmount,
+  toDateFromDay,
+} from "@workspace/ui/lib/utils"
 import { MoveLeft, RefreshCcw } from "lucide-react"
 import type { SubmitHandler } from "react-hook-form"
 import { useParams } from "react-router"
@@ -54,8 +58,7 @@ export function EditCashFlowTemplate() {
       ...getGoalAndCategory({ goalId, categoryId }),
       amount: amountToDouble(amount),
       status: "PLANNED",
-      plannedDate: date || new Date(),
-      plannedDay: day ? parseInt(day) : undefined,
+      plannedDate: data.frequency === "ONE_TIME" ? date : toDateFromDay(day),
     })
   }
 
@@ -91,7 +94,6 @@ export function EditCashFlowTemplate() {
           categoryId: template.category?.id,
           amount: formatAmount(template.amount),
           date: template.plannedDate || undefined,
-          day: template.plannedDay ? `${template.plannedDay}` : undefined,
         }}
         goalsMap={goalsMap}
         onSubmit={onSubmit}

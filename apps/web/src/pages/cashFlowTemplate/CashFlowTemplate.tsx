@@ -28,14 +28,19 @@ import {
 import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import {
   Banknote,
+  Book,
   Boxes,
   Calendar,
+  Check,
   Info,
+  MoveDown,
   MoveLeft,
+  MoveUp,
   Pen,
   RefreshCcw,
   Target,
   Trash,
+  Undo,
   X,
 } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
@@ -47,12 +52,19 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import {
   deleteTransaction,
   getTransaction,
+  updateTransaction,
 } from "@workspace/api/db/transactions"
+import { DateSelector } from "@/components/DateSelector"
+import { useState } from "react"
 
 export function CashFlowTemplate() {
   const user = useAuth()
   const { templateId = "" } = useParams()
   const { goBack, navigate } = useNavigator()
+
+  const [completedDate, setCompletedDate] = useState<Date | undefined>(
+    new Date()
+  )
 
   const {
     isPending: getApiLoading,
@@ -64,7 +76,7 @@ export function CashFlowTemplate() {
   })
 
   const { mutate, isPending: deleteApiLoading } = useMutation({
-    mutationKey: [templateId],
+    mutationKey: ["delete", templateId],
     mutationFn: deleteTransaction(user.uid).bind(null, templateId),
     onSuccess: () =>
       toast.success("Delete successful.", {
@@ -72,6 +84,17 @@ export function CashFlowTemplate() {
       }),
     onError: () => toast.error("Delete failed, Try again."),
   })
+
+  const { mutate: updateTransactionApi, isPending: updateApiLoading } =
+    useMutation({
+      mutationKey: ["update", templateId],
+      mutationFn: updateTransaction(user.uid).bind(null, templateId),
+      onSuccess: () =>
+        toast.success("Action successful.", {
+          onAutoClose: goBack,
+        }),
+      onError: () => toast.error("Action failed, Try again."),
+    })
 
   const deleteTemplate = () => {
     mutate()
@@ -94,6 +117,22 @@ export function CashFlowTemplate() {
         </div>
       </FullScreenError>
     )
+
+  const onTransact = () => {
+    updateTransactionApi({
+      ...template,
+      completedDate,
+      status: "COMPLETED",
+    })
+  }
+
+  const onUndo = () => {
+    updateTransactionApi({
+      ...template,
+      completedDate: null,
+      status: "PLANNED",
+    })
+  }
 
   const onEdit = () => {
     navigate(ROUTE_NAMES.EDIT_CASH_FLOW_TEMPLATE, {
@@ -165,13 +204,19 @@ export function CashFlowTemplate() {
             <div className={itemContainerClass}>
               <Item className={itemClass}>
                 <ItemMedia variant="icon">
-                  <Boxes />
+                  {template.type === "EXPENSE" ? (
+                    <MoveUp className="text-(--destructive)" />
+                  ) : (
+                    <MoveDown className="text-(--success)" />
+                  )}
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>
-                    {template.type === "EXPENSE" ? "Pay To" : "Receive From"}
+                    {template.type === "EXPENSE" ? "To" : "From"}
                   </ItemDescription>
-                  <ItemTitle>{template.counterParty}</ItemTitle>
+                  <ItemTitle className="capitalize">
+                    {template.counterParty}
+                  </ItemTitle>
                 </ItemContent>
               </Item>
             </div>
@@ -241,10 +286,67 @@ export function CashFlowTemplate() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button variant="outline" className="flex-1" onClick={onEdit}>
-          <Pen />
-          Transact
-        </Button>
+        {template.frequency === "ONE_TIME" && template.completedDate && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="flex-1">
+                {updateApiLoading ? <Spinner /> : <Undo />}
+                Undo
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Mark as Not Complete?</AlertDialogTitle>
+                <AlertDialogDescription className="capitalize">
+                  This template will no longer be counted as actual This
+                  template will be counted as actual{" "}
+                  {template.type.toLowerCase()}. You can mark it as completed
+                  again at any time.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex">
+                <AlertDialogCancel>
+                  <X />
+                  Don't Continue
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={onUndo}>
+                  <Check />
+                  Yes, Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+        {template.frequency === "ONE_TIME" && !template.completedDate && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="flex-1">
+                {updateApiLoading ? <Spinner /> : <Book />}
+                Complete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Mark as Completed?</AlertDialogTitle>
+                <AlertDialogDescription className="capitalize">
+                  This template will be counted as actual{" "}
+                  {template.type.toLowerCase()} for the selected date.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <DateSelector setDate={setCompletedDate} date={completedDate} />
+              <AlertDialogFooter className="flex">
+                <AlertDialogCancel>
+                  <X />
+                  Don't Continue
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={onTransact}>
+                  <Check />
+                  Yes, Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
         <Button className="flex-1" onClick={onEdit}>
           <Pen />
           Edit

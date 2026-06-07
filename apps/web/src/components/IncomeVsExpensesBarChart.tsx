@@ -28,6 +28,8 @@ export function IncomeVsExpensesBarChart({
     m: "h-[25px]",
   }
 
+  if (!income && !expenses) return null
+
   return (
     <ChartContainer config={{}} className={cn(sizeToClass[size], "w-full")}>
       <BarChart

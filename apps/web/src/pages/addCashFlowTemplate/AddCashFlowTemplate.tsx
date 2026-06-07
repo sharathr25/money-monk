@@ -1,6 +1,6 @@
 import { type SubmitHandler } from "react-hook-form"
 import { toast } from "sonner"
-import { amountToDouble } from "@workspace/ui/lib/utils"
+import { amountToDouble, toDateFromDay } from "@workspace/ui/lib/utils"
 import {
   CashFlowTemplateForm,
   type CashFlowTemplateFormInputs,
@@ -40,8 +40,7 @@ export function AddCashFlowTemplate() {
       ...data,
       ...getGoalAndCategory({ categoryId, goalId }),
       status: "PLANNED",
-      plannedDate: date || new Date(),
-      plannedDay: day ? parseInt(day) : undefined,
+      plannedDate: data.frequency === "ONE_TIME" ? date : toDateFromDay(day),
       amount: amountToDouble(amount),
     })
   }

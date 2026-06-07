@@ -99,6 +99,7 @@ export function EditTransaction() {
           ...transaction,
           categoryId: transaction.category?.id,
           goalId: transaction.goal?.id,
+          date: transaction.completedDate || undefined,
           amount: formatAmount(transaction.amount),
         }}
         action="UPDATE"

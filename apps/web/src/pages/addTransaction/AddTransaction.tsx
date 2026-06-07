@@ -38,6 +38,7 @@ export function AddTransaction() {
       ...getGoalAndCategory({ categoryId, goalId }),
       status: "COMPLETED",
       frequency: "ONE_TIME",
+      plannedDate: null,
       completedDate: date || new Date(),
       amount: amountToDouble(amount),
     })

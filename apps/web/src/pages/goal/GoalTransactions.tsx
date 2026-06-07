@@ -1,5 +1,3 @@
-import { FullScreenError } from "@/components/FullScreenError"
-import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { useNavigator } from "@/hooks/useNavigator"
 import { ROUTE_NAMES } from "@/routes"
 import { Button } from "@workspace/ui/components/button"
@@ -9,6 +7,8 @@ import { Label } from "@workspace/ui/components/label"
 import { TransactionItem } from "@/components/TransactionItem"
 import { InlineEmpty } from "@/components/InlineEmpty"
 import type { Transaction } from "@workspace/core/types/transactions"
+import { InlineLoader } from "@/components/InlineLoader"
+import { InlineError } from "@/components/InlineError"
 
 export function GoalTransactions({
   goalId,
@@ -38,6 +38,10 @@ export function GoalTransactions({
   const recentTransactions = [...transactions].reverse().slice(0, 3)
 
   const ListOrEmpty = () => {
+    if (getTransactionsPending) return <InlineLoader />
+
+    if (getTransactionsError) return <InlineError />
+
     if (recentTransactions.length)
       return (
         <div className="flex flex-col gap-2">
@@ -49,11 +53,6 @@ export function GoalTransactions({
 
     return <InlineEmpty title="No Transactions" />
   }
-
-  if (getTransactionsPending) return <FullScreenLoader />
-
-  if (getTransactionsError)
-    return <FullScreenError msg="Something went wrong" />
 
   return (
     <div className="flex flex-col gap-1">

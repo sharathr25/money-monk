@@ -54,7 +54,8 @@ export const formatDate = (date: Date) => dayjs(date).format("MMM D, YYYY")
 export const formatDateTime = (date: Date) =>
   dayjs(date).format("MMM D, YYYY h:mm A")
 
-export const formatDayOfMonth = (day: number): string => {
+export const formatDayOfMonth = (date?: Date | null): string => {
+  const day = dayjs(date || new Date()).date()
   if (day < 1 || day > 31) {
     return `${day}`
   }
@@ -150,3 +151,8 @@ export const formatCompactAmount = (amount: number): string => {
 
   return `${amount}`
 }
+
+export const toDateFromDay = (day: string | number = 1) =>
+  dayjs()
+    .date(parseInt(`${day}`))
+    .toDate()

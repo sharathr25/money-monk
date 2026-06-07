@@ -70,19 +70,20 @@ export function Goal() {
     queryFn: async () =>
       queryTransactionsForUser({
         goalId,
-        orderBy: "date",
+        orderBy: "completedDate",
         status: "COMPLETED",
       }),
   })
 
   const { data: transactions = [] } = transactionsApi
 
-  const { mutate, isPending: deleteGoalPending } = useMutation({
-    mutationFn: async () => deleteGoalForUser(goalId),
-    onSuccess: () =>
-      toast.success("Successfully deleted.", { onAutoClose: goBack }),
-    onError: () => toast.error("Delete failed, Try again."),
-  })
+  const { mutate: deleteTransaction, isPending: deleteGoalPending } =
+    useMutation({
+      mutationFn: async () => deleteGoalForUser(goalId),
+      onSuccess: () =>
+        toast.success("Successfully deleted.", { onAutoClose: goBack }),
+      onError: () => toast.error("Delete failed, Try again."),
+    })
 
   const onEdit = () => {
     navigate(ROUTE_NAMES.EDIT_GOAL, {
@@ -91,7 +92,7 @@ export function Goal() {
   }
 
   const onDeleteContinue = () => {
-    mutate()
+    deleteTransaction()
   }
 
   const savedAmount = transactions
