@@ -8,7 +8,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@workspace/ui/components/empty"
-import { Plus, FolderCode, CirclePlus } from "lucide-react"
+import { Plus, CirclePlus, Wind } from "lucide-react"
 import { useState } from "react"
 import { TemplateList } from "@/components/TemplateList"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
@@ -84,11 +84,12 @@ export function CashFlowTemplates() {
         <Empty className="border border-dashed">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <FolderCode />
+              <Wind />
             </EmptyMedia>
-            <EmptyTitle className="capitalize">No Templates Yet</EmptyTitle>
+            <EmptyTitle className="capitalize">Nothing Planned Yet</EmptyTitle>
             <EmptyDescription>
-              Start by by clicking on <CirclePlus /> to add template.
+              Start by by clicking on <CirclePlus className="inline size-5" />
+              to add template.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { GOAL_STATUSES } from "@workspace/ui/constants/goals"
-import { CirclePlus, FolderCode, Plus } from "lucide-react"
+import { CirclePlus, Plus, Wind } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { GoalItem } from "./GoalItem"
@@ -64,7 +64,7 @@ export function Goals() {
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <FolderCode />
+          <Wind />
         </EmptyMedia>
         <EmptyTitle className="capitalize">No Goals Yet</EmptyTitle>
         <EmptyDescription>

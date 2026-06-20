@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query"
 import { queryTransactions } from "@workspace/api/db/transactions"
 import { Button } from "@workspace/ui/components/button"
 import { TransactionItem } from "@/components/TransactionItem"
-import { CirclePlus, FolderCode, Plus } from "lucide-react"
+import { CirclePlus, Plus, Wind } from "lucide-react"
 import { useLocation } from "react-router"
 import {
   Empty,
@@ -93,7 +93,7 @@ export function Transactions() {
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <FolderCode />
+          <Wind />
         </EmptyMedia>
         <EmptyTitle className="capitalize">No Transactions Yet</EmptyTitle>
         <EmptyDescription>

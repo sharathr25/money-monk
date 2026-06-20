@@ -9,17 +9,27 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemMedia,
   ItemTitle,
 } from "@workspace/ui/components/item"
 import {
+  cn,
   formatAmount,
   formatDate,
   formatDayOfMonth,
 } from "@workspace/ui/lib/utils"
 import dayjs from "dayjs"
 
-import { Calendar, Repeat } from "lucide-react"
+import {
+  Boxes,
+  Calendar,
+  CalendarCheck,
+  Check,
+  MoveUpRight,
+  Repeat,
+  Target,
+} from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 
 export const TemplateItem = ({ template }: { template: Transaction }) => {
@@ -48,11 +58,12 @@ export const TemplateItem = ({ template }: { template: Transaction }) => {
           </Avatar>
         </ItemMedia>
         <ItemContent>
-          <ItemTitle className="font-bold">
-            {template.name}
-            {old && <Badge>Expired</Badge>}
-          </ItemTitle>
-          <ItemDescription>{template.description}</ItemDescription>
+          <ItemTitle className="font-bold">{template.name}</ItemTitle>
+          <ItemDescription
+            className={cn("text-xs", !template.description && "opacity-0")}
+          >
+            {template.description || "-"}
+          </ItemDescription>
         </ItemContent>
         <ItemActions className="flex-none text-center">
           <ItemDescription className="flex flex-col items-end">
@@ -79,6 +90,44 @@ export const TemplateItem = ({ template }: { template: Transaction }) => {
             )}
           </ItemDescription>
         </ItemActions>
+        <ItemFooter className="justify-start overflow-x-scroll">
+          {!!template.completedDate && (
+            <Badge
+              variant="outline"
+              className="border-(--success) text-(--success)"
+            >
+              <Check />
+              Done
+            </Badge>
+          )}
+          {template.goal?.name && (
+            <Badge variant="outline">
+              <Target />
+              {template.goal?.name}
+            </Badge>
+          )}
+          {template.category?.name && (
+            <Badge variant="outline">
+              <Boxes />
+              {template.category.name}
+            </Badge>
+          )}
+          {template.counterParty && (
+            <Badge variant="outline">
+              <MoveUpRight />
+              {template.counterParty}
+            </Badge>
+          )}
+          {old && (
+            <Badge
+              variant="outline"
+              className="border-(--destructive) text-(--destructive)"
+            >
+              <CalendarCheck />
+              Expired
+            </Badge>
+          )}
+        </ItemFooter>
       </Item>
     </Card>
   )

@@ -13,7 +13,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@workspace/ui/components/item"
-import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
+import { cn, formatAmount, formatDate } from "@workspace/ui/lib/utils"
 import { Boxes, MoveUpRight, Target } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 
@@ -45,12 +45,14 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
             </AvatarFallback>
           </Avatar>
         </ItemMedia>
-        <ItemContent>
+        <ItemContent className="flex items-start">
           <ItemTitle className="line-clamp-1 flex font-bold capitalize">
             {transaction.name}
           </ItemTitle>
-          <ItemDescription className="text-xs">
-            {transaction.description}
+          <ItemDescription
+            className={cn("text-xs", !transaction.description && "opacity-0")}
+          >
+            {transaction.description || "-"}
           </ItemDescription>
         </ItemContent>
         <ItemActions className="mb-auto flex flex-col items-end">
@@ -61,7 +63,7 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
             </ItemDescription>
           )}
         </ItemActions>
-        <ItemFooter className="justify-start">
+        <ItemFooter className="justify-start overflow-x-scroll">
           {transaction.goal?.name && (
             <Badge variant="outline">
               <Target />
