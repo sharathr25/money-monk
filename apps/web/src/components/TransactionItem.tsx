@@ -14,7 +14,7 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 import { cn, formatAmount, formatDate } from "@workspace/ui/lib/utils"
-import { Boxes, MoveUpRight, Target } from "lucide-react"
+import { Boxes, MoveDownLeft, MoveUpRight, Target } from "lucide-react"
 import { DynamicIcon, type IconName } from "lucide-react/dynamic"
 
 export function TransactionItem({ transaction }: { transaction: Transaction }) {
@@ -78,7 +78,11 @@ export function TransactionItem({ transaction }: { transaction: Transaction }) {
           )}
           {transaction.counterParty && (
             <Badge variant="outline">
-              <MoveUpRight />
+              {transaction.type === "EXPENSE" ? (
+                <MoveUpRight className="text-(--destructive)" />
+              ) : (
+                <MoveDownLeft className="text-(--success)" />
+              )}
               {transaction.counterParty}
             </Badge>
           )}

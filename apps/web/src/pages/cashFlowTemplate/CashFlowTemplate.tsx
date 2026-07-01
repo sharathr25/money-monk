@@ -185,7 +185,7 @@ export function CashFlowTemplate() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Amount</ItemDescription>
-                <ItemTitle>
+                <ItemTitle className="font-bold capitalize">
                   {formatAmount(template.amount, { withCurrency: true })}
                 </ItemTitle>
               </ItemContent>
@@ -199,7 +199,9 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>Goal</ItemDescription>
-                  <ItemTitle>{template.goal?.name}</ItemTitle>
+                  <ItemTitle className="font-bold capitalize">
+                    {template.goal?.name}
+                  </ItemTitle>
                 </ItemContent>
               </Item>
             </div>
@@ -212,7 +214,9 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>Planned Date</ItemDescription>
-                  <ItemTitle>{formatDate(template.plannedDate)}</ItemTitle>
+                  <ItemTitle className="font-bold capitalize">
+                    {formatDate(template.plannedDate)}
+                  </ItemTitle>
                 </ItemContent>
               </Item>
             </div>
@@ -225,7 +229,7 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>Planned Day</ItemDescription>
-                  <ItemTitle>
+                  <ItemTitle className="font-bold capitalize">
                     {formatDayOfMonth(template.plannedDate)}
                   </ItemTitle>
                 </ItemContent>
@@ -240,7 +244,9 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>Paid On</ItemDescription>
-                  <ItemTitle>{formatDate(template.completedDate)}</ItemTitle>
+                  <ItemTitle className="font-bold capitalize">
+                    {formatDate(template.completedDate)}
+                  </ItemTitle>
                 </ItemContent>
               </Item>
             </div>
@@ -259,7 +265,7 @@ export function CashFlowTemplate() {
                   <ItemDescription>
                     {template.type === "EXPENSE" ? "Paid To" : "Receive From"}
                   </ItemDescription>
-                  <ItemTitle className="capitalize">
+                  <ItemTitle className="font-bold capitalize">
                     {template.counterParty}
                   </ItemTitle>
                 </ItemContent>
@@ -273,7 +279,9 @@ export function CashFlowTemplate() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Created At</ItemDescription>
-                <ItemTitle>{formatDate(template.createdAt)}</ItemTitle>
+                <ItemTitle className="font-bold capitalize">
+                  {formatDate(template.createdAt)}
+                </ItemTitle>
               </ItemContent>
             </Item>
           </div>
@@ -284,7 +292,9 @@ export function CashFlowTemplate() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Updated At</ItemDescription>
-                <ItemTitle>{formatDate(template.updatedAt)}</ItemTitle>
+                <ItemTitle className="font-bold capitalize">
+                  {formatDate(template.updatedAt)}
+                </ItemTitle>
               </ItemContent>
             </Item>
           </div>
@@ -296,7 +306,7 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>Category</ItemDescription>
-                  <ItemTitle className="line-clamp-1">
+                  <ItemTitle className="line-clamp-1 font-bold capitalize">
                     {template.category?.name}
                   </ItemTitle>
                 </ItemContent>

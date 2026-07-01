@@ -26,6 +26,7 @@ import {
   Calendar,
   CalendarCheck,
   Check,
+  MoveDownLeft,
   MoveUpRight,
   Repeat,
   Target,
@@ -114,7 +115,11 @@ export const TemplateItem = ({ template }: { template: Transaction }) => {
           )}
           {template.counterParty && (
             <Badge variant="outline">
-              <MoveUpRight />
+              {template.type === "EXPENSE" ? (
+                <MoveUpRight className="text-(--destructive)" />
+              ) : (
+                <MoveDownLeft className="text-(--success)" />
+              )}
               {template.counterParty}
             </Badge>
           )}

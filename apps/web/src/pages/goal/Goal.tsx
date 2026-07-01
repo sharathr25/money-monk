@@ -160,7 +160,7 @@ export function Goal() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Saved</ItemDescription>
-                <ItemTitle>
+                <ItemTitle className="font-bold capitalize">
                   {formatAmount(savedAmount, { withCurrency: true })}
                 </ItemTitle>
               </ItemContent>
@@ -173,7 +173,9 @@ export function Goal() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Created At</ItemDescription>
-                <ItemTitle>{formatDate(goal.createdAt)}</ItemTitle>
+                <ItemTitle className="font-bold capitalize">
+                  {formatDate(goal.createdAt)}
+                </ItemTitle>
               </ItemContent>
             </Item>
           </div>
@@ -184,7 +186,9 @@ export function Goal() {
               </ItemMedia>
               <ItemContent>
                 <ItemDescription>Updated At</ItemDescription>
-                <ItemTitle>{formatDate(goal.updatedAt)}</ItemTitle>
+                <ItemTitle className="font-bold capitalize">
+                  {formatDate(goal.updatedAt)}
+                </ItemTitle>
               </ItemContent>
             </Item>
           </div>

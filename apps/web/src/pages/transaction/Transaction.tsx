@@ -154,7 +154,7 @@ export function Transaction() {
             </ItemMedia>
             <ItemContent>
               <ItemDescription>Amount</ItemDescription>
-              <ItemTitle>
+              <ItemTitle className="font-bold capitalize">
                 {formatAmount(transaction.amount, { withCurrency: true })}
               </ItemTitle>
             </ItemContent>
@@ -167,7 +167,7 @@ export function Transaction() {
             </ItemMedia>
             <ItemContent>
               <ItemDescription>Paid On</ItemDescription>
-              <ItemTitle>
+              <ItemTitle className="font-bold capitalize">
                 {formatDate(transaction.completedDate || new Date())}
               </ItemTitle>
             </ItemContent>
@@ -229,7 +229,9 @@ export function Transaction() {
             </ItemMedia>
             <ItemContent>
               <ItemDescription>Created At</ItemDescription>
-              <ItemTitle>{formatDate(transaction.createdAt)}</ItemTitle>
+              <ItemTitle className="font-bold">
+                {formatDate(transaction.createdAt)}
+              </ItemTitle>
             </ItemContent>
           </Item>
         </div>
@@ -240,7 +242,9 @@ export function Transaction() {
             </ItemMedia>
             <ItemContent>
               <ItemDescription>Updated At</ItemDescription>
-              <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
+              <ItemTitle className="font-bold">
+                {formatDate(transaction.updatedAt)}
+              </ItemTitle>
             </ItemContent>
           </Item>
         </div>
