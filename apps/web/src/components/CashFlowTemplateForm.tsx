@@ -82,7 +82,7 @@ export const CashFlowTemplateForm = ({
 
   useEffect(() => {
     if (frequency === "ONE_TIME") {
-      setValue("date", new Date())
+      setValue("date", defaultValues?.date || new Date())
     }
   }, [frequency])
 

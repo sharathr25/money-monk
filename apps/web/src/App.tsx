@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from "react"
 import { FullScreenLoader } from "@/components/FullScreenLoader"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Layout } from "./components/Layout"
+import { TooltipProvider } from "@workspace/ui/components/tooltip"
 
 export function App() {
   const [loading, setLoading] = useState(true)
@@ -26,15 +27,17 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Suspense
-        fallback={
-          <Layout>
-            <FullScreenLoader />
-          </Layout>
-        }
-      >
-        <RouterProvider router={router()} />
-      </Suspense>
+      <TooltipProvider>
+        <Suspense
+          fallback={
+            <Layout>
+              <FullScreenLoader />
+            </Layout>
+          }
+        >
+          <RouterProvider router={router()} />
+        </Suspense>
+      </TooltipProvider>
     </QueryClientProvider>
   )
 }

@@ -166,27 +166,12 @@ export function Transaction() {
               <Calendar />
             </ItemMedia>
             <ItemContent>
-              <ItemDescription>Date</ItemDescription>
+              <ItemDescription>Paid On</ItemDescription>
               <ItemTitle>
                 {formatDate(transaction.completedDate || new Date())}
               </ItemTitle>
             </ItemContent>
           </Item>
-        </div>
-        <div className={itemContainerClass}>
-          {transaction.goal && (
-            <Item className={itemClass}>
-              <ItemMedia variant="icon">
-                <Target />
-              </ItemMedia>
-              <ItemContent>
-                <ItemDescription>Goal</ItemDescription>
-                <ItemTitle className="font-bold capitalize">
-                  {transaction.goal.name}
-                </ItemTitle>
-              </ItemContent>
-            </Item>
-          )}
         </div>
         {transaction.counterParty && (
           <div className={itemContainerClass}>
@@ -201,6 +186,40 @@ export function Transaction() {
                 </ItemTitle>
               </ItemContent>
             </Item>
+          </div>
+        )}
+        {transaction.goal && (
+          <div className={itemContainerClass}>
+            (
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Target />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Goal</ItemDescription>
+                <ItemTitle className="font-bold capitalize">
+                  {transaction.goal.name}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+            )
+          </div>
+        )}
+        {transaction.category && (
+          <div className={itemContainerClass}>
+            (
+            <Item className={itemClass}>
+              <ItemMedia variant="icon">
+                <Boxes />
+              </ItemMedia>
+              <ItemContent>
+                <ItemDescription>Category</ItemDescription>
+                <ItemTitle className="line-clamp-1 font-bold capitalize">
+                  {transaction.category.name}
+                </ItemTitle>
+              </ItemContent>
+            </Item>
+            )
           </div>
         )}
         <div className={itemContainerClass}>
@@ -224,21 +243,6 @@ export function Transaction() {
               <ItemTitle>{formatDate(transaction.updatedAt)}</ItemTitle>
             </ItemContent>
           </Item>
-        </div>
-        <div className={itemContainerClass}>
-          {transaction.category && (
-            <Item className={itemClass}>
-              <ItemMedia variant="icon">
-                <Boxes />
-              </ItemMedia>
-              <ItemContent>
-                <ItemDescription>Category</ItemDescription>
-                <ItemTitle className="font-bold capitalize">
-                  {transaction.category.name}
-                </ItemTitle>
-              </ItemContent>
-            </Item>
-          )}
         </div>
       </div>
       {transaction.type !== "ADJUSTMENT" && (

@@ -25,7 +25,11 @@ import {
   ItemTitle,
 } from "@workspace/ui/components/item"
 
-import { formatAmount, formatDate } from "@workspace/ui/lib/utils"
+import {
+  formatAmount,
+  formatDate,
+  formatDayOfMonth,
+} from "@workspace/ui/lib/utils"
 import {
   Banknote,
   Book,
@@ -200,6 +204,47 @@ export function CashFlowTemplate() {
               </Item>
             </div>
           )}
+          {template.plannedDate && template.frequency === "ONE_TIME" && (
+            <div className={itemContainerClass}>
+              <Item className={itemClass}>
+                <ItemMedia variant="icon">
+                  <Calendar />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemDescription>Planned Date</ItemDescription>
+                  <ItemTitle>{formatDate(template.plannedDate)}</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
+          {template.plannedDate && template.frequency === "MONTHLY" && (
+            <div className={itemContainerClass}>
+              <Item className={itemClass}>
+                <ItemMedia variant="icon">
+                  <Calendar />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemDescription>Planned Day</ItemDescription>
+                  <ItemTitle>
+                    {formatDayOfMonth(template.plannedDate)}
+                  </ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
+          {template.completedDate && (
+            <div className={itemContainerClass}>
+              <Item className={itemClass}>
+                <ItemMedia variant="icon">
+                  <Calendar />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemDescription>Paid On</ItemDescription>
+                  <ItemTitle>{formatDate(template.completedDate)}</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
           {template.counterParty && (
             <div className={itemContainerClass}>
               <Item className={itemClass}>
@@ -212,7 +257,7 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>
-                    {template.type === "EXPENSE" ? "To" : "From"}
+                    {template.type === "EXPENSE" ? "Paid To" : "Receive From"}
                   </ItemDescription>
                   <ItemTitle className="capitalize">
                     {template.counterParty}
@@ -251,7 +296,9 @@ export function CashFlowTemplate() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemDescription>Category</ItemDescription>
-                  <ItemTitle>{template.category?.name}</ItemTitle>
+                  <ItemTitle className="line-clamp-1">
+                    {template.category?.name}
+                  </ItemTitle>
                 </ItemContent>
               </Item>
             </div>
