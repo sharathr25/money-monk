@@ -92,6 +92,16 @@ export const TemplateItem = ({ template }: { template: Transaction }) => {
           </ItemDescription>
         </ItemActions>
         <ItemFooter className="justify-start overflow-x-scroll">
+          {template.counterParty && (
+            <Badge variant="outline">
+              {template.type === "EXPENSE" ? (
+                <MoveUpRight className="text-(--destructive)" />
+              ) : (
+                <MoveDownLeft className="text-(--success)" />
+              )}
+              {template.counterParty}
+            </Badge>
+          )}
           {!!template.completedDate && (
             <Badge
               variant="outline"
@@ -113,16 +123,7 @@ export const TemplateItem = ({ template }: { template: Transaction }) => {
               {template.category.name}
             </Badge>
           )}
-          {template.counterParty && (
-            <Badge variant="outline">
-              {template.type === "EXPENSE" ? (
-                <MoveUpRight className="text-(--destructive)" />
-              ) : (
-                <MoveDownLeft className="text-(--success)" />
-              )}
-              {template.counterParty}
-            </Badge>
-          )}
+
           {old && (
             <Badge
               variant="outline"

@@ -7,6 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
+import { InfoIcon } from "lucide-react"
 
 export const GoalSelector = ({
   goalId,
@@ -24,6 +30,14 @@ export const GoalSelector = ({
     <Field>
       <FieldLabel htmlFor="goal">
         Goal{required && <span className="text-destructive">*</span>}
+        <Tooltip>
+          <TooltipTrigger>
+            <InfoIcon size={16} />
+          </TooltipTrigger>
+          <TooltipContent>
+            Only active or savings goals can be selected.
+          </TooltipContent>
+        </Tooltip>
       </FieldLabel>
       <Select
         defaultValue={goalId}
