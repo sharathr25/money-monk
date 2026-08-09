@@ -37,6 +37,7 @@ import { CashFlowProjectionItem } from "./CashFlowProjectionItem"
 
 const MONTHS_STEP_SIZE = 3
 const MONTHS_STEPS = 4
+const THRESHOLD_AMOUNT_FOR_INVESTEMENT = 250000
 
 const MONTH_OPTIONS = Array.from({ length: MONTHS_STEPS }, (_, i) => {
   const months = (i + 1) * MONTHS_STEP_SIZE
@@ -64,8 +65,11 @@ export function CashFlowProjection() {
   const shortFallProjection = cashFlowProjections.find(
     (cp) => cp.closingBalance < 0
   )
+
   const surplusProjection = cashFlowProjections.find(
-    (cp) => cp.closingBalance > 250000
+    (cp, i) =>
+      i === cashFlowProjections.length - 1 &&
+      cp.closingBalance > THRESHOLD_AMOUNT_FOR_INVESTEMENT
   )
 
   if (loading) return <FullScreenLoader />
@@ -122,41 +126,44 @@ export function CashFlowProjection() {
           </CardContent>
         </Card>
       </div>
-      <div className="flex flex-col gap-2">
-        <h1 className="flex items-center gap-1 font-extrabold">
-          <Info className="size-5" />
-          Liquidity Insights
-        </h1>
-        <div className="flex flex-col gap-3">
-          {shortFallProjection && (
-            <Alert variant="destructive" className="bg-(--destructive)/10">
-              <TriangleAlert />
-              <AlertTitle>
-                {shortFallProjection.month} Shortfall Risk
-              </AlertTitle>
-              <AlertDescription>
-                Projected expenses exceed liquidity by{" "}
-                {formatAmount(shortFallProjection.closingBalance, {
-                  withCurrency: true,
-                })}
-              </AlertDescription>
-            </Alert>
-          )}
-          {surplusProjection && (
-            <Alert variant="default" className="bg-(--primary)/10">
-              <Lightbulb />
-              <AlertTitle>Investement Opportunity</AlertTitle>
-              <AlertDescription>
-                Surplus{" "}
-                {formatAmount(surplusProjection.closingBalance, {
-                  withCurrency: true,
-                })}{" "}
-                in {surplusProjection.month} can be moved to a high-yield vault
-              </AlertDescription>
-            </Alert>
-          )}
+      {(shortFallProjection || surplusProjection) && (
+        <div className="flex flex-col gap-2">
+          <h1 className="flex items-center gap-1 font-extrabold">
+            <Info className="size-5" />
+            Liquidity Insights
+          </h1>
+          <div className="flex flex-col gap-3">
+            {shortFallProjection && (
+              <Alert variant="destructive" className="bg-(--destructive)/10">
+                <TriangleAlert />
+                <AlertTitle>
+                  {shortFallProjection.month} Shortfall Risk
+                </AlertTitle>
+                <AlertDescription>
+                  Projected expenses exceed liquidity by{" "}
+                  {formatAmount(shortFallProjection.closingBalance, {
+                    withCurrency: true,
+                  })}
+                </AlertDescription>
+              </Alert>
+            )}
+            {surplusProjection && (
+              <Alert variant="default" className="bg-(--primary)/10">
+                <Lightbulb />
+                <AlertTitle>Investement Opportunity</AlertTitle>
+                <AlertDescription>
+                  Surplus{" "}
+                  {formatAmount(surplusProjection.closingBalance, {
+                    withCurrency: true,
+                  })}{" "}
+                  in {surplusProjection.month} can be moved to a high-yield
+                  vault
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex flex-col gap-2">
         <h1 className="flex items-center gap-1 font-extrabold">
           <Binoculars className="size-5" />
